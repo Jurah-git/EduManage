@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>EduManage</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -523,13 +524,31 @@
                 <a href="{{ route('parents.index') }}">Liste parents</a>
             </div>
 
+            <!-- PERIODE -->
+            <a href="#" class="menu-toggle" data-target="periode">📆 Gestion des périodes</a>
+            <div id="periode" class="submenu">
+
+                <a href="{{ route('periodes.create') }}">
+                    Créer une période
+                </a>
+
+                <a href="{{ route('periodes.index') }}">
+                    Toutes les périodes
+                </a>
+
+            </div>
+
             <!-- BULLETIN -->
-            <a href="#" class="menu-toggle" data-target="bulletin">📝 Bulletin</a>
+            <a href="#" class="menu-toggle" data-target="bulletin">🧾 Bulletin</a>
+
             <div id="bulletin" class="submenu">
-                <a href="{{ route('bulletin.index') }}">Liste</a>
-                <a href="{{ route('bulletin.saisie') }}">Saisie</a>
-                <a href="{{ route('bulletin.validation') }}">Validation</a>
-                <a href="{{ route('bulletin.generer') }}">Générer</a>
+
+                <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
+
+               
+
+               
+
             </div>
 
         </div>

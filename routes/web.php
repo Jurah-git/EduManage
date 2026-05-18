@@ -18,6 +18,7 @@ use App\Http\Controllers\BibliothequeController;
 
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\BulletinController;
+use App\Http\Controllers\PeriodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,9 +72,9 @@ Route::middleware(['auth'])->group(function () {
     */
 
     Route::resource('classes', ClasseController::class)
-    ->parameters([
-        'classes' => 'classe'
-    ]);
+        ->parameters([
+            'classes' => 'classe'
+        ]);
 
     /*
     |--------------------------------------------------------------------------
@@ -141,23 +142,26 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | PERIODE
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('periodes', PeriodeController::class);
+
+    /*
+    |--------------------------------------------------------------------------
     | BULLETIN
     |--------------------------------------------------------------------------
     */
 
     Route::prefix('bulletin')->name('bulletin.')->group(function () {
 
-        Route::get('/', [BulletinController::class, 'index'])
-            ->name('index');
+        Route::get('/saisie', [BulletinController::class, 'saisie'])->name('saisie');
 
-        Route::get('/saisie', [BulletinController::class, 'saisie'])
-            ->name('saisie');
+        Route::get('/eleve/{id}', [BulletinController::class, 'getEleve'])->name('eleve');
 
-        Route::get('/validation', [BulletinController::class, 'validation'])
-            ->name('validation');
+        Route::post('/store', [BulletinController::class, 'store'])->name('store');
 
-        Route::get('/generer', [BulletinController::class, 'generer'])
-            ->name('generer');
+        
     });
 
     /*
