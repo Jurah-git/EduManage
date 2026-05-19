@@ -111,7 +111,7 @@
 
                                         <input type="number" class="form-control coef"
                                             name="notes[{{ $matiere->id }}][coef]"
-                                            value="{{ optional($notes['journalier_' . $matiere->id][0] ?? null)->coef ?? 1 }}">
+                                            value="{{ $coefficients[$matiere->id] ?? 1 }}">
 
                                     </td>
 
@@ -271,7 +271,7 @@
 
                                         <input type="number" class="form-control coef"
                                             name="notes[{{ $matiere->id }}][coef]"
-                                            value="{{ optional($notes['composition_' . $matiere->id][0] ?? null)->coef ?? 1 }}">
+                                            value="{{ $coefficients[$matiere->id] ?? 1 }}">
 
                                     </td>
 

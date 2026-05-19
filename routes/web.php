@@ -19,6 +19,7 @@ use App\Http\Controllers\BibliothequeController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\CoefficientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +84,40 @@ Route::middleware(['auth'])->group(function () {
     */
 
     Route::resource('matieres', MatiereController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | COEFF
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('coefficients')
+
+        ->name('coefficients.')
+
+        ->group(function () {
+
+            Route::get(
+                '/',
+                [CoefficientController::class, 'index']
+            )
+
+                ->name('index');
+
+            Route::get(
+                '/matiere/{id}',
+                [CoefficientController::class, 'edit']
+            )
+
+                ->name('edit');
+
+            Route::post(
+                '/save/{id}',
+                [CoefficientController::class, 'save']
+            )
+
+                ->name('save');
+        });
 
     /*
     |--------------------------------------------------------------------------
@@ -160,8 +195,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/eleve/{id}', [BulletinController::class, 'getEleve'])->name('eleve');
 
         Route::post('/store', [BulletinController::class, 'store'])->name('store');
-
-        
     });
 
     /*

@@ -7,6 +7,7 @@ use App\Models\Matiere;
 use App\Models\Note;
 use App\Models\Periode;
 use Illuminate\Http\Request;
+use App\Models\ClasseMatiereCoefficient;
 
 class BulletinController extends Controller
 {
@@ -49,28 +50,46 @@ class BulletinController extends Controller
             ->groupBy(function ($n) {
 
                 return
-                    $n->type . '_' .
+                    $n->type .
+                    '_' .
                     $n->matiere_id;
             });
 
+        $coefficients = ClasseMatiereCoefficient::where(
+                'classe_id',
+                $eleve->classe_id
+            )
+
+            ->pluck(
+                'coef',
+                'matiere_id'
+            )
+
+            ->toArray();
+
         return view(
+
             'bulletin.partials.notes_form',
+
             [
 
                 'eleve' => $eleve,
 
                 'matieres' =>
+
                 $eleve
                     ->classe
                     ->matieres,
 
-                'periodes' =>
-                $periodes,
+                'periodes' => $periodes,
 
-                'notes' =>
-                $notes
+                'notes' => $notes,
+
+                'coefficients' =>
+                $coefficients
 
             ]
+
         );
     }
     // =========================

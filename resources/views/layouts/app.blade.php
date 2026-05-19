@@ -477,10 +477,33 @@
             </div>
 
             <!-- MATIERE -->
-            <a href="#" class="menu-toggle" data-target="matiere">📖 Matière</a>
+
+            <a href="#" class="menu-toggle" data-target="matiere">
+
+                📖 Matière
+
+            </a>
+
             <div id="matiere" class="submenu">
-                <a href="{{ route('matieres.create') }}">Ajouter</a>
-                <a href="{{ route('matieres.index') }}">Liste</a>
+
+                <a href="{{ route('matieres.create') }}">
+
+                    Ajouter matière
+
+                </a>
+
+                <a href="{{ route('matieres.index') }}">
+
+                    Liste matières
+
+                </a>
+
+                <a href="{{ route('coefficients.index') }}">
+
+                    Coefficients
+
+                </a>
+
             </div>
 
             <!-- ELEVE -->
@@ -545,9 +568,9 @@
 
                 <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
 
-               
 
-               
+
+
 
             </div>
 
