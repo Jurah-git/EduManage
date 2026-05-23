@@ -1,5 +1,5 @@
 <h3 class="mb-4">
-    📝 {{ $eleve->nom }} {{ $eleve->prenom }}
+     {{ $eleve->nom }} {{ $eleve->prenom }}
 </h3>
 
 <button class="btn btn-secondary mb-3" onclick="retourListe()">
