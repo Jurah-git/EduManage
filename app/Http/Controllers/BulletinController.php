@@ -56,9 +56,9 @@ class BulletinController extends Controller
             });
 
         $coefficients = ClasseMatiereCoefficient::where(
-                'classe_id',
-                $eleve->classe_id
-            )
+            'classe_id',
+            $eleve->classe_id
+        )
 
             ->pluck(
                 'coef',
@@ -162,6 +162,102 @@ class BulletinController extends Controller
 
     public function generer()
     {
-        return view('bulletin.generer');
+
+        $eleves = Eleve::with(
+            'classe'
+        )->get();
+
+        return view(
+
+            'bulletin.generer',
+
+            compact(
+                'eleves'
+            )
+
+        );
+    }
+
+    public function choixPeriode($id)
+    {
+
+        $eleve = Eleve::findOrFail(
+            $id
+        );
+
+        $periodes = Periode::all();
+
+        return view(
+
+            'bulletin.choix',
+
+            compact(
+
+                'eleve',
+
+                'periodes'
+
+            )
+
+        );
+    }
+
+    public function verifierPeriodes(
+        Request $request
+    ) {
+
+        $eleve_id =
+            $request->eleve_id;
+
+        foreach (
+
+            $request->periodes
+
+            as
+
+            $periode_id
+
+        ) {
+
+            $existe = Note::where(
+
+                'eleve_id',
+
+                $eleve_id
+
+            )
+
+                ->where(
+
+                    'periode_id',
+
+                    $periode_id
+
+                )
+
+                ->exists();
+
+            if (
+                !$existe
+            ) {
+
+                return response()
+
+                    ->json([
+
+                        'success' => false,
+
+                        'periode' => $periode_id
+
+                    ]);
+            }
+        }
+
+        return response()
+
+            ->json([
+
+                'success' => true
+            ]);
     }
 }

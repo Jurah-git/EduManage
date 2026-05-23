@@ -188,14 +188,111 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix('bulletin')->name('bulletin.')->group(function () {
+    Route::prefix('bulletin')
 
-        Route::get('/saisie', [BulletinController::class, 'saisie'])->name('saisie');
+        ->name('bulletin.')
 
-        Route::get('/eleve/{id}', [BulletinController::class, 'getEleve'])->name('eleve');
+        ->group(function () {
 
-        Route::post('/store', [BulletinController::class, 'store'])->name('store');
-    });
+            Route::get(
+
+                '/saisie',
+
+                [
+                    BulletinController::class,
+
+                    'saisie'
+                ]
+
+            )
+
+                ->name(
+                    'saisie'
+                );
+
+            Route::get(
+
+                '/eleve/{id}',
+
+                [
+                    BulletinController::class,
+
+                    'getEleve'
+                ]
+
+            )
+
+                ->name(
+                    'eleve'
+                );
+
+            Route::post(
+
+                '/store',
+
+                [
+                    BulletinController::class,
+
+                    'store'
+                ]
+
+            )
+
+                ->name(
+                    'store'
+                );
+
+            Route::get(
+
+                '/generer',
+
+                [
+                    BulletinController::class,
+
+                    'generer'
+
+                ]
+
+            )
+
+                ->name(
+                    'generer'
+                );
+
+            Route::get(
+
+                '/choix/{id}',
+
+                [
+                    BulletinController::class,
+
+                    'choixPeriode'
+
+                ]
+
+            )
+
+                ->name(
+                    'choix'
+                );
+
+            Route::post(
+
+                '/verifier',
+
+                [
+                    BulletinController::class,
+
+                    'verifierPeriodes'
+
+                ]
+
+            )
+
+                ->name(
+                    'verifier'
+                );
+        });
 
     /*
     |--------------------------------------------------------------------------

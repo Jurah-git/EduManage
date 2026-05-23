@@ -1,28 +1,77 @@
 @extends('layouts.app')
 
 @section('content')
+    <h3>
 
-<div class="container-fluid">
+        📄 Générer bulletin
 
-    <div class="card shadow border-0 rounded-4">
+    </h3>
 
-        <div class="card-body text-center p-5">
+    <table class="table table-bordered">
 
-            <h2>
-                🖨 Génération des bulletins
-            </h2>
+        <thead>
 
-            <p class="text-muted mt-3">
+            <tr>
 
-                Cette page servira à générer
-                les bulletins PDF des élèves.
+                <th>
 
-            </p>
+                    Nom
 
-        </div>
+                </th>
 
-    </div>
+                <th>
 
-</div>
+                    Classe
 
+                </th>
+
+                <th>
+
+                    Action
+
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach ($eleves as $eleve)
+                <tr>
+
+                    <td>
+
+                        {{ $eleve->nom }}
+
+                        {{ $eleve->prenom }}
+
+                    </td>
+
+                    <td>
+
+                        {{ $eleve->classe->nom }}
+
+                    </td>
+
+                    <td>
+
+                        <a href="{{ route(
+                            'bulletin.choix',
+                        
+                            $eleve->id,
+                        ) }}" class="btn btn-primary">
+
+                            Choisir périodes
+
+                        </a>
+
+                    </td>
+
+                </tr>
+            @endforeach
+
+        </tbody>
+
+    </table>
 @endsection

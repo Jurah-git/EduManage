@@ -3,29 +3,60 @@
 @section('content')
     <h3>📝 Saisie des notes</h3>
 
-    <table class="table table-bordered text-center">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Classe</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+    <div id="liste-eleves">
 
-        <tbody>
-            @foreach ($eleves as $eleve)
+        <table class="table table-bordered text-center">
+
+            <thead>
                 <tr>
-                    <td>{{ $eleve->nom }} {{ $eleve->prenom }}</td>
-                    <td>{{ $eleve->classe->nom }}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="loadEleve({{ $eleve->id }})">
-                            Saisir
-                        </button>
-                    </td>
+                    <th>Nom</th>
+                    <th>Classe</th>
+                    <th>Action</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+
+                @foreach ($eleves as $eleve)
+                    <tr>
+
+                        <td>
+
+                            {{ $eleve->nom }}
+
+                            {{ $eleve->prenom }}
+
+                        </td>
+
+                        <td>
+
+                            {{ $eleve->classe->nom }}
+
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-primary"
+                                onclick="loadEleve(
+
+                        {{ $eleve->id }}
+
+                        )">
+
+                                Saisir
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+                @endforeach
+
+            </tbody>
+
+        </table>
+
+    </div>
 
     <div id="zone"></div>
 
@@ -112,9 +143,22 @@
     <script>
         function loadEleve(id) {
 
-            fetch('/bulletin/eleve/' + id)
+            document
+                .getElementById(
+                    'liste-eleves'
+                )
 
-                .then(r => r.text())
+                .style.display = 'none';
+
+            fetch(
+
+                    '/bulletin/eleve/' + id
+
+                )
+
+                .then(
+                    r => r.text()
+                )
 
                 .then(html => {
 
@@ -122,11 +166,20 @@
                         .getElementById(
                             'zone'
                         )
+
                         .innerHTML = html;
 
                     initNotes();
 
                     initSaveForms();
+
+                    calculTable(
+                        'note-journalier'
+                    );
+
+                    calculTable(
+                        'note-composition'
+                    );
 
                 });
 
@@ -314,13 +367,17 @@
         function initNotes() {
 
             document
+
                 .querySelectorAll(
+
                     '.note-journalier,.note-composition,.coef'
+
                 )
 
                 .forEach(el => {
 
                     el.addEventListener(
+
                         'input',
 
                         () => {
@@ -338,6 +395,16 @@
                     );
 
                 });
+
+            // CALCUL IMMEDIAT AU CHARGEMENT
+
+            calculTable(
+                'note-journalier'
+            );
+
+            calculTable(
+                'note-composition'
+            );
 
         }
 
@@ -487,6 +554,24 @@
                     });
 
             });
+
+        }
+
+        function retourListe() {
+
+            document
+                .getElementById(
+                    'liste-eleves'
+                )
+
+                .style.display = 'block';
+
+            document
+                .getElementById(
+                    'zone'
+                )
+
+                .innerHTML = '';
 
         }
     </script>

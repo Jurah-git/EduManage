@@ -2,7 +2,7 @@
     📝 {{ $eleve->nom }} {{ $eleve->prenom }}
 </h3>
 
-<button class="btn btn-secondary mb-3" onclick="location.reload()">
+<button class="btn btn-secondary mb-3" onclick="retourListe()">
 
     ⬅ Retour
 

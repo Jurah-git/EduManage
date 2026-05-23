@@ -562,15 +562,26 @@
             </div>
 
             <!-- BULLETIN -->
-            <a href="#" class="menu-toggle" data-target="bulletin">🧾 Bulletin</a>
+            <!-- BULLETIN -->
+            <a href="#" class="menu-toggle" data-target="bulletin">
+
+                🧾 Bulletin
+
+            </a>
 
             <div id="bulletin" class="submenu">
 
-                <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
+                <a href="{{ route('bulletin.saisie') }}">
 
+                    Saisie des notes
 
+                </a>
 
+                <a href="{{ route('bulletin.generer') }}">
 
+                    Générer bulletin
+
+                </a>
 
             </div>
 
