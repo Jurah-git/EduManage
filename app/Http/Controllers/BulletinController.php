@@ -260,4 +260,106 @@ class BulletinController extends Controller
                 'success' => true
             ]);
     }
+
+    public function afficherBulletin(
+        Request $request
+    ) {
+
+        $eleve = Eleve::with(
+            'classe'
+        )
+
+            ->findOrFail(
+
+                $request->eleve_id
+
+            );
+
+        $bulletins = [];
+
+        foreach (
+
+            $request->periodes
+
+            as
+
+            $periode_id
+
+        ) {
+
+            $periode = Periode::find(
+                $periode_id
+            );
+
+            $notes = Note::where(
+
+                'eleve_id',
+
+                $eleve->id
+
+            )
+
+                ->where(
+
+                    'periode_id',
+
+                    $periode_id
+
+                )
+
+                ->with(
+                    'matiere'
+                )
+
+                ->get();
+
+            $total =
+
+                $notes->sum(
+                    'valeur'
+                );
+
+            $coef =
+
+                $notes->sum(
+                    'coef'
+                );
+
+            $moyenne =
+
+                $coef > 0
+
+                ?
+
+                $total / $coef
+
+                :
+
+                0;
+
+            $bulletins[] = [
+
+                'periode' => $periode,
+
+                'notes' => $notes,
+
+                'moyenne' => $moyenne
+
+            ];
+        }
+
+        return view(
+
+            'bulletin.affichage',
+
+            compact(
+
+                'eleve',
+
+                'bulletins'
+
+            )
+
+        );
+    }
 }

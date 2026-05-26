@@ -247,6 +247,7 @@ Route::middleware(['auth'])->group(function () {
                 '/generer',
 
                 [
+
                     BulletinController::class,
 
                     'generer'
@@ -264,6 +265,7 @@ Route::middleware(['auth'])->group(function () {
                 '/choix/{id}',
 
                 [
+
                     BulletinController::class,
 
                     'choixPeriode'
@@ -281,6 +283,7 @@ Route::middleware(['auth'])->group(function () {
                 '/verifier',
 
                 [
+
                     BulletinController::class,
 
                     'verifierPeriodes'
@@ -291,6 +294,24 @@ Route::middleware(['auth'])->group(function () {
 
                 ->name(
                     'verifier'
+                );
+
+            Route::post(
+
+                '/afficher',
+
+                [
+
+                    BulletinController::class,
+
+                    'afficherBulletin'
+
+                ]
+
+            )
+
+                ->name(
+                    'afficher'
                 );
         });
 

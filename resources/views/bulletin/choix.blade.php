@@ -150,11 +150,53 @@ Enregistrer période
 
                             } else {
 
-                                alert(
+                                let fd =
 
-                                    'OK génération bulletin'
+                                    new FormData(
+                                        this
+                                    );
 
-                                );
+                                fetch(
+
+                                        '{{ route('bulletin.afficher') }}',
+
+                                        {
+
+                                            method: 'POST',
+
+                                            body: fd,
+
+                                            headers: {
+
+                                                'X-CSRF-TOKEN':
+
+                                                    document
+
+                                                    .querySelector(
+
+                                                        'meta[name="csrf-token"]'
+
+                                                    )
+
+                                                    .content
+
+                                            }
+
+                                        }
+
+                                    )
+
+                                    .then(
+                                        r => r.text()
+                                    )
+
+                                    .then(html => {
+
+                                        document.body.innerHTML =
+
+                                            html;
+
+                                    });
 
                             }
 
