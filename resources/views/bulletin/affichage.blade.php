@@ -322,7 +322,9 @@
         🖨 Imprimer
 
     </button>
-
+    <button onclick="saveBulletin()" class="btn btn-warning">
+        💾 Enregistrer image
+    </button>
     <div class="container-bulletins nb{{ count($bulletins) }}">
 
         @foreach ($bulletins as $b)
@@ -653,4 +655,59 @@
         @endforeach
 
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        async function saveBulletin() {
+            alert('Début sauvegarde');
+
+            try {
+
+                const zone = document.querySelector('.container-bulletins');
+
+                if (!zone) {
+                    alert('container-bulletins introuvable');
+                    return;
+                }
+
+                const canvas = await html2canvas(zone);
+
+                const image = canvas.toDataURL('image/png');
+
+                const response = await fetch(
+                    "{{ route('bulletin.saveImage') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            eleve_id: "{{ $eleve->id }}",
+                            image: image
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                console.log(data);
+
+                if (data.ok) {
+
+                    alert('Image enregistrée');
+
+                } else {
+
+                    alert('Erreur retour serveur');
+
+                }
+
+            } catch (e) {
+
+                console.error(e);
+
+                alert('Erreur Javascript');
+
+            }
+        }
+    </script>
 @endsection

@@ -1,207 +1,133 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>
 
-        📄 Bulletin :
+<h3>
+    📄 Bulletin :
+    {{ $eleve->nom }}
+    {{ $eleve->prenom }}
+</h3>
 
-        {{ $eleve->nom }}
+<form id="form-bulletin"
+      action="{{ route('bulletin.afficher') }}"
+      method="POST">
 
-        {{ $eleve->prenom }}
+    @csrf
 
-    </h3>
+    <input
+        type="hidden"
+        name="eleve_id"
+        value="{{ $eleve->id }}"
+    >
 
-    <form id="form-bulletin">
+    @foreach($periodes as $periode)
 
-        @csrf
+        <div class="mb-2">
 
-        <input type="hidden" name="eleve_id" value="{{ $eleve->id }}">
+            <label>
 
-        @foreach ($periodes as $periode)
-            <div>
+                <input
+                    type="checkbox"
+                    name="periodes[]"
+                    value="{{ $periode->id }}"
+                >
 
-                <label>
+                {{ $periode->nom }}
 
-                    <input type="checkbox" name="periodes[]" value="{{ $periode->id }}">
+            </label>
 
-                    {{ $periode->nom }}
+        </div>
 
-                </label>
+    @endforeach
 
-            </div>
-        @endforeach
+    <br>
 
-        <br>
+    <button type="submit" class="btn btn-success">
 
-        <button class="btn btn-success">
+        Générer
 
-            Générer
+    </button>
 
-        </button>
+</form>
 
-    </form>
+<div id="popup" class="mt-3"></div>
 
-    <div id="popup"></div>
+<script>
 
-    <script>
-        document
+document
+.getElementById('form-bulletin')
+.addEventListener('submit', function(e)
+{
+    e.preventDefault();
 
-            .getElementById(
+    let form = this;
 
-                'form-bulletin'
+    let fd = new FormData(form);
 
-            )
+    fetch(
+        "{{ route('bulletin.verifier') }}",
+        {
+            method: "POST",
 
-            .addEventListener(
+            body: fd,
 
-                'submit',
+            headers:
+            {
+                "X-CSRF-TOKEN":
+                document
+                .querySelector('meta[name="csrf-token"]')
+                .content
+            }
+        }
+    )
 
-                function(e) {
+    .then(response => response.json())
 
-                    e.preventDefault();
+    .then(data =>
+    {
+        if (!data.success)
+        {
+            document.getElementById('popup').innerHTML = `
 
-                    fetch(
+                <div class="alert alert-danger">
 
-                            '{{ route('bulletin.verifier') }}',
+                    Cette période ne possède aucune note.
 
-                            {
+                    <br><br>
 
-                                method: 'POST',
+                    <button
+                        onclick="location.reload()"
+                        class="btn btn-secondary"
+                    >
+                        OK
+                    </button>
 
-                                body: new FormData(
-                                    this
-                                ),
+                    <a
+                        href="/bulletin/saisie"
+                        class="btn btn-danger"
+                    >
+                        Enregistrer les notes
+                    </a>
 
-                                headers: {
+                </div>
 
-                                    'X-CSRF-TOKEN':
+            `;
+        }
+        else
+        {
+            form.submit();
+        }
+    })
 
-                                        document
+    .catch(error =>
+    {
+        console.error(error);
 
-                                        .querySelector(
+        alert('Erreur de vérification');
+    });
 
-                                            'meta[name="csrf-token"]'
+});
 
-                                        )
+</script>
 
-                                        .content
-
-                                }
-
-                            }
-
-                        )
-
-                        .then(
-                            r => r.json()
-                        )
-
-                        .then(data => {
-
-                            if (
-
-                                !data.success
-
-                            ) {
-
-                                document
-
-                                    .getElementById(
-                                        'popup'
-                                    )
-
-                                    .innerHTML =
-
-                                    `
-
-<div class="alert alert-danger">
-
-Période non enregistrée
-
-<br><br>
-
-<button
-
-onclick="location.reload()"
-
-class="btn btn-secondary"
-
->
-
-OK
-
-</button>
-
-<a
-
-href="/bulletin/saisie"
-
-class="btn btn-danger"
-
->
-
-Enregistrer période
-
-</a>
-
-</div>
-
-`;
-
-                            } else {
-
-                                let fd =
-
-                                    new FormData(
-                                        this
-                                    );
-
-                                fetch(
-
-                                        '{{ route('bulletin.afficher') }}',
-
-                                        {
-
-                                            method: 'POST',
-
-                                            body: fd,
-
-                                            headers: {
-
-                                                'X-CSRF-TOKEN':
-
-                                                    document
-
-                                                    .querySelector(
-
-                                                        'meta[name="csrf-token"]'
-
-                                                    )
-
-                                                    .content
-
-                                            }
-
-                                        }
-
-                                    )
-
-                                    .then(
-                                        r => r.text()
-                                    )
-
-                                    .then(html => {
-
-                                        document.body.innerHTML =
-
-                                            html;
-
-                                    });
-
-                            }
-
-                        });
-
-                });
-    </script>
 @endsection

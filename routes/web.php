@@ -313,6 +313,47 @@ Route::middleware(['auth'])->group(function () {
                 ->name(
                     'afficher'
                 );
+
+            Route::post(
+
+                '/save-image',
+
+                [
+
+                    BulletinController::class,
+
+                    'saveImage'
+
+                ]
+
+            )
+
+                ->name(
+
+                    'saveImage'
+
+                );
+
+
+
+            Route::get(
+
+                '/voir/{id}',
+
+                [
+
+                    BulletinController::class,
+
+                    'voirImage'
+
+                ]
+
+            )
+
+                ->name(
+
+                    'voirImage'
+                );
         });
 
     /*

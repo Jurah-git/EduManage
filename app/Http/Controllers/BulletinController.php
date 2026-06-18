@@ -8,6 +8,7 @@ use App\Models\Note;
 use App\Models\Periode;
 use Illuminate\Http\Request;
 use App\Models\ClasseMatiereCoefficient;
+use App\Models\Bulletin;
 
 class BulletinController extends Controller
 {
@@ -362,4 +363,38 @@ class BulletinController extends Controller
 
         );
     }
+
+    // =========================
+    // SAVE IMAGE BASE 64
+    // =========================
+public function saveImage(Request $request)
+{
+    try {
+
+        $bulletin = Bulletin::create([
+
+            'eleve_id'     => $request->eleve_id,
+
+            'image_base64' => $request->image
+
+        ]);
+
+        return response()->json([
+
+            'ok' => true,
+
+            'id' => $bulletin->id
+
+        ]);
+    } catch (\Exception $e) {
+
+        return response()->json([
+
+            'ok' => false,
+
+            'message' => $e->getMessage()
+
+        ]);
+    }
+}
 }
