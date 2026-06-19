@@ -6,6 +6,7 @@ use App\Models\ClasseMatiereCoefficient;
 use App\Models\Eleve;
 use App\Models\Note;
 use App\Models\Periode;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class BulletinController extends Controller
@@ -473,6 +474,20 @@ class BulletinController extends Controller
         return view(
             'bulletin.print',
             compact('bulletin')
+        );
+    }
+
+    public function downloadPdf($id)
+    {
+        $bulletin = Bulletin::findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'bulletin.pdf',
+            compact('bulletin')
+        );
+
+        return $pdf->download(
+            'bulletin_' . $id . '.pdf'
         );
     }
 }

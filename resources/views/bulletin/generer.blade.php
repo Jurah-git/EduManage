@@ -81,7 +81,6 @@
                         </td>
 
                         <td>
-
                             <button type="submit" name="eleve_id" value="{{ $eleve->id }}"
                                 class="btn btn-success btn-sm">
                                 Générer
@@ -91,12 +90,39 @@
                                 👁 Voir
                             </button>
 
-                            <button type="button" class="btn btn-warning btn-sm btn-download"
-                                data-eleve="{{ $eleve->id }}">
-                                📥 Télécharger
-                            </button>
+                            @if ($bulletin)
+                                <div class="dropdown d-inline-block">
 
-                            <button type="button" class="btn btn-danger btn-sm btn-print" data-eleve="{{ $eleve->id }}">
+                                    <button class="btn btn-warning btn-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+
+                                        📥 Télécharger
+
+                                    </button>
+
+                                    <ul class="dropdown-menu">
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{{ route('bulletin.downloadImage', $bulletin->id) }}">
+                                                🖼 PNG
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item"
+                                                href="{{ route('bulletin.downloadPdf', $bulletin->id) }}">
+                                                📄 PDF
+                                            </a>
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+                            @endif
+
+                            <button type="button" class="btn btn-danger btn-sm btn-print"
+                                data-eleve="{{ $eleve->id }}">
                                 🖨 Imprimer
                             </button>
 

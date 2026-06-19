@@ -317,11 +317,6 @@
         }
     </style>
 
-    <button onclick="window.print()" class="btn btn-success btn-print">
-
-        🖨 Imprimer
-
-    </button>
     <button onclick="saveBulletin()" class="btn btn-warning">
         💾 Enregistrer image
     </button>
@@ -671,7 +666,10 @@
 
                 const canvas = await html2canvas(zone);
 
-                const image = canvas.toDataURL('image/png');
+                const image = canvas.toDataURL(
+                    'image/jpeg',
+                    0.7
+                );
 
                 const response = await fetch(
                     "{{ route('bulletin.saveImage') }}", {

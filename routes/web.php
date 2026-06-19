@@ -14,7 +14,43 @@ use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PeriodeController;
 use Illuminate\Support\Facades\Route;
+use Barryvdh\DomPDF\Facade\Pdf;
 
+Route::get('/test-gd', function () {
+
+    dd(
+        phpversion(),
+        extension_loaded('gd'),
+        ini_get('extension_dir')
+    );
+
+});
+Route::get('/phpinfo-laravel', function () {
+    phpinfo();
+});
+Route::get('/test-gd', function () {
+
+    phpinfo();
+
+});
+Route::get('/test-gd2', function () {
+
+    return [
+
+        'gd' => extension_loaded('gd'),
+
+        'extensions' => get_loaded_extensions()
+
+    ];
+
+});
+Route::get('/test-pdf', function () {
+
+    return class_exists(
+        \Barryvdh\DomPDF\Facade\Pdf::class
+    );
+
+});
 /*
 |--------------------------------------------------------------------------
 | REDIRECTION
@@ -353,6 +389,10 @@ Route::middleware(['auth'])->group(function () {
                 '/print-direct',
                 [BulletinController::class, 'printDirect']
             )->name('printDirect');
+            Route::get(
+                '/download-pdf/{id}',
+                [BulletinController::class, 'downloadPdf']
+            )->name('downloadPdf');
         });
 
     /*
