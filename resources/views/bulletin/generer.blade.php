@@ -1,77 +1,197 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>
-
-        📄 Générer bulletin
-
+    <h3 class="mb-4">
+        📄 Génération des bulletins
     </h3>
 
-    <table class="table table-bordered">
+    <div id="alertePeriode" class="alert alert-danger" style="display:none;">
 
-        <thead>
+        Veuillez sélectionner au moins une période.
 
-            <tr>
+    </div>
 
-                <th>
+    <form id="formBulletin" method="POST" action="{{ route('bulletin.afficher') }}">
 
-                    Nom
+        @csrf
 
-                </th>
+        <div class="card mb-4">
 
-                <th>
+            <div class="card-header">
 
-                    Classe
+                Choix des périodes
 
-                </th>
+            </div>
 
-                <th>
+            <div class="card-body">
 
-                    Action
+                @foreach ($periodes as $periode)
+                    <label class="me-4">
 
-                </th>
+                        <input type="checkbox" name="periodes[]" value="{{ $periode->id }}">
 
-            </tr>
+                        {{ $periode->nom }}
 
-        </thead>
+                    </label>
+                @endforeach
 
-        <tbody>
+            </div>
 
-            @foreach ($eleves as $eleve)
+        </div>
+
+        <table class="table table-bordered">
+
+            <thead>
+
                 <tr>
 
-                    <td>
+                    <th>Nom</th>
 
-                        {{ $eleve->nom }}
+                    <th>Classe</th>
 
-                        {{ $eleve->prenom }}
-
-                    </td>
-
-                    <td>
-
-                        {{ $eleve->classe->nom }}
-
-                    </td>
-
-                    <td>
-
-                        <a href="{{ route(
-                            'bulletin.choix',
-                        
-                            $eleve->id,
-                        ) }}" class="btn btn-primary">
-
-                            Choisir périodes
-
-                        </a>
-
-                    </td>
+                    <th>Actions</th>
 
                 </tr>
-            @endforeach
 
-        </tbody>
+            </thead>
 
-    </table>
+            <tbody>
+
+                @foreach ($eleves as $eleve)
+                    @php
+
+                        $bulletin = \App\Models\Bulletin::where('eleve_id', $eleve->id)->latest()->first();
+
+                    @endphp
+
+                    <tr>
+
+                        <td>
+
+                            {{ $eleve->nom }}
+
+                            {{ $eleve->prenom }}
+
+                        </td>
+
+                        <td>
+
+                            {{ $eleve->classe->nom }}
+
+                        </td>
+
+                        <td>
+
+                            <button type="submit" name="eleve_id" value="{{ $eleve->id }}"
+                                class="btn btn-success btn-sm">
+                                Générer
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-sm btn-voir" data-eleve="{{ $eleve->id }}">
+                                👁 Voir
+                            </button>
+
+                            <button type="button" class="btn btn-warning btn-sm btn-download"
+                                data-eleve="{{ $eleve->id }}">
+                                📥 Télécharger
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-sm btn-print" data-eleve="{{ $eleve->id }}">
+                                🖨 Imprimer
+                            </button>
+
+                        </td>
+
+                    </tr>
+                @endforeach
+
+            </tbody>
+
+        </table>
+
+    </form>
+
+    <script>
+        function getPeriodes() {
+            let ids = [];
+
+            document
+                .querySelectorAll(
+                    'input[name="periodes[]"]:checked'
+                )
+                .forEach(cb => {
+                    ids.push(cb.value);
+                });
+
+            return ids.join(',');
+        }
+
+        document.querySelectorAll('.btn-voir')
+            .forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let periodes = getPeriodes();
+
+                    if (!periodes) {
+                        alert(
+                            'Choisissez au moins une période.'
+                        );
+
+                        return;
+                    }
+
+                    window.location.href =
+                        '/bulletin/voir-direct' +
+                        '?eleve_id=' +
+                        this.dataset.eleve +
+                        '&periodes=' +
+                        periodes;
+                });
+            });
+
+        document.querySelectorAll('.btn-download')
+            .forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let periodes = getPeriodes();
+
+                    if (!periodes) {
+                        alert(
+                            'Choisissez au moins une période.'
+                        );
+
+                        return;
+                    }
+
+                    window.location.href =
+                        '/bulletin/download-direct' +
+                        '?eleve_id=' +
+                        this.dataset.eleve +
+                        '&periodes=' +
+                        periodes;
+                });
+            });
+
+        document.querySelectorAll('.btn-print')
+            .forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let periodes = getPeriodes();
+
+                    if (!periodes) {
+                        alert(
+                            'Choisissez au moins une période.'
+                        );
+
+                        return;
+                    }
+
+                    window.open(
+                        '/bulletin/print-direct' +
+                        '?eleve_id=' +
+                        this.dataset.eleve +
+                        '&periodes=' +
+                        periodes,
+                        '_blank'
+                    );
+                });
+            });
+    </script>
 @endsection

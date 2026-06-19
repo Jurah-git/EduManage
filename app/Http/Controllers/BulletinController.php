@@ -1,14 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Bulletin;
+use App\Models\ClasseMatiereCoefficient;
 use App\Models\Eleve;
-use App\Models\Matiere;
 use App\Models\Note;
 use App\Models\Periode;
 use Illuminate\Http\Request;
-use App\Models\ClasseMatiereCoefficient;
-use App\Models\Bulletin;
 
 class BulletinController extends Controller
 {
@@ -50,10 +48,10 @@ class BulletinController extends Controller
 
             ->groupBy(function ($n) {
 
-                return
-                    $n->type .
-                    '_' .
-                    $n->matiere_id;
+                return;
+                $n->type .
+                '_' .
+                $n->matiere_id;
             });
 
         $coefficients = ClasseMatiereCoefficient::where(
@@ -74,20 +72,20 @@ class BulletinController extends Controller
 
             [
 
-                'eleve' => $eleve,
+                'eleve'        => $eleve,
 
-                'matieres' =>
+                'matieres'     =>
 
                 $eleve
                     ->classe
                     ->matieres,
 
-                'periodes' => $periodes,
+                'periodes'     => $periodes,
 
-                'notes' => $notes,
+                'notes'        => $notes,
 
                 'coefficients' =>
-                $coefficients
+                $coefficients,
 
             ]
 
@@ -100,13 +98,13 @@ class BulletinController extends Controller
     {
         $request->validate([
 
-            'eleve_id' => 'required',
+            'eleve_id'   => 'required',
 
-            'type' => 'required',
+            'type'       => 'required',
 
             'periode_id' => 'required',
 
-            'notes' => 'required|array'
+            'notes'      => 'required|array',
 
         ]);
 
@@ -116,13 +114,13 @@ class BulletinController extends Controller
 
                 [
 
-                    'eleve_id' => $request->eleve_id,
+                    'eleve_id'   => $request->eleve_id,
 
                     'matiere_id' => $matiere_id,
 
-                    'type' => $request->type,
+                    'type'       => $request->type,
 
-                    'periode_id' => $request->periode_id
+                    'periode_id' => $request->periode_id,
 
                 ],
 
@@ -130,9 +128,9 @@ class BulletinController extends Controller
 
                     'valeur' => $data['valeur'] ?? 0,
 
-                    'coef' => $data['coef'] ?? 1,
+                    'coef'   => $data['coef'] ?? 1,
 
-                    'base' => $data['base'] ?? 20
+                    'base'   => $data['base'] ?? 20,
 
                 ]
 
@@ -143,7 +141,7 @@ class BulletinController extends Controller
 
             'success' => true,
 
-            'message' => 'Notes enregistrées'
+            'message' => 'Notes enregistrées',
 
         ]);
     }
@@ -161,60 +159,16 @@ class BulletinController extends Controller
         return view('bulletin.validation');
     }
 
-    public function generer()
-    {
-
-        $eleves = Eleve::with(
-            'classe'
-        )->get();
-
-        return view(
-
-            'bulletin.generer',
-
-            compact(
-                'eleves'
-            )
-
-        );
-    }
-
-    public function choixPeriode($id)
-    {
-
-        $eleve = Eleve::findOrFail(
-            $id
-        );
-
-        $periodes = Periode::all();
-
-        return view(
-
-            'bulletin.choix',
-
-            compact(
-
-                'eleve',
-
-                'periodes'
-
-            )
-
-        );
-    }
-
     public function verifierPeriodes(
         Request $request
     ) {
 
         $eleve_id =
-            $request->eleve_id;
+        $request->eleve_id;
 
         foreach (
 
-            $request->periodes
-
-            as
+            $request->periodes as
 
             $periode_id
 
@@ -239,7 +193,7 @@ class BulletinController extends Controller
                 ->exists();
 
             if (
-                !$existe
+                ! $existe
             ) {
 
                 return response()
@@ -248,7 +202,7 @@ class BulletinController extends Controller
 
                         'success' => false,
 
-                        'periode' => $periode_id
+                        'periode' => $periode_id,
 
                     ]);
             }
@@ -258,14 +212,16 @@ class BulletinController extends Controller
 
             ->json([
 
-                'success' => true
+                'success' => true,
             ]);
     }
 
     public function afficherBulletin(
         Request $request
-    ) {
-
+    ) {$request->validate([
+        'eleve_id' => 'required',
+        'periodes' => 'required|array|min:1',
+    ]);
         $eleve = Eleve::with(
             'classe'
         )
@@ -280,9 +236,7 @@ class BulletinController extends Controller
 
         foreach (
 
-            $request->periodes
-
-            as
+            $request->periodes as
 
             $periode_id
 
@@ -316,35 +270,35 @@ class BulletinController extends Controller
 
             $total =
 
-                $notes->sum(
-                    'valeur'
-                );
+            $notes->sum(
+                'valeur'
+            );
 
             $coef =
 
-                $notes->sum(
-                    'coef'
-                );
+            $notes->sum(
+                'coef'
+            );
 
             $moyenne =
 
-                $coef > 0
+            $coef > 0
 
                 ?
 
-                $total / $coef
+            $total / $coef
 
                 :
 
-                0;
+            0;
 
             $bulletins[] = [
 
                 'periode' => $periode,
 
-                'notes' => $notes,
+                'notes'   => $notes,
 
-                'moyenne' => $moyenne
+                'moyenne' => $moyenne,
 
             ];
         }
@@ -361,40 +315,164 @@ class BulletinController extends Controller
 
             )
 
-        );
-    }
+        );}
 
     // =========================
     // SAVE IMAGE BASE 64
     // =========================
-public function saveImage(Request $request)
-{
-    try {
+    public function saveImage(Request $request)
+    {
+        try {
 
-        $bulletin = Bulletin::create([
+            $bulletin = Bulletin::create([
+                'eleve_id'     => $request->eleve_id,
+                'image_base64' => $request->image,
+                'periodes_ids' => $request->periodes_ids,
+            ]);
 
-            'eleve_id'     => $request->eleve_id,
+            return response()->json([
+                'ok' => true,
+                'id' => $bulletin->id,
+            ]);
 
-            'image_base64' => $request->image
+        } catch (\Exception $e) {
 
-        ]);
-
-        return response()->json([
-
-            'ok' => true,
-
-            'id' => $bulletin->id
-
-        ]);
-    } catch (\Exception $e) {
-
-        return response()->json([
-
-            'ok' => false,
-
-            'message' => $e->getMessage()
-
-        ]);
+            return response()->json([
+                'ok'      => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
-}
+
+    public function voirImage($id)
+    {
+        $bulletin = Bulletin::findOrFail($id);
+
+        return view(
+            'bulletin.voir',
+            compact('bulletin')
+        );
+    }
+
+    public function downloadImage($id)
+    {
+        $bulletin = Bulletin::findOrFail($id);
+
+        $image = str_replace(
+            'data:image/png;base64,',
+            '',
+            $bulletin->image_base64
+        );
+
+        return response(
+            base64_decode($image)
+        )
+            ->header(
+                'Content-Type',
+                'image/png'
+            )
+            ->header(
+                'Content-Disposition',
+                'attachment; filename=bulletin_' . $id . '.png'
+            );
+    }
+
+    public function printImage($id)
+    {
+        $bulletin = Bulletin::findOrFail($id);
+
+        return view(
+            'bulletin.print',
+            compact('bulletin')
+        );
+    }
+
+    public function generer()
+    {
+        $eleves = Eleve::with('classe')->get();
+
+        $periodes = Periode::all();
+
+        return view(
+            'bulletin.generer',
+            compact(
+                'eleves',
+                'periodes'
+            )
+        );
+    }
+    public function voirDirect(Request $request)
+    {
+        $bulletin = Bulletin::where(
+            'eleve_id',
+            $request->eleve_id
+        )
+            ->where(
+                'periodes_ids',
+                $request->periodes
+            )
+            ->latest()
+            ->first();
+
+        if (! $bulletin) {
+
+            return back()->with(
+                'error',
+                'Aucun bulletin enregistré pour ces périodes.'
+            );
+        }
+
+        return view(
+            'bulletin.voir',
+            compact('bulletin')
+        );
+    }
+
+    public function downloadDirect(Request $request)
+    {
+        $bulletin = Bulletin::where(
+            'eleve_id',
+            $request->eleve_id
+        )
+            ->where(
+                'periodes_ids',
+                $request->periodes
+            )
+            ->latest()
+            ->firstOrFail();
+
+        $image = str_replace(
+            'data:image/png;base64,',
+            '',
+            $bulletin->image_base64
+        );
+
+        return response(
+            base64_decode($image)
+        )
+            ->header('Content-Type', 'image/png')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename=bulletin.png'
+            );
+    }
+
+    public function printDirect(Request $request)
+    {
+        $bulletin = Bulletin::where(
+            'eleve_id',
+            $request->eleve_id
+        )
+            ->where(
+                'periodes_ids',
+                $request->periodes
+            )
+            ->latest()
+            ->firstOrFail();
+
+        return view(
+            'bulletin.print',
+            compact('bulletin')
+        );
+    }
 }

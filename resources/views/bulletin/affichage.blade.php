@@ -681,8 +681,13 @@
                             "X-CSRF-TOKEN": "{{ csrf_token() }}"
                         },
                         body: JSON.stringify({
+
                             eleve_id: "{{ $eleve->id }}",
-                            image: image
+
+                            image: image,
+
+                            periodes_ids: "{{ implode(',', collect($bulletins)->pluck('periode.id')->toArray()) }}"
+
                         })
                     }
                 );

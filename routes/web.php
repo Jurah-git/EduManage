@@ -1,25 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\DashboardController;
-
-use App\Http\Controllers\ConfigController;
-
-use App\Http\Controllers\ClasseController;
-use App\Http\Controllers\MatiereController;
-use App\Http\Controllers\EleveController;
-
-use App\Http\Controllers\CahierTexteController;
-use App\Http\Controllers\EmploiTempsController;
-
-use App\Http\Controllers\LivreController;
 use App\Http\Controllers\BibliothequeController;
-
-use App\Http\Controllers\ParentController;
 use App\Http\Controllers\BulletinController;
-use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\CahierTexteController;
+use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CoefficientController;
+use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EleveController;
+use App\Http\Controllers\EmploiTempsController;
+use App\Http\Controllers\LivreController;
+use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\ParentController;
+use App\Http\Controllers\PeriodeController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('classes', ClasseController::class)
         ->parameters([
-            'classes' => 'classe'
+            'classes' => 'classe',
         ]);
 
     /*
@@ -127,7 +121,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('eleves', EleveController::class)
         ->parameters([
-            'eleves' => 'eleve'
+            'eleves' => 'eleve',
         ]);
 
     /*
@@ -201,7 +195,7 @@ Route::middleware(['auth'])->group(function () {
                 [
                     BulletinController::class,
 
-                    'saisie'
+                    'saisie',
                 ]
 
             )
@@ -217,7 +211,7 @@ Route::middleware(['auth'])->group(function () {
                 [
                     BulletinController::class,
 
-                    'getEleve'
+                    'getEleve',
                 ]
 
             )
@@ -233,7 +227,7 @@ Route::middleware(['auth'])->group(function () {
                 [
                     BulletinController::class,
 
-                    'store'
+                    'store',
                 ]
 
             )
@@ -250,7 +244,7 @@ Route::middleware(['auth'])->group(function () {
 
                     BulletinController::class,
 
-                    'generer'
+                    'generer',
 
                 ]
 
@@ -258,24 +252,6 @@ Route::middleware(['auth'])->group(function () {
 
                 ->name(
                     'generer'
-                );
-
-            Route::get(
-
-                '/choix/{id}',
-
-                [
-
-                    BulletinController::class,
-
-                    'choixPeriode'
-
-                ]
-
-            )
-
-                ->name(
-                    'choix'
                 );
 
             Route::post(
@@ -286,7 +262,7 @@ Route::middleware(['auth'])->group(function () {
 
                     BulletinController::class,
 
-                    'verifierPeriodes'
+                    'verifierPeriodes',
 
                 ]
 
@@ -304,7 +280,7 @@ Route::middleware(['auth'])->group(function () {
 
                     BulletinController::class,
 
-                    'afficherBulletin'
+                    'afficherBulletin',
 
                 ]
 
@@ -322,7 +298,7 @@ Route::middleware(['auth'])->group(function () {
 
                     BulletinController::class,
 
-                    'saveImage'
+                    'saveImage',
 
                 ]
 
@@ -333,8 +309,6 @@ Route::middleware(['auth'])->group(function () {
                     'saveImage'
 
                 );
-
-
 
             Route::get(
 
@@ -344,7 +318,7 @@ Route::middleware(['auth'])->group(function () {
 
                     BulletinController::class,
 
-                    'voirImage'
+                    'voirImage',
 
                 ]
 
@@ -354,6 +328,31 @@ Route::middleware(['auth'])->group(function () {
 
                     'voirImage'
                 );
+
+            Route::get(
+                '/download/{id}',
+                [BulletinController::class, 'downloadImage']
+            )->name('downloadImage');
+
+            Route::get(
+                '/print/{id}',
+                [BulletinController::class, 'printImage']
+            )->name('printImage');
+
+            Route::get(
+                '/voir-direct',
+                [BulletinController::class, 'voirDirect']
+            )->name('voirDirect');
+
+            Route::get(
+                '/download-direct',
+                [BulletinController::class, 'downloadDirect']
+            )->name('downloadDirect');
+
+            Route::get(
+                '/print-direct',
+                [BulletinController::class, 'printDirect']
+            )->name('printDirect');
         });
 
     /*
