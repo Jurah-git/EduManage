@@ -477,9 +477,50 @@ class BulletinController extends Controller
         );
     }
 
-    public function downloadPdf($id)
+    public function downloadDirectPng(Request $request)
     {
-        $bulletin = Bulletin::findOrFail($id);
+        $bulletin = Bulletin::where(
+            'eleve_id',
+            $request->eleve_id
+        )
+            ->where(
+                'periodes_ids',
+                $request->periodes
+            )
+            ->latest()
+            ->firstOrFail();
+
+        $image = str_replace(
+            'data:image/png;base64,',
+            '',
+            $bulletin->image_base64
+        );
+
+        return response(
+            base64_decode($image)
+        )
+            ->header(
+                'Content-Type',
+                'image/png'
+            )
+            ->header(
+                'Content-Disposition',
+                'attachment; filename=bulletin.png'
+            );
+    }
+
+    public function downloadDirectPdf(Request $request)
+    {
+        $bulletin = Bulletin::where(
+            'eleve_id',
+            $request->eleve_id
+        )
+            ->where(
+                'periodes_ids',
+                $request->periodes
+            )
+            ->latest()
+            ->firstOrFail();
 
         $pdf = Pdf::loadView(
             'bulletin.pdf',
@@ -487,7 +528,7 @@ class BulletinController extends Controller
         );
 
         return $pdf->download(
-            'bulletin_' . $id . '.pdf'
+            'bulletin.pdf'
         );
     }
 }

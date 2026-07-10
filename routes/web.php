@@ -14,7 +14,6 @@ use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PeriodeController;
 use Illuminate\Support\Facades\Route;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::get('/test-gd', function () {
 
@@ -37,9 +36,9 @@ Route::get('/test-gd2', function () {
 
     return [
 
-        'gd' => extension_loaded('gd'),
+        'gd'         => extension_loaded('gd'),
 
-        'extensions' => get_loaded_extensions()
+        'extensions' => get_loaded_extensions(),
 
     ];
 
@@ -393,6 +392,16 @@ Route::middleware(['auth'])->group(function () {
                 '/download-pdf/{id}',
                 [BulletinController::class, 'downloadPdf']
             )->name('downloadPdf');
+
+            Route::get(
+                '/download-direct-png',
+                [BulletinController::class, 'downloadDirectPng']
+            )->name('downloadDirectPng');
+
+            Route::get(
+                '/download-direct-pdf',
+                [BulletinController::class, 'downloadDirectPdf']
+            )->name('downloadDirectPdf');
         });
 
     /*

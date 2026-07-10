@@ -103,15 +103,15 @@
                                     <ul class="dropdown-menu">
 
                                         <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('bulletin.downloadImage', $bulletin->id) }}">
+                                            <a href="#" class="dropdown-item btn-download-png"
+                                                data-eleve="{{ $eleve->id }}">
                                                 🖼 PNG
                                             </a>
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item"
-                                                href="{{ route('bulletin.downloadPdf', $bulletin->id) }}">
+                                            <a href="#" class="dropdown-item btn-download-pdf"
+                                                data-eleve="{{ $eleve->id }}">
                                                 📄 PDF
                                             </a>
                                         </li>
@@ -219,5 +219,54 @@
                     );
                 });
             });
+
+        document.querySelectorAll('.btn-download-png').forEach(btn => {
+
+            btn.addEventListener('click', function(e) {
+
+                e.preventDefault();
+
+                let periodes = getPeriodes();
+
+                if (!periodes) {
+                    alert('Choisissez au moins une période');
+                    return;
+                }
+
+                window.location.href =
+                    '/bulletin/download-direct-png' +
+                    '?eleve_id=' +
+                    this.dataset.eleve +
+                    '&periodes=' +
+                    periodes;
+
+            });
+
+        });
+
+
+        document.querySelectorAll('.btn-download-pdf').forEach(btn => {
+
+            btn.addEventListener('click', function(e) {
+
+                e.preventDefault();
+
+                let periodes = getPeriodes();
+
+                if (!periodes) {
+                    alert('Choisissez au moins une période');
+                    return;
+                }
+
+                window.location.href =
+                    '/bulletin/download-direct-pdf' +
+                    '?eleve_id=' +
+                    this.dataset.eleve +
+                    '&periodes=' +
+                    periodes;
+
+            });
+
+        });
     </script>
 @endsection
