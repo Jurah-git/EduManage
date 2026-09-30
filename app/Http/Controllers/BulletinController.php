@@ -352,25 +352,43 @@ class BulletinController extends Controller
     {
         $bulletin = Bulletin::findOrFail($id);
 
-        $image = str_replace(
-            'data:image/png;base64,',
-            '',
-            $bulletin->image_base64
-        );
+        $data = $bulletin->image_base64;
 
-        return response(
-            base64_decode($image)
-        )
-            ->header(
-                'Content-Type',
-                'image/png'
-            )
+        // Vérifier qu'il s'agit bien d'une Data URI
+        if (! preg_match('/^data:image\/[a-zA-Z0-9.+-]+;base64,(.*)$/s', $data, $matches)) {
+            abort(422, 'Le contenu de l’image du bulletin est invalide.');
+        }
+
+        $image = base64_decode($matches[1], true);
+
+        if ($image === false) {
+            abort(422, 'Impossible de décoder l’image du bulletin.');
+        }
+
+        // Détecter le vrai type de l'image
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($image);
+
+        // Sécurité : vérifier que c'est bien une image
+        if (! str_starts_with($mime, 'image/')) {
+            abort(422, 'Le fichier enregistré n’est pas une image valide.');
+        }
+
+        // Déterminer l'extension réelle
+        $extension = match ($mime) {
+            'image/png'  => 'png',
+            'image/jpeg' => 'jpg',
+            'image/gif'  => 'gif',
+            'image/webp' => 'webp',
+            default      => 'bin',
+        };
+
+        return response($image)
+            ->header('Content-Type', $mime)
             ->header(
                 'Content-Disposition',
-                'attachment; filename=bulletin_' . $id . '.png'
+                'attachment; filename="bulletin_' . $id . '.' . $extension . '"'
             );
     }
-
     public function printImage($id)
     {
         $bulletin = Bulletin::findOrFail($id);
@@ -483,22 +501,39 @@ class BulletinController extends Controller
             ->latest()
             ->firstOrFail();
 
-        $image = str_replace(
-            'data:image/png;base64,',
-            '',
-            $bulletin->image_base64
-        );
+        $data = $bulletin->image_base64;
 
-        return response(
-            base64_decode($image)
-        )
-            ->header(
-                'Content-Type',
-                'image/png'
-            )
+        // Vérifier et extraire le Base64
+        if (! preg_match('/^data:image\/[a-zA-Z0-9.+-]+;base64,(.*)$/s', $data, $matches)) {
+            abort(422, 'Le contenu de l’image du bulletin est invalide.');
+        }
+
+        $image = base64_decode($matches[1], true);
+
+        if ($image === false) {
+            abort(422, 'Impossible de décoder l’image du bulletin.');
+        }
+
+        // Détecter le vrai format
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($image);
+
+        if (! str_starts_with($mime, 'image/')) {
+            abort(422, 'Le fichier enregistré n’est pas une image valide.');
+        }
+
+        $extension = match ($mime) {
+            'image/png'  => 'png',
+            'image/jpeg' => 'jpg',
+            'image/gif'  => 'gif',
+            'image/webp' => 'webp',
+            default      => 'bin',
+        };
+
+        return response($image)
+            ->header('Content-Type', $mime)
             ->header(
                 'Content-Disposition',
-                'attachment; filename=bulletin.png'
+                'attachment; filename="bulletin.' . $extension . '"'
             );
     }
 
