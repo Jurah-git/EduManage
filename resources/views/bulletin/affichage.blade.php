@@ -369,7 +369,7 @@
 
                         <div>
 
-                            Année :
+                            Année scolaire
 
                             {{ date('Y') }}
 

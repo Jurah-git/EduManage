@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnneeScolaireController;
 use App\Http\Controllers\BibliothequeController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\CahierTexteController;
@@ -434,16 +435,22 @@ Route::middleware(['auth'])->group(function () {
             ->name('pointage');
 
         /*
-        |--------------------------------------------------------------------------
-        | ANNÉE SCOLAIRE
-        |--------------------------------------------------------------------------
-        */
+|--------------------------------------------------------------------------
+| ANNÉE SCOLAIRE
+|--------------------------------------------------------------------------
+*/
 
-        Route::get('/annee/create', [ConfigController::class, 'anneeCreate'])
-            ->name('annee.create');
+        Route::resource(
+            'annees-scolaires',
+            AnneeScolaireController::class
+        )->parameters([
+            'annees-scolaires' => 'anneeScolaire',
+        ]);
 
-        Route::get('/annee/current', [ConfigController::class, 'anneeCurrent'])
-            ->name('annee.current');
+        Route::patch(
+            'annees-scolaires/{anneeScolaire}/activer',
+            [AnneeScolaireController::class, 'activer']
+        )->name('annees-scolaires.activer');
 
         /*
         |--------------------------------------------------------------------------

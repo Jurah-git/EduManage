@@ -457,9 +457,17 @@
             <div id="config" class="submenu">
                 <a href="{{ route('config.users.create') }}">Ajouter utilisateur</a> <a
                     href="{{ route('config.users.list') }}"> Liste des utilisateurs</a> <a
-                    href="{{ route('config.pointage') }}"> Pointage</a> <a href="{{ route('config.annee.create') }}">
-                    Ajouter année scolaire</a> <a href="{{ route('config.annee.current') }}"> Année scolaire en
-                    cours</a> <a href="{{ route('config.droit.inscription') }}"> Droit d'inscription</a> <a
+                    href="{{ route('config.pointage') }}"> Pointage</a> <a
+                    href="{{ route('config.annees-scolaires.create') }}">
+                    <i class="bi bi-calendar-plus"></i>
+                    Ajouter année scolaire
+                </a>
+
+                <a href="{{ route('config.annees-scolaires.index') }}">
+                    <i class="bi bi-calendar-check"></i>
+                    Année scolaire en cours
+                </a>
+                <a href="{{ route('config.droit.inscription') }}"> Droit d'inscription</a> <a
                     href="{{ route('config.droit.reinscription') }}"> Droit de réinscription</a> <a
                     href="{{ route('config.mode.paiement') }}"> Mode de paiement</a> <a
                     href="{{ route('config.ecoles') }}"> Liste des écoles</a> <a
