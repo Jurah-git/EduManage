@@ -637,7 +637,7 @@
     </div>
 
     <!-- JS -->
-    
+
     <script>
         document.querySelectorAll('.menu-toggle').forEach(item => {
             item.addEventListener('click', function(e) {
