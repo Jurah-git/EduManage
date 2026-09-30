@@ -29,55 +29,50 @@ class BulletinController extends Controller
         );
     }
 
-    // =========================
-    // CHARGER ELEVE + MATIERES (AJAX)
-    // =========================
+// =========================
+// CHARGER ELEVE + MATIERES (AJAX)
+// =========================
     public function getEleve($id)
     {
-        $eleve = Eleve::with(
-            'classe.matieres'
-        )->findOrFail($id);
+
+        $eleve = Eleve::with('classe.matieres')->findOrFail($id);
 
         $periodes = Periode::all();
 
-        $notes = Note::where(
-            'eleve_id',
-            $id
-        )
-
+        // Récupérer toutes les notes de cet élève
+        // et les organiser :
+        //
+        // $notes[periode_id][type][matiere_id]
+        //
+        $notes = Note::where('eleve_id', $id)
             ->get()
+            ->groupBy('periode_id')
+            ->map(function ($notesPeriode) {
 
-            ->groupBy(function ($n) {
+                return $notesPeriode
+                    ->groupBy('type')
+                    ->map(function ($notesType) {
 
-                return;
-                $n->type .
-                '_' .
-                $n->matiere_id;
+                        return $notesType->keyBy('matiere_id');
+
+                    });
+
             });
 
+        // Récupérer les coefficients de la classe
         $coefficients = ClasseMatiereCoefficient::where(
             'classe_id',
             $eleve->classe_id
         )
-
-            ->pluck(
-                'coef',
-                'matiere_id'
-            )
-
+            ->pluck('coef', 'matiere_id')
             ->toArray();
 
         return view(
-
             'bulletin.partials.notes_form',
-
             [
-
                 'eleve'        => $eleve,
 
-                'matieres'     =>
-
-                $eleve
+                'matieres'     => $eleve
                     ->classe
                     ->matieres,
 
@@ -85,13 +80,11 @@ class BulletinController extends Controller
 
                 'notes'        => $notes,
 
-                'coefficients' =>
-                $coefficients,
-
+                'coefficients' => $coefficients,
             ]
-
         );
     }
+
     // =========================
     // ENREGISTRER NOTES
     // =========================

@@ -1,5 +1,5 @@
 <h3 class="mb-4">
-     {{ $eleve->nom }} {{ $eleve->prenom }}
+    {{ $eleve->nom }} {{ $eleve->prenom }}
 </h3>
 
 <button class="btn btn-secondary mb-3" onclick="retourListe()">
@@ -8,9 +8,13 @@
 
 </button>
 
+<div id="notes-existantes" data-notes='@json($notes)' style="display:none;">
+</div>
 
 <div class="row">
 
+    <div id="notes-existantes" data-notes='@json($notes)' style="display:none;">
+    </div>
     <!-- ================= JOURNALIER ================= -->
 
     <div class="col-md-6">
@@ -102,8 +106,8 @@
                                     <td>
 
                                         <input type="number" step="0.01" class="form-control note-journalier"
-                                            name="notes[{{ $matiere->id }}][valeur]"
-                                            value="{{ optional($notes['journalier_' . $matiere->id][0] ?? null)->valeur }}">
+                                            data-matiere="{{ $matiere->id }}"
+                                            name="notes[{{ $matiere->id }}][valeur]" value="">
 
                                     </td>
 
@@ -118,8 +122,7 @@
                                     <td>
 
                                         <input type="number" class="form-control"
-                                            name="notes[{{ $matiere->id }}][base]"
-                                            value="{{ optional($notes['journalier_' . $matiere->id][0] ?? null)->base ?? 20 }}">
+                                            name="notes[{{ $matiere->id }}][base]" value="20">
 
                                     </td>
 
@@ -262,8 +265,8 @@
                                     <td>
 
                                         <input type="number" step="0.01" class="form-control note-composition"
-                                            name="notes[{{ $matiere->id }}][valeur]"
-                                            value="{{ optional($notes['composition_' . $matiere->id][0] ?? null)->valeur }}">
+                                            data-matiere="{{ $matiere->id }}"
+                                            name="notes[{{ $matiere->id }}][valeur]" value="">
 
                                     </td>
 
@@ -278,8 +281,7 @@
                                     <td>
 
                                         <input type="number" class="form-control"
-                                            name="notes[{{ $matiere->id }}][base]"
-                                            value="{{ optional($notes['composition_' . $matiere->id][0] ?? null)->base ?? 20 }}">
+                                            name="notes[{{ $matiere->id }}][base]" value="20">
 
                                     </td>
 

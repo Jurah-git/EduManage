@@ -1,0 +1,13 @@
+[33me4b168b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m bootstrap hors ligne.
+[33m68594d2[m bootstrap hors ligne.
+[33m5b74dd4[m bouton telecharger pdf et png mety.
+[33mb6c5797[m bouton telecharger avec submenu png et pdf, periode 1, 1et2, 1et2et3, etc...
+[33m6d1b491[m generer, voir, telecharger, imprimer bulletin en utilisant la base 64.
+[33m73a2d32[m base 64 enregistrer dans la table bulletins.
+[33m24e03dc[m Affichage bulletin note journalier et composition se separe.
+[33m58aecc7[m Affichage bulletin.
+[33m8d7351b[m 👉Affichage immédiatement des appréciations et Total et Moyenne après chargement ajax. resources/views/bulletin/saisie.blade.php
+[33mfd746b2[m 👉Affichage immédiatement des appréciations et Total et Moyenne après chargement ajax.
+[33m31578d4[m Ajout Coefficien (CoefficienController,ClassMatiereCoefficient.php,)
+[33m8ef4ff4[m Ajout module bulletin complet avec notes, périodes, calculs et popup
+[33m21583f3[m Premier commit EduManage
