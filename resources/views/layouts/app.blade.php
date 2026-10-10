@@ -533,6 +533,16 @@
             </div>
 
 
+            <!-- SALLES DE CLASSE -->
+            <a href="#" class="menu-toggle" data-target="salle">
+                🚪 Salles de classe
+            </a>
+
+            <div id="salle" class="submenu">
+                <a href="{{ route('salles.create') }}">Ajouter</a>
+                <a href="{{ route('salles.index') }}">Liste des salles</a>
+            </div>
+
             <!-- CAHIER -->
             <a href="#" class="menu-toggle" data-target="cahier">📘 Cahier</a>
             <div id="cahier" class="submenu">

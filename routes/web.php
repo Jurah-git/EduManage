@@ -10,12 +10,13 @@ use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiTempsController;
+use App\Http\Controllers\EnseignantController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\SalleController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EnseignantController;
 
 Route::get('/test-gd', function () {
 
@@ -69,6 +70,15 @@ Route::get('/', function () {
 */
 
 Route::middleware(['auth'])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| SALLE
+|--------------------------------------------------------------------------
+*/
+
+    Route::resource('salles', SalleController::class)
+        ->parameters(['salles' => 'salle']);
 
 /*
 |--------------------------------------------------------------------------
