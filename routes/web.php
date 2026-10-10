@@ -15,6 +15,7 @@ use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PeriodeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EnseignantController;
 
 Route::get('/test-gd', function () {
 
@@ -68,6 +69,17 @@ Route::get('/', function () {
 */
 
 Route::middleware(['auth'])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| ENSEIGNANTS
+|--------------------------------------------------------------------------
+*/
+
+    Route::resource('enseignants', EnseignantController::class)
+        ->parameters([
+            'enseignants' => 'enseignant',
+        ]);
 
     /*
     |--------------------------------------------------------------------------

@@ -521,6 +521,18 @@
                 <a href="{{ route('eleves.index') }}">Liste</a>
             </div>
 
+
+            <!-- ENSEIGNANTS -->
+            <a href="#" class="menu-toggle" data-target="enseignant">
+                👨‍🏫 Enseignants
+            </a>
+
+            <div id="enseignant" class="submenu">
+                <a href="{{ route('enseignants.create') }}">Ajouter</a>
+                <a href="{{ route('enseignants.index') }}">Liste</a>
+            </div>
+
+
             <!-- CAHIER -->
             <a href="#" class="menu-toggle" data-target="cahier">📘 Cahier</a>
             <div id="cahier" class="submenu">
