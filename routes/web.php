@@ -7,6 +7,7 @@ use App\Http\Controllers\CahierTexteController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\CoefficientController;
 use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\CreneauEmploiTempsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiTempsController;
@@ -196,7 +197,39 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::resource('emploi', EmploiTempsController::class);
+    Route::resource('emplois-temps', EmploiTempsController::class)
+        ->parameters(['emplois-temps' => 'emploiTemps'])
+        ->except(['show']);
+
+    Route::get(
+        'emplois-temps/{emploiTemps}',
+        [EmploiTempsController::class, 'show']
+    )->name('emplois-temps.show');
+
+    Route::patch(
+        'emplois-temps/{emploiTemps}/publier',
+        [EmploiTempsController::class, 'publier']
+    )->name('emplois-temps.publier');
+
+    Route::patch(
+        'emplois-temps/{emploiTemps}/brouillon',
+        [EmploiTempsController::class, 'brouillon']
+    )->name('emplois-temps.brouillon');
+
+/*
+|--------------------------------------------------------------------------
+| Créneaux de l'emploi du temps
+|--------------------------------------------------------------------------
+*/
+    Route::post(
+        'emplois-temps/{emploiTemps}/creneaux',
+        [CreneauEmploiTempsController::class, 'store']
+    )->name('emplois-temps.creneaux.store');
+
+    Route::delete(
+        'emplois-temps/{emploiTemps}/creneaux/{creneau}',
+        [CreneauEmploiTempsController::class, 'destroy']
+    )->name('emplois-temps.creneaux.destroy');
 
     /*
     |--------------------------------------------------------------------------

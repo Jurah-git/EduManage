@@ -550,12 +550,13 @@
                 <a href="{{ route('cahier.index') }}">Liste</a>
             </div>
 
-            <!-- EMPLOI -->
-            <a href="#" class="menu-toggle" data-target="emploi">📅 Emploi</a>
+            <!-- EMPLOI DU TEMPS -->
+            <a href="#" class="menu-toggle" data-target="emploi">📅 Emploi du temps</a>
             <div id="emploi" class="submenu">
-                <a href="{{ route('emploi.create') }}">Ajouter</a>
-                <a href="{{ route('emploi.index') }}">Liste</a>
+                <a href="{{ route('emplois-temps.create') }}">Ajouter</a>
+                <a href="{{ route('emplois-temps.index') }}">Liste</a>
             </div>
+
 
             <!-- LIVRE -->
             <a href="#" class="menu-toggle" data-target="livre">📚 Livre</a>
