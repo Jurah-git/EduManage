@@ -15,6 +15,7 @@ use App\Http\Controllers\EnseignantController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\ParentEleveController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\SalleController;
 use Illuminate\Support\Facades\Route;
@@ -259,6 +260,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/parents', [ParentController::class, 'index'])
         ->name('parents.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODULE PARENTS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource('parents', ParentEleveController::class);
 
     /*
     |--------------------------------------------------------------------------
