@@ -1,640 +1,763 @@
+
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Connexion | EduManage</title>
 
-    <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
+        :root {
+            --navy: #071b3a;
+            --navy-light: #102e59;
+            --blue: #174b91;
+            --gold: #f5bd28;
+            --gold-light: #ffda70;
+            --text: #14213d;
+            --muted: #718096;
+            --border: #dce4ef;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            height: 100%;
-            font-family: 'Segoe UI', sans-serif;
-            overflow-y: auto;
         }
 
         body {
-
-            background:
-                linear-gradient(135deg,
-                    #0f172a,
-                    #1e293b,
-                    #334155);
-
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-
+            justify-content: center;
             padding: 30px;
+            background:
+                radial-gradient(circle at 15% 10%, #183d70 0, transparent 35%),
+                linear-gradient(135deg, #06152f, #163761);
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
         }
-
-        /* CARD LOGIN */
 
         .login-container {
-
             width: 100%;
-            max-width: 1050px;
-
-            min-height: 620px;
-
-            background: white;
-
-            border-radius: 24px;
-
+            max-width: 1200px;
+            min-height: 760px;
+            display: grid;
+            grid-template-columns: 46% 54%;
             overflow: hidden;
-
-            display: flex;
-
-            box-shadow:
-                0 25px 70px rgba(0, 0, 0, 0.35);
+            background: #fff;
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 20px;
+            box-shadow: 0 30px 90px rgba(0,0,0,.35);
         }
 
-        /* LEFT */
+        /* PANNEAU GAUCHE */
 
         .login-left {
-
-            width: 50%;
-
-            background:
-                linear-gradient(rgba(15, 23, 42, 0.88),
-                    rgba(15, 23, 42, 0.88));
-
-            color: white;
-
-            padding: 60px;
-
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
-
-            position: relative;
+            padding: 55px 52px;
+            overflow: hidden;
+            color: #fff;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(48,91,151,.4), transparent 32%),
+                linear-gradient(145deg, #0d2850, #061733 75%);
         }
 
-        /* LOGO */
+        .login-left::before,
+        .login-left::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255,255,255,.055);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .login-left::before {
+            width: 340px;
+            height: 340px;
+            top: -210px;
+            right: -160px;
+        }
+
+        .login-left::after {
+            width: 300px;
+            height: 300px;
+            bottom: -210px;
+            left: -180px;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
 
         .logo-box {
-
-            width: 95px;
-            height: 95px;
-
-            border-radius: 20px;
-
-            background:
-                linear-gradient(135deg,
-                    #2563eb,
-                    #7c3aed);
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            margin-bottom: 30px;
-
-            box-shadow:
-                0 10px 30px rgba(37, 99, 235, 0.4);
-        }
-
-        .logo-box i {
-
-            font-size: 42px;
-        }
-
-        .brand-title {
-
-            font-size: 42px;
-            font-weight: 800;
-
-            margin-bottom: 10px;
-        }
-
-        .brand-subtitle {
-
-            font-size: 17px;
-
-            color: rgba(255, 255, 255, 0.8);
-
-            line-height: 1.7;
-        }
-
-        /* FEATURES */
-
-        .feature-list {
-
-            margin-top: 40px;
-        }
-
-        .feature-item {
-
+            width: 100%;
+            min-height: 235px;
             display: flex;
             align-items: center;
-
-            gap: 12px;
-
-            margin-bottom: 18px;
-
-            font-size: 15px;
-        }
-
-        .feature-item i {
-
-            width: 35px;
-            height: 35px;
-
-            border-radius: 10px;
-
-            background: rgba(255, 255, 255, 0.1);
-
-            display: flex;
             justify-content: center;
-            align-items: center;
-        }
-
-        /* RIGHT */
-
-        .login-right {
-
-            width: 50%;
-
-            padding: 60px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
-            background: #ffffff;
-        }
-
-        .login-title {
-
-            font-size: 32px;
-            font-weight: 700;
-
-            color: #0f172a;
-
-            margin-bottom: 8px;
-        }
-
-        .login-subtitle {
-
-            color: #64748b;
-
-            margin-bottom: 35px;
-        }
-
-        /* LABEL */
-
-        .form-label {
-
-            font-weight: 600;
-
-            color: #334155;
-
-            margin-bottom: 8px;
-        }
-
-        /* INPUT GROUP */
-
-        .input-group-custom {
-
-            position: relative;
-
             margin-bottom: 22px;
         }
 
-        .input-group-custom i {
-
-            position: absolute;
-
-            top: 50%;
-            left: 16px;
-
-            transform: translateY(-50%);
-
-            color: #64748b;
+        .app-logo {
+            display: block;
+            width: min(100%, 300px);
+            height: 235px;
+            object-fit: contain;
+            filter: drop-shadow(0 12px 22px rgba(0,0,0,.24));
         }
 
-        /* INPUT */
-
-        .form-control {
-
-            height: 55px;
-
-            border-radius: 14px;
-
-            padding-left: 48px;
-
-            border: 1px solid #dbe2ea;
-
-            transition: 0.3s;
+        .brand-title {
+            margin-bottom: 12px;
+            color: #fff;
+            font-size: clamp(34px, 3.2vw, 46px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            text-align: center;
         }
 
-        .form-control:focus {
-
-            border-color: #2563eb;
-
-            box-shadow:
-                0 0 0 4px rgba(37, 99, 235, 0.12);
+        .brand-title span {
+            color: var(--gold);
         }
 
-        /* PASSWORD BUTTON */
-
-        .toggle-password {
-
-            position: absolute;
-
-            right: 16px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            background: transparent;
-            border: none;
-
-            color: #64748b;
-
-            cursor: pointer;
+        .brand-subtitle {
+            max-width: 390px;
+            margin: 0 auto;
+            color: #d5dfed;
+            font-size: 15px;
+            line-height: 1.8;
+            text-align: center;
         }
 
-        /* REMEMBER */
+        .gold-line {
+            width: 55px;
+            height: 3px;
+            margin: 23px auto 30px;
+            border-radius: 10px;
+            background: var(--gold);
+        }
 
-        .remember-row {
+        .feature-list {
+            display: grid;
+            gap: 20px;
+        }
 
+        .feature-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 14px;
+        }
 
+        .feature-icon {
+            flex: 0 0 48px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 18px;
+            border: 1px solid rgba(245,189,40,.65);
+            border-radius: 12px;
+            background: rgba(245,189,40,.07);
+        }
+
+        .feature-item strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .feature-item small {
+            display: block;
+            color: #bac9de;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .brand-footer {
+            margin-top: 35px;
+            color: #aebed4;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .brand-footer i {
+            margin-right: 6px;
+            color: var(--gold);
+        }
+
+        /* PANNEAU DROIT */
+
+        .login-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 65px clamp(28px, 5.2vw, 76px);
+            background: #fff;
+        }
+
+        .login-heading {
+            margin-bottom: 38px;
+            text-align: center;
+        }
+
+        .login-title {
+            margin-bottom: 10px;
+            color: var(--navy);
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .login-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .heading-line {
+            width: 55px;
+            height: 3px;
+            margin: 22px auto 0;
+            border-radius: 5px;
+            background: var(--gold);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #1c2d49;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-group-custom {
+            position: relative;
             margin-bottom: 25px;
         }
 
-        .remember-row label {
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            z-index: 2;
+            color: #71819a;
+            transform: translateY(-50%);
+        }
 
+        .form-control {
+            width: 100%;
+            height: 58px;
+            padding: 12px 48px;
+            color: var(--text);
             font-size: 14px;
-            color: #475569;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: #fbfcfe;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+
+        .form-control::placeholder {
+            color: #9aa7ba;
+        }
+
+        .form-control:focus {
+            border-color: var(--blue);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(23,75,145,.09);
+            outline: none;
+        }
+
+        .password-input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            z-index: 3;
+            padding: 6px;
+            color: #71819a;
+            border: 0;
+            background: transparent;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .toggle-password:hover {
+            color: var(--blue);
+        }
+
+        .remember-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 3px 0 28px;
+        }
+
+        .remember-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #56657b;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .remember-label input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--blue);
+            cursor: pointer;
         }
 
         .forgot-link {
-
-            font-size: 14px;
-
-            text-decoration: none;
-
-            color: #2563eb;
-
+            color: var(--blue);
+            font-size: 13px;
             font-weight: 600;
+            text-decoration: none;
         }
 
-        /* BUTTON */
+        .forgot-link:hover {
+            color: #b17b00;
+            text-decoration: underline;
+        }
 
         .login-btn {
-
             width: 100%;
-
-            height: 55px;
-
-            border: none;
-
-            border-radius: 14px;
-
-            background:
-                linear-gradient(135deg,
-                    #2563eb,
-                    #1d4ed8);
-
-            color: white;
-
-            font-size: 16px;
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 11px;
+            padding: 14px 20px;
+            color: #fff;
+            font-size: 15px;
             font-weight: 700;
-
-            transition: 0.3s;
+            border: 1px solid #214e8b;
+            border-radius: 11px;
+            background: linear-gradient(110deg, #174b91, #092751);
+            box-shadow: 0 7px 18px rgba(9,39,81,.17);
+            transition: transform .2s, box-shadow .2s;
+            cursor: pointer;
         }
 
         .login-btn:hover {
-
             transform: translateY(-2px);
-
-            box-shadow:
-                0 10px 25px rgba(37, 99, 235, 0.35);
+            box-shadow: 0 12px 24px rgba(9,39,81,.25);
         }
 
-        /* FOOTER */
+        .login-btn i {
+            color: var(--gold);
+        }
 
-        .footer-text {
-
-            margin-top: 30px;
-
-            text-align: center;
-
-            color: #64748b;
-
+        .register-separator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0 22px;
+            color: #8591a3;
             font-size: 13px;
         }
 
-        /* MOBILE */
-
-        @media(max-width: 900px) {
-
-            .login-container {
-
-                flex-direction: column;
-
-                min-height: auto;
-            }
-
-            .login-left,
-            .login-right {
-
-                width: 100%;
-            }
-
-            .login-left {
-
-                padding: 40px;
-            }
-
-            .login-right {
-
-                padding: 40px 30px;
-            }
+        .register-separator::before,
+        .register-separator::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e0e6ef;
         }
 
-        /* CREATE ACCOUNT */
+        .register-text {
+            margin-bottom: 15px;
+            color: #758198;
+            font-size: 13px;
+            text-align: center;
+        }
 
         .create-account-btn {
-
-            display: inline-flex;
-
+            width: 100%;
+            min-height: 54px;
+            display: flex;
             align-items: center;
             justify-content: center;
-
             gap: 10px;
-
-            margin-top: 12px;
-
-            width: 100%;
-
-            height: 52px;
-
-            border-radius: 14px;
-
-            text-decoration: none;
-
+            padding: 12px 18px;
+            color: #a87500;
+            font-size: 14px;
             font-weight: 700;
-
-            color: #2563eb;
-
-            border: 2px solid #2563eb;
-
-            background: white;
-
-            transition: 0.3s;
+            text-decoration: none;
+            border: 1px solid var(--gold);
+            border-radius: 11px;
+            background: #fff;
+            transition: color .2s, background .2s, transform .2s;
         }
 
         .create-account-btn:hover {
+            color: var(--navy);
+            background: #fff7df;
+            transform: translateY(-1px);
+        }
 
-            background: #2563eb;
+        .create-account-btn i {
+            color: #d69e00;
+        }
 
-            color: white;
+        .footer-text {
+            margin-top: 40px;
+            color: #8b96a8;
+            font-size: 11px;
+            line-height: 1.7;
+            text-align: center;
+        }
 
-            transform: translateY(-2px);
+        .alert {
+            margin-bottom: 22px;
+            font-size: 13px;
+            border-radius: 10px;
+        }
 
-            box-shadow:
-                0 10px 25px rgba(37, 99, 235, 0.20);
+        .field-error {
+            display: block;
+            margin-top: 7px;
+            color: #c62828;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            body {
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .login-container {
+                max-width: 580px;
+                grid-template-columns: 1fr;
+            }
+
+            .login-left {
+                padding: 35px 28px;
+            }
+
+            .logo-box {
+                min-height: 150px;
+                margin-bottom: 12px;
+            }
+
+            .app-logo {
+                height: 150px;
+                width: min(100%, 220px);
+            }
+
+            .brand-title {
+                font-size: 34px;
+            }
+
+            .brand-subtitle {
+                font-size: 13px;
+            }
+
+            .gold-line {
+                margin: 18px auto 22px;
+            }
+
+            .feature-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .feature-item {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .feature-icon {
+                flex-basis: 40px;
+                width: 40px;
+                height: 40px;
+                font-size: 15px;
+            }
+
+            .feature-item small {
+                font-size: 11px;
+            }
+
+            .brand-footer {
+                margin-top: 24px;
+            }
+
+            .login-right {
+                padding: 42px 32px;
+            }
+
+            .login-heading {
+                margin-bottom: 30px;
+            }
+
+            .login-title {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .login-container {
+                border-radius: 14px;
+            }
+
+            .login-left {
+                padding: 28px 22px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .login-right {
+                padding: 35px 22px;
+            }
+
+            .remember-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .login-title {
+                font-size: 28px;
+            }
+
+            .footer-text {
+                margin-top: 28px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <main class="login-container">
 
-    <div class="login-container">
+        <!-- PANNEAU GAUCHE : IDENTITÉ EDUMANAGE -->
+        <section class="login-left">
+            <div class="brand-content">
 
-        <!-- LEFT -->
-        <div class="login-left">
-
-            <div class="logo-box">
-
-                <i class="fa-solid fa-graduation-cap"></i>
-
-            </div>
-
-            <div class="brand-title">
-
-                EduManage
-
-            </div>
-
-            <div class="brand-subtitle">
-
-                Plateforme professionnelle de gestion scolaire moderne,
-                rapide et intelligente.
-
-            </div>
-
-            <div class="feature-list">
-
-                <div class="feature-item">
-
-                    <i class="fa-solid fa-user-graduate"></i>
-
-                    Gestion des élèves
-
+                <div class="logo-box">
+                    <img
+                        src="{{ asset('images/logo.jpeg') }}"
+                        alt="Logo EduManage"
+                        class="app-logo"
+                    >
                 </div>
 
-                <div class="feature-item">
+                
 
-                    <i class="fa-solid fa-chalkboard"></i>
+                <p class="brand-subtitle">
+                    La plateforme professionnelle pour une gestion scolaire
+                    moderne, organisée et efficace.
+                </p>
 
-                    Gestion des classes
+                <div class="gold-line"></div>
 
-                </div>
-
-                <div class="feature-item">
-
-                    <i class="fa-solid fa-book"></i>
-
-                    Gestion des matières
-
-                </div>
-
-                <div class="feature-item">
-
-                    <i class="fa-solid fa-chart-column"></i>
-
-                    Notes & statistiques
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- RIGHT -->
-        <div class="login-right">
-
-            <div class="login-title">
-
-                Connexion
-
-            </div>
-
-            <div class="login-subtitle">
-
-                Connectez-vous à votre espace EduManage
-
-            </div>
-
-            <form method="POST" action="{{ route('login') }}">
-
-                @csrf
-
-                <!-- EMAIL -->
-                <label class="form-label">
-
-                    Adresse email
-
-                </label>
-
-                <div class="input-group-custom">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                    <input type="email" name="email" class="form-control" placeholder="Entrer votre email" required
-                        autofocus>
-
-                </div>
-
-                <!-- PASSWORD -->
-                <label class="form-label">
-
-                    Mot de passe
-
-                </label>
-
-                <div class="input-group-custom">
-
-                    <i class="fa-solid fa-lock"></i>
-
-                    <input type="password" name="password" id="password" class="form-control"
-                        placeholder="Entrer votre mot de passe" required>
-
-                    <button type="button" class="toggle-password" onclick="togglePassword()">
-
-                        <i class="fa-solid fa-eye" id="eyeIcon"></i>
-
-                    </button>
-
-                </div>
-
-                <!-- REMEMBER -->
-                <div class="remember-row">
-
-                    <div>
-
-                        <input type="checkbox" name="remember" id="remember_me">
-
-                        <label for="remember_me">
-
-                            Se souvenir
-
-                        </label>
-
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <strong>Gestion des élèves</strong>
+                            <small>Suivi des inscriptions et informations des élèves.</small>
+                        </div>
                     </div>
 
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="forgot-link">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-chalkboard"></i>
+                        </div>
+                        <div>
+                            <strong>Gestion des classes</strong>
+                            <small>Organisation des classes et des niveaux scolaires.</small>
+                        </div>
+                    </div>
 
-                            Mot de passe oublié ?
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div>
+                            <strong>Matières et emplois du temps</strong>
+                            <small>Planification des cours et suivi pédagogique.</small>
+                        </div>
+                    </div>
 
-                        </a>
-                    @endif
-
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <strong>Notes et statistiques</strong>
+                            <small>Suivi des résultats et performances scolaires.</small>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- BUTTON -->
+                <div class="brand-footer">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Une gestion scolaire centralisée et simplifiée
+                </div>
+            </div>
+        </section>
+
+        <!-- PANNEAU DROIT : FORMULAIRE -->
+        <section class="login-right">
+
+            <div class="login-heading">
+                <h2 class="login-title">Connexion</h2>
+                <p class="login-subtitle">
+                    Connectez-vous à votre espace EduManage
+                </p>
+                <div class="heading-line"></div>
+            </div>
+
+            @if (session('status'))
+                <div class="alert alert-success" role="status">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <div>
+                    <label for="email" class="form-label">Adresse email</label>
+                    <div class="input-group-custom">
+                        <i class="input-icon fa-solid fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Entrez votre adresse email"
+                            value="{{ old('email') }}"
+                            autocomplete="username"
+                            required
+                            autofocus
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <div class="input-group-custom">
+                        <i class="input-icon fa-solid fa-lock"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control password-input"
+                            placeholder="Entrez votre mot de passe"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            id="togglePassword"
+                            aria-label="Afficher le mot de passe"
+                            aria-pressed="false"
+                        >
+                            <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="remember-row">
+                    <label for="remember_me" class="remember-label">
+                        <input
+                            type="checkbox"
+                            name="remember"
+                            id="remember_me"
+                        >
+                        Se souvenir de moi
+                    </label>
+
+                    @if (Route::has('password.request'))
+                        <a
+                            href="{{ route('password.request') }}"
+                            class="forgot-link"
+                        >
+                            Mot de passe oublié ?
+                        </a>
+                    @endif
+                </div>
+
                 <button type="submit" class="login-btn">
-
                     <i class="fa-solid fa-right-to-bracket"></i>
-
-                    Connexion
-
+                    Se connecter
                 </button>
-
             </form>
 
-            <!-- REGISTER -->
-            <div style="margin-top:18px; text-align:center;">
+            @if (Route::has('register'))
+                <div class="register-separator">ou</div>
 
-                <span style="color:#64748b; font-size:14px;">
-
+                <p class="register-text">
                     Vous n'avez pas de compte ?
-
-                </span>
-
-                <br>
+                </p>
 
                 <a href="{{ route('register') }}" class="create-account-btn">
-
                     <i class="fa-solid fa-user-plus"></i>
-
                     Créer un compte
-
                 </a>
+            @endif
 
-            </div>
-
-            <!-- FOOTER -->
-            <div class="footer-text">
-
-                © {{ date('Y') }} EduManage —
+            <footer class="footer-text">
+                &copy; {{ date('Y') }} EduManage —
                 ERP scolaire professionnel
+            </footer>
 
-            </div>
-
-        </div>
-
-    </div>
+        </section>
+    </main>
 
     <script>
-        function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const togglePasswordButton = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-            const password =
-                document.getElementById('password');
+        togglePasswordButton.addEventListener('click', function () {
+            const isHidden = passwordInput.type === 'password';
 
-            const eyeIcon =
-                document.getElementById('eyeIcon');
+            passwordInput.type = isHidden ? 'text' : 'password';
+            eyeIcon.classList.toggle('fa-eye', !isHidden);
+            eyeIcon.classList.toggle('fa-eye-slash', isHidden);
 
-            if (password.type === 'password') {
-
-                password.type = 'text';
-
-                eyeIcon.classList.remove('fa-eye');
-
-                eyeIcon.classList.add('fa-eye-slash');
-
-            } else {
-
-                password.type = 'password';
-
-                eyeIcon.classList.remove('fa-eye-slash');
-
-                eyeIcon.classList.add('fa-eye');
-            }
-        }
+            togglePasswordButton.setAttribute('aria-pressed', String(isHidden));
+            togglePasswordButton.setAttribute(
+                'aria-label',
+                isHidden ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+            );
+        });
     </script>
-
 </body>
-
 </html>

@@ -76,17 +76,20 @@
 
         /* LOGO */
 
-        .sidebar-header img {
+        .sidebar-header .app-logo {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #ffffff;
+            padding: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.25s ease;
+        }
 
-            width: 42px;
-            height: 42px;
-
-            border-radius: 12px;
-
-            object-fit: cover;
-
-            box-shadow:
-                0 4px 10px rgba(0, 0, 0, 0.25);
+        .sidebar-header .app-logo:hover {
+            transform: scale(1.05);
         }
 
         /* TITLE */
@@ -254,30 +257,46 @@
 
         /* ================= TOPBAR ================= */
 
+
+        /* ================= EN-TÊTE PROFESSIONNEL ================= */
+
         .topbar {
-
             position: sticky;
-
             top: 0;
-
             z-index: 900;
-
-            background: white;
-
-            padding: 14px 25px;
-
+            min-height: 82px;
+            box-sizing: border-box;
             display: flex;
-
-            justify-content: space-between;
-
             align-items: center;
-
-            border-bottom:
-                1px solid #e2e8f0;
-
-            box-shadow:
-                0 2px 10px rgba(0, 0, 0, 0.04);
+            justify-content: space-between;
+            gap: 20px;
+            padding: 16px 28px;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+            backdrop-filter: blur(12px);
         }
+
+        .topbar h4 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 19px;
+            font-weight: 750;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
 
         /* SCHOOL */
 
@@ -425,6 +444,124 @@
             box-shadow:
                 0 8px 18px rgba(239, 68, 68, 0.35);
         }
+
+        /* ================= SIDEBAR PROFESSIONNELLE ================= */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: linear-gradient(180deg, #111827 0%, #172554 100%);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 4px 0 24px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+        }
+
+        /* En-tête fixe */
+
+        .sidebar-header {
+            min-height: 84px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .sidebar-title h3 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+        }
+
+        .sidebar-title span {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        /* Zone de navigation */
+
+        .sidebar-menu {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 18px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 transparent;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+
+        /* Liens principaux et sous-menus */
+
+        .sidebar-menu a {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-menu a:hover {
+            color: #ffffff;
+            background: rgba(96, 165, 250, 0.13);
+        }
+
+        .sidebar-menu a.active {
+            color: #ffffff;
+            background: linear-gradient(100deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+        }
+
+        /* Sous-menus */
+
+        .submenu {
+            display: none;
+            margin: 2px 0 12px 15px;
+            padding-left: 10px;
+            border-left: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .sidebar-menu .submenu a {
+            padding: 10px 12px;
+            margin-bottom: 3px;
+            font-size: 12.5px;
+            color: #aebdd0;
+            border-radius: 8px;
+        }
+
+        .sidebar-menu .submenu a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.07);
+        }
     </style>
 </head>
 
@@ -435,7 +572,7 @@
         <!-- HEADER FIXE -->
         <div class="sidebar-header">
 
-            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png">
+            <img src="{{ asset('images/logo.jpeg') }}" alt="Logo EduManage" class="app-logo">
 
             <div class="sidebar-title">
 
@@ -628,7 +765,7 @@
 
             <div>
                 <div class="school-name">🏫 EduManage School</div>
-                <div class="school-meta">📍 Antananarivo | 📞 +261 34 00 000 00</div>
+                <div class="school-meta">📍 Antananarivo | 📞 +261 34 56 899 69</div>
             </div>
 
             <div class="topbar-right">
