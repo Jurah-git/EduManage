@@ -5,86 +5,72 @@
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>EduManage</title>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* ==========================================
+   EDUMANAGE — DESIGN PROFESSIONNEL
+   Bleu marine, bleu royal et jaune doré
+========================================== */
+
         /* ================= BODY ================= */
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f1f5fb;
+            color: #17243b;
         }
 
-        /* ================= SIDEBAR ================= */
+        /* ==========================================
+   SIDEBAR
+========================================== */
 
         .sidebar {
-
             position: fixed;
-
             top: 0;
             left: 0;
-
             width: 270px;
-
             height: 100vh;
-
-            background:
-                linear-gradient(180deg,
-                    #0f172a 0%,
-                    #111827 50%,
-                    #1e293b 100%);
-
-            color: white;
-
             display: flex;
-
             flex-direction: column;
-
-            z-index: 1000;
-
-            box-shadow:
-                4px 0 20px rgba(0, 0, 0, 0.15);
-
             overflow: hidden;
+            z-index: 1000;
+            color: #e8efff;
+            background: linear-gradient(165deg, #0b1933 0%, #061329 100%);
+            border-right: 1px solid rgba(125, 161, 220, 0.12);
+            box-shadow: 8px 0 30px rgba(2, 8, 23, 0.16);
         }
 
-        /* HEADER */
+        /* ================= SIDEBAR HEADER ================= */
 
         .sidebar-header {
-
-            min-height: 80px;
-
+            flex-shrink: 0;
+            min-height: 82px;
             display: flex;
-
             align-items: center;
-
             gap: 12px;
-
-            padding: 20px;
-
-            border-bottom:
-                1px solid rgba(255, 255, 255, 0.08);
-
-            background:
-                rgba(216, 66, 66, 0.03);
-
-            backdrop-filter: blur(10px);
+            padding: 15px 18px;
+            border-bottom: 1px solid rgba(125, 161, 220, 0.22);
+            background: rgba(255, 255, 255, 0.015);
         }
 
-        /* LOGO */
-
         .sidebar-header .app-logo {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
+            width: 43px;
+            height: 43px;
+            min-width: 43px;
             object-fit: contain;
-            border-radius: 10px;
+            padding: 3px;
+            border-radius: 9px;
             background: #ffffff;
-            padding: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: transform 0.25s ease;
         }
 
@@ -92,173 +78,225 @@
             transform: scale(1.05);
         }
 
-        /* TITLE */
-
         .sidebar-title {
-
             display: flex;
             flex-direction: column;
+            min-width: 0;
         }
 
         .sidebar-title h3 {
-
             margin: 0;
-
-            font-size: 20px;
-
-            font-weight: 700;
-
-            color: white;
+            color: #ffffff;
+            font-size: 19px;
+            font-weight: 750;
+            letter-spacing: -0.3px;
         }
 
         .sidebar-title span {
-
-            font-size: 12px;
-
-            color: #94a3b8;
+            display: block;
+            margin-top: 4px;
+            color: #8da7d5;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* MENU ZONE */
+        /* ==========================================
+   SIDEBAR MENU
+========================================== */
 
         .sidebar-menu {
-
             flex: 1;
-
+            min-height: 0;
             overflow-y: auto;
-
             overflow-x: hidden;
-
-            padding: 15px 12px;
+            padding: 17px 12px 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #30466b transparent;
         }
 
-        /* SCROLLBAR */
-
         .sidebar-menu::-webkit-scrollbar {
+            width: 4px;
+        }
 
-            width: 6px;
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         .sidebar-menu::-webkit-scrollbar-thumb {
-
-            background: #334155;
-
+            background: #30466b;
             border-radius: 10px;
         }
 
-        /* MENU LINK */
+        .sidebar-menu::-webkit-scrollbar-thumb:hover {
+            background: #526b96;
+        }
 
-        .sidebar-menu a {
+        /* ================= SECTION TITLES ================= */
 
+        .menu-section-title {
             display: flex;
-
             align-items: center;
+            gap: 9px;
+            margin: 2px 8px 10px;
+            padding: 0 0 2px;
+            color: #8ba5d3;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.25px;
+            text-transform: uppercase;
+        }
 
-            justify-content: space-between;
+        .menu-section-admin {
+            margin: 20px 3px 12px;
+            padding: 15px 5px 0;
+            border-top: 1px solid rgba(125, 161, 220, 0.25);
+            font-size: 12px;
+        }
 
-            gap: 10px;
+        .menu-section-admin i {
+            color: #ffc928;
+            font-size: 18px;
+        }
 
-            padding: 13px 15px;
+        /* ================= MAIN MENU LINKS ================= */
 
-            margin-bottom: 6px;
-
-            color: #e2e8f0;
-
+        .sidebar-menu>a,
+        .sidebar-menu>a.sidebar-link {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 3px 0;
+            padding: 10px 11px;
+            border-radius: 9px;
+            color: #d4def3;
+            background: transparent;
             text-decoration: none;
-
-            border-radius: 14px;
-
-            transition: all 0.25s ease;
-
-            font-size: 14px;
-
+            font-size: 12.5px;
             font-weight: 500;
+            line-height: 1.4;
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                box-shadow 0.2s ease;
         }
 
-        /* HOVER */
-
-        .sidebar-menu a:hover {
-
-            background:
-                linear-gradient(90deg,
-                    rgba(59, 130, 246, 0.20),
-                    rgba(59, 130, 246, 0.05));
-
-            transform: translateX(4px);
-
-            color: white;
+        .sidebar-menu>a>i:first-child,
+        .sidebar-menu>a.sidebar-link>i:first-child {
+            width: 19px;
+            min-width: 19px;
+            color: #a8badb;
+            font-size: 15px;
+            text-align: center;
+            transition: color 0.2s ease;
         }
 
-        /* ACTIVE */
-
-        .sidebar-menu a.active {
-
-            background:
-                linear-gradient(90deg,
-                    #2563eb,
-                    #1d4ed8);
-
-            color: white;
-
-            box-shadow:
-                0 6px 18px rgba(37, 99, 235, 0.35);
+        .sidebar-menu>a>span,
+        .sidebar-menu>a.sidebar-link>span {
+            flex: 1;
+            min-width: 0;
         }
 
-        /* SUBMENU */
+        /* Flèche des sous-menus */
 
-        .submenu {
+        .sidebar-menu>a .menu-arrow {
+            width: auto;
+            min-width: auto;
+            margin-left: auto;
+            color: #7f9ed8;
+            font-size: 11px;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
 
+        /* Survol */
+
+        .sidebar-menu>a:hover {
+            color: #ffffff;
+            background: rgba(76, 119, 198, 0.15);
+        }
+
+        .sidebar-menu>a:hover>i:first-child {
+            color: #ffc928;
+        }
+
+        /* Menu actif */
+
+        .sidebar-menu>a.active {
+            color: #ffffff;
+            background: linear-gradient(100deg, #123f9d, #0c347a);
+            box-shadow: inset 3px 0 0 #ffc928;
+        }
+
+        .sidebar-menu>a.active>i:first-child {
+            color: #ffc928;
+        }
+
+        /* Flèche tournée si aria-expanded est activé */
+
+        .sidebar-menu>a.menu-toggle[aria-expanded="true"] .menu-arrow {
+            transform: rotate(90deg);
+            color: #ffc928;
+        }
+
+        /* ==========================================
+   SUBMENUS
+========================================== */
+
+        .sidebar-menu .submenu {
             display: none;
-
-            margin-left: 12px;
-
-            margin-bottom: 10px;
-
-            padding-left: 12px;
-
-            border-left:
-                2px solid rgba(255, 255, 255, 0.08);
+            margin: 3px 0 8px 21px;
+            padding: 4px 0 4px 12px;
+            border-left: 1px solid rgba(125, 161, 220, 0.28);
         }
 
-        /* SUBMENU LINKS */
-
-        .submenu a {
-
-            font-size: 13px;
-
-            padding: 10px 12px;
-
-            color: #cbd5e1;
-
-            background: none;
+        .sidebar-menu .submenu a {
+            display: block;
+            margin: 2px 0;
+            padding: 9px 10px;
+            border-radius: 7px;
+            color: #9fb2d3;
+            background: transparent;
+            text-decoration: none;
+            font-size: 11.5px;
+            line-height: 1.4;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
-        .submenu a:hover {
-
-            background:
-                rgba(255, 255, 255, 0.05);
-
-            transform: none;
+        .sidebar-menu .submenu a:hover {
+            color: #ffffff;
+            background: rgba(76, 119, 198, 0.15);
         }
 
-        /* ================= CONTENT ================= */
+        .sidebar-menu .submenu a.active {
+            color: #ffd34f;
+            background: rgba(255, 201, 40, 0.08);
+        }
+
+        /* ==========================================
+   CONTENT AREA
+========================================== */
 
         .content {
-
             margin-left: 270px;
-
             min-height: 100vh;
-
             display: flex;
-
             flex-direction: column;
-
-            background: #b8d2ec;
+            background: #f1f5fb;
         }
 
-        /* ================= TOPBAR ================= */
+        /* Conteneur du contenu des pages */
 
+        .content>.p-4 {
+            flex: 1;
+            padding: 26px !important;
+        }
 
-        /* ================= EN-TÊTE PROFESSIONNEL ================= */
+        /* ==========================================
+   TOPBAR / HEADER
+========================================== */
 
         .topbar {
             position: sticky;
@@ -270,8 +308,8 @@
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-            padding: 16px 28px;
-            background: rgba(255, 255, 255, 0.96);
+            padding: 15px 26px;
+            background: rgba(255, 255, 255, 0.97);
             border-bottom: 1px solid #e2e8f0;
             box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
             backdrop-filter: blur(12px);
@@ -279,7 +317,7 @@
 
         .topbar h4 {
             margin: 0;
-            color: #0f172a;
+            color: #0b1933;
             font-size: 19px;
             font-weight: 750;
             letter-spacing: -0.3px;
@@ -291,276 +329,295 @@
             font-size: 12px;
         }
 
-        .topbar .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-
-        /* SCHOOL */
+        /* Nom de l'établissement */
 
         .school-name {
-
-            font-size: 18px;
-
-            font-weight: 700;
-
-            color: #0f172a;
+            color: #0b1933;
+            font-size: 17px;
+            font-weight: 750;
         }
 
         .school-meta {
-
-            font-size: 13px;
-
+            margin-top: 4px;
             color: #64748b;
+            font-size: 12px;
         }
 
-        /* USER BOX */
+        /* Informations utilisateur */
+
+        .topbar .user-info,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
         .user-box {
-
             display: flex;
-
             align-items: center;
-
-            gap: 12px;
-
-            padding: 8px 14px;
-
-            border-radius: 14px;
-
+            gap: 11px;
+            padding: 7px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             background: #f8fafc;
-
-            border:
-                1px solid #e2e8f0;
+            transition: border-color 0.2s ease, background 0.2s ease;
         }
 
-        /* USER AVATAR */
+        .user-box:hover {
+            border-color: #cbd8ed;
+            background: #f1f5fb;
+        }
+
+        /* Avatar utilisateur */
 
         .avatar {
-
-            width: 45px;
-            height: 45px;
-
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
             border-radius: 50%;
-
             object-fit: cover;
-
-            border: 3px solid white;
-
-            box-shadow:
-                0 4px 10px rgba(0, 0, 0, 0.12);
+            border: 2px solid #ffffff;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.12);
         }
 
+        .username {
+            color: #0b1933;
+            font-size: 12.5px;
+            font-weight: 650;
+            overflow-wrap: anywhere;
+        }
+
+        /* ==========================================
+   AVATAR ÉLÈVE
+========================================== */
+
         .student-avatar {
-
             width: 55px !important;
-
             height: 55px !important;
-
             min-width: 55px;
-
             min-height: 55px;
-
             max-width: 55px;
-
             max-height: 55px;
-
-            border-radius: 50% !important;
-
-            object-fit: cover;
-
             display: block;
-
             border: 3px solid #ffffff;
-
-            box-shadow:
-                0 4px 10px rgba(0, 0, 0, 0.15);
-
-            transition: 0.3s;
+            border-radius: 50% !important;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
         .student-avatar:hover {
-
-            transform: scale(1.08);
-
-            box-shadow:
-                0 8px 20px rgba(0, 0, 0, 0.25);
+            transform: scale(1.06);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        /* USERNAME */
-
-        .username {
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            color: #0f172a;
-        }
-
-        /* RIGHT */
-
-        .topbar-right {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-        }
-
-        /* LOGOUT */
+        /* ==========================================
+   LOGOUT BUTTON
+========================================== */
 
         .logout-btn {
-
-            background:
-                linear-gradient(90deg,
-                    #ef4444,
-                    #dc2626);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 12px;
-
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid rgba(220, 38, 38, 0.12);
+            border-radius: 10px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
             text-decoration: none;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            transition: 0.25s;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 650;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .logout-btn:hover {
-
-            transform: translateY(-2px);
-
-            color: white;
-
-            box-shadow:
-                0 8px 18px rgba(239, 68, 68, 0.35);
-        }
-
-        /* ================= SIDEBAR PROFESSIONNELLE ================= */
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 270px;
-            height: 100vh;
-            background: linear-gradient(180deg, #111827 0%, #172554 100%);
-            color: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            box-shadow: 4px 0 24px rgba(15, 23, 42, 0.12);
-            overflow: hidden;
-        }
-
-        /* En-tête fixe */
-
-        .sidebar-header {
-            min-height: 84px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-            background: rgba(255, 255, 255, 0.025);
-        }
-
-        .sidebar-title h3 {
-            margin: 0;
-            font-size: 21px;
-            font-weight: 750;
-            letter-spacing: 0.3px;
             color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.24);
         }
 
-        .sidebar-title span {
-            display: block;
-            margin-top: 4px;
-            font-size: 11px;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: #94a3b8;
+        /* ==========================================
+   RESPONSIVE
+========================================== */
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 245px;
+            }
+
+            .content {
+                margin-left: 245px;
+            }
+
+            .topbar {
+                padding: 14px 18px;
+                gap: 12px;
+            }
+
+            .content>.p-4 {
+                padding: 18px !important;
+            }
         }
 
-        /* Zone de navigation */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 225px;
+            }
 
-        .sidebar-menu {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 18px 12px;
-            scrollbar-width: thin;
-            scrollbar-color: #475569 transparent;
+            .content {
+                margin-left: 225px;
+            }
+
+            .sidebar-menu>a,
+            .sidebar-menu>a.sidebar-link {
+                font-size: 11.5px;
+                padding: 10px 9px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 14px 16px;
+            }
+
+            .topbar-right {
+                width: 100%;
+                flex-wrap: wrap;
+            }
         }
 
-        .sidebar-menu::-webkit-scrollbar {
-            width: 5px;
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .content {
+                margin-left: 205px;
+            }
+
+            .sidebar-header {
+                padding: 12px;
+                gap: 9px;
+            }
+
+            .sidebar-title h3 {
+                font-size: 16px;
+            }
+
+            .sidebar-title span {
+                font-size: 9px;
+            }
+
+            .sidebar-menu {
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+
+            .content>.p-4 {
+                padding: 12px !important;
+            }
+
+            .school-name {
+                font-size: 15px;
+            }
+
+            .user-box {
+                padding: 6px 8px;
+            }
+
         }
 
-        .sidebar-menu::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 10px;
-        }
+        /* ===== FINITION PROFESSIONNELLE DU MENU ===== */
 
-        /* Liens principaux et sous-menus */
-
-        .sidebar-menu a {
-            box-sizing: border-box;
+        .sidebar-menu>.sidebar-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
-            margin-bottom: 5px;
-            color: #cbd5e1;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 4px 10px;
+            border-radius: 9px;
+            color: #d5deed;
             text-decoration: none;
-            border-radius: 10px;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 500;
-            transition: background 0.2s ease, color 0.2s ease;
+            transition: background 0.25s ease, color 0.25s ease;
         }
 
-        .sidebar-menu a:hover {
-            color: #ffffff;
-            background: rgba(96, 165, 250, 0.13);
+        .sidebar-menu>.sidebar-link>i:first-child {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+            color: #c3cddd;
+            transition: color 0.25s ease;
         }
 
-        .sidebar-menu a.active {
-            color: #ffffff;
-            background: linear-gradient(100deg, #2563eb, #1d4ed8);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+        /* Survol */
+        .sidebar-menu>.sidebar-link:hover {
+            background: rgba(230, 184, 74, 0.12);
+            color: #f2cc70;
+        }
+
+        .sidebar-menu>.sidebar-link:hover>i:first-child {
+            color: #f2cc70;
+        }
+
+        /* Flèches des sous-menus */
+        .sidebar-menu .menu-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            color: #93a4bd;
+            transition: transform 0.25s ease, color 0.25s ease;
+        }
+
+        /* Rotation de la flèche lorsque le menu est ouvert */
+        .sidebar-menu .menu-toggle[aria-expanded="true"] .menu-arrow {
+            transform: rotate(90deg);
+            color: #f2cc70;
+        }
+
+        /* Titre des sections */
+        .sidebar-menu .menu-section-title {
+            padding: 18px 16px 8px;
+            color: #8fa2bd;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Section administration */
+        .sidebar-menu .menu-section-admin {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #f2cc70;
+        }
+
+        .sidebar-menu .menu-section-admin i {
+            font-size: 13px;
         }
 
         /* Sous-menus */
-
-        .submenu {
-            display: none;
-            margin: 2px 0 12px 15px;
-            padding-left: 10px;
-            border-left: 1px solid rgba(148, 163, 184, 0.3);
+        .sidebar-menu .submenu {
+            padding: 3px 10px 8px 42px;
         }
 
         .sidebar-menu .submenu a {
-            padding: 10px 12px;
-            margin-bottom: 3px;
-            font-size: 12.5px;
-            color: #aebdd0;
-            border-radius: 8px;
+            display: block;
+            padding: 9px 10px;
+            border-left: 2px solid rgba(242, 204, 112, 0.25);
+            color: #b8c5d8;
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s ease, background 0.2s ease;
         }
 
         .sidebar-menu .submenu a:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.07);
+            color: #f2cc70;
+            background: rgba(230, 184, 74, 0.08);
+            border-left-color: #f2cc70;
         }
     </style>
 </head>
@@ -585,175 +642,187 @@
         </div>
 
         <!-- MENUS SCROLLABLES -->
+
         <div class="sidebar-menu">
 
-            <a href="{{ route('dashboard') }}">🏠 Accueil</a>
+            <div class="menu-section-title">ESPACE PRINCIPAL</div>
 
-            <!-- CONFIG -->
-            <a href="#" class="menu-toggle" data-target="config">⚙️ Configuration</a>
-            <div id="config" class="submenu">
-                <a href="{{ route('config.users.create') }}">Ajouter utilisateur</a> <a
-                    href="{{ route('config.users.list') }}"> Liste des utilisateurs</a> <a
-                    href="{{ route('config.pointage') }}"> Pointage</a> <a
-                    href="{{ route('config.annees-scolaires.create') }}">
-                    <i class="bi bi-calendar-plus"></i>
-                    Ajouter année scolaire
-                </a>
-
-                <a href="{{ route('config.annees-scolaires.index') }}">
-                    <i class="bi bi-calendar-check"></i>
-                    Année scolaire en cours
-                </a>
-                <a href="{{ route('config.droit.inscription') }}"> Droit d'inscription</a> <a
-                    href="{{ route('config.droit.reinscription') }}"> Droit de réinscription</a> <a
-                    href="{{ route('config.mode.paiement') }}"> Mode de paiement</a> <a
-                    href="{{ route('config.ecoles') }}"> Liste des écoles</a> <a
-                    href="{{ route('config.test.niveau') }}"> Test de niveau</a> <a
-                    href="{{ route('config.frais.divers') }}">Frais divers</a> <a
-                    href="{{ route('config.parascolaires') }}"> Parascolaires</a> <a
-                    href="{{ route('config.rang.matiere') }}"> Rang matière</a>
-            </div>
-
-            <!-- CLASSE -->
-            <a href="#" class="menu-toggle" data-target="classe">📚 Classe</a>
-            <div id="classe" class="submenu">
-                <a href="{{ route('classes.create') }}">Ajouter</a>
-                <a href="{{ route('classes.index') }}">Liste</a>
-            </div>
-
-            <!-- MATIERE -->
-
-            <a href="#" class="menu-toggle" data-target="matiere">
-
-                📖 Matière
-
+            <a href="{{ route('dashboard') }}" class="sidebar-link">
+                <i class="bi bi-grid"></i>
+                <span>Tableau de bord</span>
             </a>
 
-            <div id="matiere" class="submenu">
-
-                <a href="{{ route('matieres.create') }}">
-
-                    Ajouter matière
-
-                </a>
-
-                <a href="{{ route('matieres.index') }}">
-
-                    Liste matières
-
-                </a>
-
-                <a href="{{ route('coefficients.index') }}">
-
-                    Coefficients
-
-                </a>
-
-            </div>
-
-            <!-- ELEVE -->
-            <a href="#" class="menu-toggle" data-target="eleve">🎓 Élève</a>
+            <a href="#" class="sidebar-link menu-toggle" data-target="eleve">
+                <i class="bi bi-people"></i>
+                <span>Élèves</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
             <div id="eleve" class="submenu">
-                <a href="{{ route('eleves.create') }}">Ajouter</a>
-                <a href="{{ route('eleves.index') }}">Liste</a>
+                <a href="{{ route('eleves.create') }}">Ajouter un élève</a>
+                <a href="{{ route('eleves.index') }}">Liste des élèves</a>
             </div>
 
-
-            <!-- ENSEIGNANTS -->
-            <a href="#" class="menu-toggle" data-target="enseignant">
-                👨‍🏫 Enseignants
+            <a href="#" class="sidebar-link menu-toggle" data-target="inscriptions">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Inscriptions</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
             </a>
+            <div id="inscriptions" class="submenu">
+                <a href="{{ route('eleves.create') }}">Nouvelle inscription</a>
+                <a href="{{ route('eleves.index') }}">Liste des élèves inscrits</a>
+            </div>
 
+            <a href="#" class="sidebar-link menu-toggle" data-target="classe">
+                <i class="bi bi-mortarboard"></i>
+                <span>Classes et niveaux</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="classe" class="submenu">
+                <a href="{{ route('classes.create') }}">Ajouter une classe</a>
+                <a href="{{ route('classes.index') }}">Liste des classes</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="matiere">
+                <i class="bi bi-book"></i>
+                <span>Matières et programmes</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="matiere" class="submenu">
+                <a href="{{ route('matieres.create') }}">Ajouter une matière</a>
+                <a href="{{ route('matieres.index') }}">Liste des matières</a>
+                <a href="{{ route('coefficients.index') }}">Coefficients</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="enseignant">
+                <i class="bi bi-person"></i>
+                <span>Enseignants</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
             <div id="enseignant" class="submenu">
-                <a href="{{ route('enseignants.create') }}">Ajouter</a>
-                <a href="{{ route('enseignants.index') }}">Liste</a>
+                <a href="{{ route('enseignants.create') }}">Ajouter un enseignant</a>
+                <a href="{{ route('enseignants.index') }}">Liste des enseignants</a>
             </div>
 
-
-            <!-- SALLES DE CLASSE -->
-            <a href="#" class="menu-toggle" data-target="salle">
-                🚪 Salles de classe
+            <a href="#" class="sidebar-link menu-toggle" data-target="emploi">
+                <i class="bi bi-calendar-week"></i>
+                <span>Emploi du temps</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
             </a>
-
-            <div id="salle" class="submenu">
-                <a href="{{ route('salles.create') }}">Ajouter</a>
-                <a href="{{ route('salles.index') }}">Liste des salles</a>
-            </div>
-
-            <!-- CAHIER -->
-            <a href="#" class="menu-toggle" data-target="cahier">📘 Cahier</a>
-            <div id="cahier" class="submenu">
-                <a href="{{ route('cahier.create') }}">Ajouter</a>
-                <a href="{{ route('cahier.index') }}">Liste</a>
-            </div>
-
-            <!-- EMPLOI DU TEMPS -->
-            <a href="#" class="menu-toggle" data-target="emploi">📅 Emploi du temps</a>
             <div id="emploi" class="submenu">
                 <a href="{{ route('emplois-temps.create') }}">Ajouter</a>
                 <a href="{{ route('emplois-temps.index') }}">Liste</a>
             </div>
 
-
-            <!-- LIVRE -->
-            <a href="#" class="menu-toggle" data-target="livre">📚 Livre</a>
-            <div id="livre" class="submenu">
-                <a href="{{ route('livres.create') }}">Ajouter</a>
-                <a href="{{ route('livres.index') }}">Liste</a>
+            <a href="#" class="sidebar-link menu-toggle" data-target="bulletin">
+                <i class="bi bi-journal-check"></i>
+                <span>Notes et bulletins</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="bulletin" class="submenu">
+                <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
+                <a href="{{ route('bulletin.generer') }}">Générer les bulletins</a>
             </div>
 
-            <!-- BIBLIO -->
-            <a href="#" class="menu-toggle" data-target="biblio">🏫 Bibliothèque</a>
-            <div id="biblio" class="submenu">
-                <a href="{{ route('biblio.index') }}">Accueil</a>
+            <a href="#" class="sidebar-link menu-toggle" data-target="presence">
+                <i class="bi bi-calendar-check"></i>
+                <span>Présences et discipline</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="presence" class="submenu">
+                <a href="{{ route('config.pointage') }}">Pointage</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="finances">
+                <i class="bi bi-wallet2"></i>
+                <span>Frais et écolages</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="finances" class="submenu">
+                <a href="{{ route('config.droit.inscription') }}">Droit d'inscription</a>
+                <a href="{{ route('config.droit.reinscription') }}">Droit de réinscription</a>
+                <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
+                <a href="{{ route('config.frais.divers') }}">Frais divers</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="communication">
+                <i class="bi bi-megaphone"></i>
+                <span>Annonces et communication</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="communication" class="submenu">
+                <a href="{{ route('parents.index') }}">Parents</a>
+            </div>
+
+            <div class="menu-section-title menu-section-admin">
+                <i class="bi bi-shield-check"></i>
+                ADMINISTRATION
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="config">
+                <i class="bi bi-people"></i>
+                <span>Utilisateurs</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="config" class="submenu">
+                <a href="{{ route('config.users.create') }}">Ajouter un utilisateur</a>
+                <a href="{{ route('config.users.list') }}">Liste des utilisateurs</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="permissions">
+                <i class="bi bi-shield-lock"></i>
+                <span>Rôles et permissions</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="permissions" class="submenu">
+                <a href="{{ route('config.users.list') }}">Gestion des utilisateurs</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="rapports">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Rapports et statistiques</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="rapports" class="submenu">
+                <a href="{{ route('dashboard') }}">Tableau de bord</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="parametres">
+                <i class="bi bi-gear"></i>
+                <span>Paramètres</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="parametres" class="submenu">
+                <a href="{{ route('config.annees-scolaires.create') }}">Ajouter une année scolaire</a>
+                <a href="{{ route('config.annees-scolaires.index') }}">Années scolaires</a>
+                <a href="{{ route('config.test.niveau') }}">Tests de niveau</a>
+                <a href="{{ route('config.parascolaires') }}">Activités parascolaires</a>
+                <a href="{{ route('config.rang.matiere') }}">Rang par matière</a>
+                <a href="{{ route('config.ecoles') }}">Liste des écoles</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="securite">
+                <i class="bi bi-database"></i>
+                <span>Sauvegardes et sécurité</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="securite" class="submenu">
+                <a href="{{ route('config.users.list') }}">Gestion des accès</a>
+            </div>
+
+            <a href="#" class="sidebar-link menu-toggle" data-target="livre">
+                <i class="bi bi-journal-bookmark"></i>
+                <span>Livres et bibliothèque</span>
+                <i class="bi bi-chevron-right menu-arrow"></i>
+            </a>
+            <div id="livre" class="submenu">
+                <a href="{{ route('livres.create') }}">Ajouter un livre</a>
+                <a href="{{ route('livres.index') }}">Liste des livres</a>
+                <a href="{{ route('biblio.index') }}">Bibliothèque</a>
                 <a href="{{ route('biblio.emprunt') }}">Emprunts</a>
             </div>
 
-            <!-- PARENTS -->
-            <a href="#" class="menu-toggle" data-target="parents">👨‍👩‍👧 Parents</a>
-            <div id="parents" class="submenu">
-                <a href="{{ route('parents.index') }}">Liste parents</a>
-            </div>
-
-            <!-- PERIODE -->
-            <a href="#" class="menu-toggle" data-target="periode">📆 Gestion des périodes</a>
-            <div id="periode" class="submenu">
-
-                <a href="{{ route('periodes.create') }}">
-                    Créer une période
-                </a>
-
-                <a href="{{ route('periodes.index') }}">
-                    Toutes les périodes
-                </a>
-
-            </div>
-
-            <!-- BULLETIN -->
-            <!-- BULLETIN -->
-            <a href="#" class="menu-toggle" data-target="bulletin">
-
-                🧾 Bulletin
-
-            </a>
-
-            <div id="bulletin" class="submenu">
-
-                <a href="{{ route('bulletin.saisie') }}">
-
-                    Saisie des notes
-
-                </a>
-
-                <a href="{{ route('bulletin.generer') }}">
-
-                    Générer bulletin
-
-                </a>
-
-            </div>
-
         </div>
+
     </div>
 
 
@@ -807,15 +876,46 @@
     <!-- JS -->
 
     <script>
-        document.querySelectorAll('.menu-toggle').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggles = document.querySelectorAll('.menu-toggle');
 
-                let target = this.getAttribute('data-target');
-                let submenu = document.getElementById(target);
+            menuToggles.forEach(function(item) {
+                const target = item.getAttribute('data-target');
+                const submenu = document.getElementById(target);
 
-                submenu.style.display =
-                    submenu.style.display === 'block' ? 'none' : 'block';
+                if (!submenu) {
+                    return;
+                }
+
+                // Préparer l'état initial
+                item.setAttribute('aria-expanded', 'false');
+                submenu.style.display = 'none';
+
+                item.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    const isOpen = submenu.style.display === 'block';
+
+                    // Fermer tous les autres sous-menus
+                    menuToggles.forEach(function(otherItem) {
+                        const otherTarget = otherItem.getAttribute('data-target');
+                        const otherSubmenu = document.getElementById(otherTarget);
+
+                        if (otherSubmenu && otherSubmenu !== submenu) {
+                            otherSubmenu.style.display = 'none';
+                            otherItem.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    // Ouvrir ou fermer le sous-menu sélectionné
+                    if (isOpen) {
+                        submenu.style.display = 'none';
+                        item.setAttribute('aria-expanded', 'false');
+                    } else {
+                        submenu.style.display = 'block';
+                        item.setAttribute('aria-expanded', 'true');
+                    }
+                });
             });
         });
     </script>
