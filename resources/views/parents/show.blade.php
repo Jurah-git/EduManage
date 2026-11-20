@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $peutModifier = auth()->user()->aPermission('parents.modifier');
+    @endphp
     <div class="container-fluid px-3 px-md-4 py-4 parent-show-page">
 
         {{-- En-tête --}}
@@ -21,10 +24,11 @@
                     Retour
                 </a>
 
-                <a href="{{ route('parents.edit', $parent) }}" class="btn btn-primary">
-                    <i class="bi bi-pencil-square me-1"></i>
-                    Modifier
-                </a>
+                @if ($peutModifier)
+                    <a href="{{ route('parents.edit', $parent->id) }}" class="btn btn-warning">
+                        <i class="bi bi-pencil-square"></i> Modifier
+                    </a>
+                @endif
             </div>
         </div>
 

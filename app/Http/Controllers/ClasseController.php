@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
@@ -12,17 +11,15 @@ class ClasseController extends Controller
     | LISTE
     |--------------------------------------------------------------------------
     */
-
     public function index()
     {
+        abort_unless(auth()->user()->aPermission('classes.voir'), 403);
+
         $classes = Classe::withCount('eleves')
             ->latest()
             ->get();
 
-        return view(
-            'classes.index',
-            compact('classes')
-        );
+        return view('classes.index', compact('classes'));
     }
 
     /*
@@ -30,9 +27,10 @@ class ClasseController extends Controller
     | CREATE FORM
     |--------------------------------------------------------------------------
     */
-
     public function create()
     {
+        abort_unless(auth()->user()->aPermission('classes.creer'), 403);
+
         return view('classes.create');
     }
 
@@ -41,9 +39,10 @@ class ClasseController extends Controller
     | STORE
     |--------------------------------------------------------------------------
     */
-
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('classes.creer'), 403);
+
         $request->validate([
             'nom' => 'required|unique:classes,nom',
         ]);
@@ -54,10 +53,7 @@ class ClasseController extends Controller
 
         return redirect()
             ->route('classes.index')
-            ->with(
-                'success',
-                'Classe ajoutée avec succès'
-            );
+            ->with('success', 'Classe ajoutée avec succès');
     }
 
     /*
@@ -65,13 +61,11 @@ class ClasseController extends Controller
     | EDIT
     |--------------------------------------------------------------------------
     */
-
     public function edit(Classe $classe)
     {
-        return view(
-            'classes.edit',
-            compact('classe')
-        );
+        abort_unless(auth()->user()->aPermission('classes.modifier'), 403);
+
+        return view('classes.edit', compact('classe'));
     }
 
     /*
@@ -79,11 +73,10 @@ class ClasseController extends Controller
     | UPDATE
     |--------------------------------------------------------------------------
     */
+    public function update(Request $request, Classe $classe)
+    {
+        abort_unless(auth()->user()->aPermission('classes.modifier'), 403);
 
-    public function update(
-        Request $request,
-        Classe $classe
-    ) {
         $request->validate([
             'nom' => 'required|unique:classes,nom,' . $classe->id,
         ]);
@@ -94,10 +87,7 @@ class ClasseController extends Controller
 
         return redirect()
             ->route('classes.index')
-            ->with(
-                'success',
-                'Classe modifiée avec succès'
-            );
+            ->with('success', 'Classe modifiée avec succès');
     }
 
     /*
@@ -105,36 +95,18 @@ class ClasseController extends Controller
     | DELETE
     |--------------------------------------------------------------------------
     */
-
     public function destroy(Classe $classe)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | VERIFIER SI DES ELEVES EXISTENT
-        |--------------------------------------------------------------------------
-        */
+        abort_unless(auth()->user()->aPermission('classes.supprimer'), 403);
 
         if ($classe->eleves()->count() > 0) {
-
             return back()->with(
                 'error',
                 'Impossible de supprimer cette classe car elle contient des élèves.'
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | DETACH MATIERES
-        |--------------------------------------------------------------------------
-        */
-
         $classe->matieres()->detach();
-
-        /*
-        |--------------------------------------------------------------------------
-        | DELETE
-        |--------------------------------------------------------------------------
-        */
 
         $classe->delete();
 

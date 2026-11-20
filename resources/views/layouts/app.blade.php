@@ -627,19 +627,35 @@
     <div class="sidebar">
 
         <!-- HEADER FIXE -->
+
         <div class="sidebar-header">
 
-            <img src="{{ asset('images/logo.jpeg') }}" alt="Logo EduManage" class="app-logo">
+            @if (isset($ecole) && $ecole && $ecole->logo)
+                <img src="{{ asset('storage/' . $ecole->logo) }}" alt="Logo de l'école" class="app-logo">
+            @else
+                <div class="app-logo d-flex align-items-center justify-content-center"
+                    style="background: linear-gradient(135deg, #34495e, #1abc9c);
+                    color: white;
+                    border-radius: 14px;
+                    width: 55px;
+                    height: 55px;
+                    font-size: 27px;
+                    flex-shrink: 0;">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+            @endif
 
             <div class="sidebar-title">
 
-                <h3>EduManage</h3>
-
-                <span>ERP Scolaire</span>
+                @if (isset($ecole) && $ecole && $ecole->nom_ecole)
+                    <h3>{{ $ecole->nom_ecole }}</h3>
+                    <span>ERP Scolaire</span>
+                @endif
 
             </div>
 
         </div>
+
 
         <!-- MENUS SCROLLABLES -->
 
@@ -651,175 +667,216 @@
                 <i class="bi bi-grid"></i>
                 <span>Tableau de bord</span>
             </a>
+            @if (auth()->user()->aPermission('eleves.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="eleve">
+                    <i class="bi bi-people"></i>
+                    <span>Élèves</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="eleve" class="submenu">
+                    <a href="{{ route('eleves.create') }}">Ajouter un élève</a>
+                    <a href="{{ route('eleves.index') }}">Liste des élèves</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="eleve">
-                <i class="bi bi-people"></i>
-                <span>Élèves</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="eleve" class="submenu">
-                <a href="{{ route('eleves.create') }}">Ajouter un élève</a>
-                <a href="{{ route('eleves.index') }}">Liste des élèves</a>
-            </div>
+            @if (auth()->user()->aPermission('inscriptions.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="inscriptions">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Inscriptions</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="inscriptions" class="submenu">
+                    <a href="{{ route('eleves.create') }}">Nouvelle inscription</a>
+                    <a href="{{ route('eleves.index') }}">Liste des élèves inscrits</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="inscriptions">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>Inscriptions</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="inscriptions" class="submenu">
-                <a href="{{ route('eleves.create') }}">Nouvelle inscription</a>
-                <a href="{{ route('eleves.index') }}">Liste des élèves inscrits</a>
-            </div>
+            @if (auth()->user()->aPermission('classes.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="classe">
+                    <i class="bi bi-mortarboard"></i>
+                    <span>Classes et niveaux</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="classe" class="submenu">
+                    <a href="{{ route('classes.create') }}">Ajouter une classe</a>
+                    <a href="{{ route('classes.index') }}">Liste des classes</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="classe">
-                <i class="bi bi-mortarboard"></i>
-                <span>Classes et niveaux</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="classe" class="submenu">
-                <a href="{{ route('classes.create') }}">Ajouter une classe</a>
-                <a href="{{ route('classes.index') }}">Liste des classes</a>
-            </div>
+            @if (auth()->user()->aPermission('matieres.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="matiere">
+                    <i class="bi bi-book"></i>
+                    <span>Matières et programmes</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="matiere" class="submenu">
+                    <a href="{{ route('matieres.create') }}">Ajouter une matière</a>
+                    <a href="{{ route('matieres.index') }}">Liste des matières</a>
+                    <a href="{{ route('coefficients.index') }}">Coefficients</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="matiere">
-                <i class="bi bi-book"></i>
-                <span>Matières et programmes</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="matiere" class="submenu">
-                <a href="{{ route('matieres.create') }}">Ajouter une matière</a>
-                <a href="{{ route('matieres.index') }}">Liste des matières</a>
-                <a href="{{ route('coefficients.index') }}">Coefficients</a>
-            </div>
+            @if (auth()->user()->aPermission('enseignants.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="enseignant">
+                    <i class="bi bi-person"></i>
+                    <span>Enseignants</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="enseignant" class="submenu">
+                    <a href="{{ route('enseignants.create') }}">Ajouter un enseignant</a>
+                    <a href="{{ route('enseignants.index') }}">Liste des enseignants</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="enseignant">
-                <i class="bi bi-person"></i>
-                <span>Enseignants</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="enseignant" class="submenu">
-                <a href="{{ route('enseignants.create') }}">Ajouter un enseignant</a>
-                <a href="{{ route('enseignants.index') }}">Liste des enseignants</a>
-            </div>
+            @if (auth()->user()->aPermission('emploi_temps.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="emploi">
+                    <i class="bi bi-calendar-week"></i>
+                    <span>Emploi du temps</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="emploi" class="submenu">
+                    <a href="{{ route('emplois-temps.create') }}">Ajouter</a>
+                    <a href="{{ route('emplois-temps.index') }}">Liste</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="emploi">
-                <i class="bi bi-calendar-week"></i>
-                <span>Emploi du temps</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="emploi" class="submenu">
-                <a href="{{ route('emplois-temps.create') }}">Ajouter</a>
-                <a href="{{ route('emplois-temps.index') }}">Liste</a>
-            </div>
+            @if (auth()->user()->aPermission('notes.voir') || auth()->user()->aPermission('bulletins.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="bulletin">
+                    <i class="bi bi-journal-check"></i>
+                    <span>Notes et bulletins</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="bulletin" class="submenu">
+                    <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
+                    <a href="{{ route('bulletin.generer') }}">Générer les bulletins</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="bulletin">
-                <i class="bi bi-journal-check"></i>
-                <span>Notes et bulletins</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="bulletin" class="submenu">
-                <a href="{{ route('bulletin.saisie') }}">Saisie des notes</a>
-                <a href="{{ route('bulletin.generer') }}">Générer les bulletins</a>
-            </div>
+            @if (auth()->user()->aPermission('presences.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="presence">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Présences et discipline</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="presence" class="submenu">
+                    <a href="{{ route('config.pointage') }}">Pointage</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="presence">
-                <i class="bi bi-calendar-check"></i>
-                <span>Présences et discipline</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="presence" class="submenu">
-                <a href="{{ route('config.pointage') }}">Pointage</a>
-            </div>
+            @if (auth()->user()->aPermission('paiements.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="finances">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Frais et écolages</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="finances" class="submenu">
+                    <a href="{{ route('config.droit.inscription') }}">Droit d'inscription</a>
+                    <a href="{{ route('config.droit.reinscription') }}">Droit de réinscription</a>
+                    <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
+                    <a href="{{ route('config.frais.divers') }}">Frais divers</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="finances">
-                <i class="bi bi-wallet2"></i>
-                <span>Frais et écolages</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="finances" class="submenu">
-                <a href="{{ route('config.droit.inscription') }}">Droit d'inscription</a>
-                <a href="{{ route('config.droit.reinscription') }}">Droit de réinscription</a>
-                <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
-                <a href="{{ route('config.frais.divers') }}">Frais divers</a>
-            </div>
+            @if (auth()->user()->aPermission('parents.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="communication">
+                    <i class="bi bi-megaphone"></i>
+                    <span>Annonces et communication</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="communication" class="submenu">
+                    <a href="{{ route('parents.index') }}">Parents</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="communication">
-                <i class="bi bi-megaphone"></i>
-                <span>Annonces et communication</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="communication" class="submenu">
-                <a href="{{ route('parents.index') }}">Parents</a>
-            </div>
+            @if (auth()->user()->aPermission('bibliotheque.voir'))
+                <a href="#" class="sidebar-link menu-toggle" data-target="livre">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span>Livres et bibliothèque</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
 
-            <div class="menu-section-title menu-section-admin">
-                <i class="bi bi-shield-check"></i>
-                ADMINISTRATION
-            </div>
+                <div id="livre" class="submenu">
+                    <a href="{{ route('livres.create') }}">Ajouter un livre</a>
+                    <a href="{{ route('livres.index') }}">Liste des livres</a>
+                    <a href="{{ route('biblio.index') }}">Bibliothèque</a>
+                    <a href="{{ route('biblio.emprunt') }}">Emprunts</a>
+                </div>
+            @endif
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="config">
-                <i class="bi bi-people"></i>
-                <span>Utilisateurs</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="config" class="submenu">
-                <a href="{{ route('config.users.create') }}">Ajouter un utilisateur</a>
-                <a href="{{ route('config.users.list') }}">Liste des utilisateurs</a>
-            </div>
+            @if (auth()->check() && auth()->id() === 1)
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="permissions">
-                <i class="bi bi-shield-lock"></i>
-                <span>Rôles et permissions</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="permissions" class="submenu">
-                <a href="{{ route('config.users.list') }}">Gestion des utilisateurs</a>
-            </div>
+                <div class="menu-section-title menu-section-admin">
+                    <i class="bi bi-shield-check"></i>
+                    ADMINISTRATION
+                </div>
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="rapports">
-                <i class="bi bi-bar-chart-line"></i>
-                <span>Rapports et statistiques</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="rapports" class="submenu">
-                <a href="{{ route('dashboard') }}">Tableau de bord</a>
-            </div>
+                <a href="#" class="sidebar-link menu-toggle" data-target="config">
+                    <i class="bi bi-people"></i>
+                    <span>Utilisateurs</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="config" class="submenu">
+                    <a href="{{ route('config.users.create') }}">Ajouter un utilisateur</a>
+                    <a href="{{ route('config.users.list') }}">Liste des utilisateurs</a>
+                </div>
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="parametres">
-                <i class="bi bi-gear"></i>
-                <span>Paramètres</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="parametres" class="submenu">
-                <a href="{{ route('config.annees-scolaires.create') }}">Ajouter une année scolaire</a>
-                <a href="{{ route('config.annees-scolaires.index') }}">Années scolaires</a>
-                <a href="{{ route('config.test.niveau') }}">Tests de niveau</a>
-                <a href="{{ route('config.parascolaires') }}">Activités parascolaires</a>
-                <a href="{{ route('config.rang.matiere') }}">Rang par matière</a>
-                <a href="{{ route('config.ecoles') }}">Liste des écoles</a>
-            </div>
+                <a href="#" class="sidebar-link menu-toggle" data-target="permissions">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Rôles et permissions</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="permissions" class="submenu">
+                    @if (auth()->check() && (int) auth()->id() === 1)
+                        <a href="{{ route('config.roles.index') }}">
+                            <i class="bi bi-shield-check"></i>
+                            Gestion des rôles
+                        </a>
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="securite">
-                <i class="bi bi-database"></i>
-                <span>Sauvegardes et sécurité</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="securite" class="submenu">
-                <a href="{{ route('config.users.list') }}">Gestion des accès</a>
-            </div>
+                        <a href="{{ route('config.users.list') }}">
+                            <i class="bi bi-people"></i>
+                            Gestion des utilisateurs
+                        </a>
+                    @endif
+                </div>
 
-            <a href="#" class="sidebar-link menu-toggle" data-target="livre">
-                <i class="bi bi-journal-bookmark"></i>
-                <span>Livres et bibliothèque</span>
-                <i class="bi bi-chevron-right menu-arrow"></i>
-            </a>
-            <div id="livre" class="submenu">
-                <a href="{{ route('livres.create') }}">Ajouter un livre</a>
-                <a href="{{ route('livres.index') }}">Liste des livres</a>
-                <a href="{{ route('biblio.index') }}">Bibliothèque</a>
-                <a href="{{ route('biblio.emprunt') }}">Emprunts</a>
-            </div>
+                <a href="#" class="sidebar-link menu-toggle" data-target="rapports">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span>Rapports et statistiques</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="rapports" class="submenu">
+                    <a href="{{ route('dashboard') }}">Tableau de bord</a>
+                </div>
+
+                <a href="#" class="sidebar-link menu-toggle" data-target="parametres">
+                    <i class="bi bi-gear"></i>
+                    <span>Paramètres</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="parametres" class="submenu">
+                    <a href="{{ route('config.ecole-identite') }}">
+                        <i class="bi bi-building"></i> Identité de l'école
+                    </a>
+                    <a href="{{ route('config.annees-scolaires.create') }}">Ajouter une année scolaire</a>
+                    <a href="{{ route('config.annees-scolaires.index') }}">Années scolaires</a>
+                    <a href="{{ route('config.test.niveau') }}">Tests de niveau</a>
+                    <a href="{{ route('config.parascolaires') }}">Activités parascolaires</a>
+                    <a href="{{ route('config.rang.matiere') }}">Rang par matière</a>
+                    <a href="{{ route('config.ecoles') }}">Liste des écoles</a>
+                </div>
+
+                <a href="#" class="sidebar-link menu-toggle" data-target="securite">
+                    <i class="bi bi-database"></i>
+                    <span>Sauvegardes et sécurité</span>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </a>
+                <div id="securite" class="submenu">
+                    <a href="{{ route('config.users.list') }}">Gestion des accès</a>
+                </div>
+
+
+
+            @endif
 
         </div>
 
@@ -833,8 +890,23 @@
         <div class="topbar">
 
             <div>
-                <div class="school-name">🏫 EduManage School</div>
-                <div class="school-meta">📍 Antananarivo | 📞 +261 34 56 899 69</div>
+                <div class="school-name">
+                    🏫 {{ $ecole?->nom_ecole ?: 'EduManage School' }}
+                </div>
+
+                <div class="school-meta">
+                    @if ($ecole?->adresse)
+                        📍 {{ $ecole->adresse }}
+                    @endif
+
+                    @if ($ecole?->telephone)
+                        | 📞 {{ $ecole->telephone }}
+                    @endif
+
+                    @if ($ecole?->email)
+                        | ✉️ {{ $ecole->email }}
+                    @endif
+                </div>
             </div>
 
             <div class="topbar-right">
@@ -843,7 +915,10 @@
                 <div class="user-box">
 
                     <img class="avatar"
-                        src="{{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->email) }}">
+                        src="{{ Auth::user()->photo
+                            ? asset('storage/' . Auth::user()->photo)
+                            : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->email) }}"
+                        alt="Photo de profil">
 
                     <span class="username">
                         {{ Auth::user()->email }}

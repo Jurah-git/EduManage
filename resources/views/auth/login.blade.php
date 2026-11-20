@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,9 +48,9 @@
             grid-template-columns: 46% 54%;
             overflow: hidden;
             background: #fff;
-            border: 1px solid rgba(255,255,255,.35);
+            border: 1px solid rgba(255, 255, 255, .35);
             border-radius: 20px;
-            box-shadow: 0 30px 90px rgba(0,0,0,.35);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .35);
         }
 
         /* PANNEAU GAUCHE */
@@ -64,7 +64,7 @@
             overflow: hidden;
             color: #fff;
             background:
-                radial-gradient(circle at 100% 0%, rgba(48,91,151,.4), transparent 32%),
+                radial-gradient(circle at 100% 0%, rgba(48, 91, 151, .4), transparent 32%),
                 linear-gradient(145deg, #0d2850, #061733 75%);
         }
 
@@ -72,7 +72,7 @@
         .login-left::after {
             content: "";
             position: absolute;
-            border: 1px solid rgba(255,255,255,.055);
+            border: 1px solid rgba(255, 255, 255, .055);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -110,7 +110,7 @@
             width: min(100%, 300px);
             height: 235px;
             object-fit: contain;
-            filter: drop-shadow(0 12px 22px rgba(0,0,0,.24));
+            filter: drop-shadow(0 12px 22px rgba(0, 0, 0, .24));
         }
 
         .brand-title {
@@ -163,9 +163,9 @@
             justify-content: center;
             color: var(--gold);
             font-size: 18px;
-            border: 1px solid rgba(245,189,40,.65);
+            border: 1px solid rgba(245, 189, 40, .65);
             border-radius: 12px;
-            background: rgba(245,189,40,.07);
+            background: rgba(245, 189, 40, .07);
         }
 
         .feature-item strong {
@@ -273,7 +273,7 @@
         .form-control:focus {
             border-color: var(--blue);
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(23,75,145,.09);
+            box-shadow: 0 0 0 4px rgba(23, 75, 145, .09);
             outline: none;
         }
 
@@ -349,14 +349,14 @@
             border: 1px solid #214e8b;
             border-radius: 11px;
             background: linear-gradient(110deg, #174b91, #092751);
-            box-shadow: 0 7px 18px rgba(9,39,81,.17);
+            box-shadow: 0 7px 18px rgba(9, 39, 81, .17);
             transition: transform .2s, box-shadow .2s;
             cursor: pointer;
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(9,39,81,.25);
+            box-shadow: 0 12px 24px rgba(9, 39, 81, .25);
         }
 
         .login-btn i {
@@ -557,15 +557,27 @@
         <section class="login-left">
             <div class="brand-content">
 
+
                 <div class="logo-box">
-                    <img
-                        src="{{ asset('images/logo.jpeg') }}"
-                        alt="Logo EduManage"
-                        class="app-logo"
-                    >
+
+                    @if (isset($ecole) && $ecole && $ecole->logo)
+                        <img src="{{ asset('storage/' . $ecole->logo) }}" alt="Logo de l'école" class="app-logo">
+                    @else
+                        <div class="app-logo d-flex align-items-center justify-content-center"
+                            style="background: linear-gradient(135deg, #34495e, #1abc9c);
+                            color: white;
+                            border-radius: 14px;
+                            width: 160px;
+                            height: 160px;
+                            font-size: 60px;
+                            flex-shrink: 0;">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                    @endif
+
                 </div>
 
-                
+
 
                 <p class="brand-subtitle">
                     La plateforme professionnelle pour une gestion scolaire
@@ -653,17 +665,9 @@
                     <label for="email" class="form-label">Adresse email</label>
                     <div class="input-group-custom">
                         <i class="input-icon fa-solid fa-envelope"></i>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="form-control"
-                            placeholder="Entrez votre adresse email"
-                            value="{{ old('email') }}"
-                            autocomplete="username"
-                            required
-                            autofocus
-                        >
+                        <input type="email" id="email" name="email" class="form-control"
+                            placeholder="Entrez votre adresse email" value="{{ old('email') }}" autocomplete="username"
+                            required autofocus>
                     </div>
                 </div>
 
@@ -671,23 +675,11 @@
                     <label for="password" class="form-label">Mot de passe</label>
                     <div class="input-group-custom">
                         <i class="input-icon fa-solid fa-lock"></i>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-control password-input"
-                            placeholder="Entrez votre mot de passe"
-                            autocomplete="current-password"
-                            required
-                        >
+                        <input type="password" id="password" name="password" class="form-control password-input"
+                            placeholder="Entrez votre mot de passe" autocomplete="current-password" required>
 
-                        <button
-                            type="button"
-                            class="toggle-password"
-                            id="togglePassword"
-                            aria-label="Afficher le mot de passe"
-                            aria-pressed="false"
-                        >
+                        <button type="button" class="toggle-password" id="togglePassword"
+                            aria-label="Afficher le mot de passe" aria-pressed="false">
                             <i class="fa-solid fa-eye" id="eyeIcon"></i>
                         </button>
                     </div>
@@ -695,19 +687,12 @@
 
                 <div class="remember-row">
                     <label for="remember_me" class="remember-label">
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            id="remember_me"
-                        >
+                        <input type="checkbox" name="remember" id="remember_me">
                         Se souvenir de moi
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a
-                            href="{{ route('password.request') }}"
-                            class="forgot-link"
-                        >
+                        <a href="{{ route('password.request') }}" class="forgot-link">
                             Mot de passe oublié ?
                         </a>
                     @endif
@@ -725,11 +710,6 @@
                 <p class="register-text">
                     Vous n'avez pas de compte ?
                 </p>
-
-                <a href="{{ route('register') }}" class="create-account-btn">
-                    <i class="fa-solid fa-user-plus"></i>
-                    Créer un compte
-                </a>
             @endif
 
             <footer class="footer-text">
@@ -745,7 +725,7 @@
         const togglePasswordButton = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
 
-        togglePasswordButton.addEventListener('click', function () {
+        togglePasswordButton.addEventListener('click', function() {
             const isHidden = passwordInput.type === 'password';
 
             passwordInput.type = isHidden ? 'text' : 'password';
@@ -760,4 +740,5 @@
         });
     </script>
 </body>
+
 </html>

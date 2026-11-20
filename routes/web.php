@@ -9,52 +9,18 @@ use App\Http\Controllers\CoefficientController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CreneauEmploiTempsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EcoleSettingController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiTempsController;
 use App\Http\Controllers\EnseignantController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\MatiereController;
-use App\Http\Controllers\ParentController;
 use App\Http\Controllers\ParentEleveController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalleController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test-gd', function () {
-
-    dd(
-        phpversion(),
-        extension_loaded('gd'),
-        ini_get('extension_dir')
-    );
-
-});
-Route::get('/phpinfo-laravel', function () {
-    phpinfo();
-});
-Route::get('/test-gd', function () {
-
-    phpinfo();
-
-});
-Route::get('/test-gd2', function () {
-
-    return [
-
-        'gd'         => extension_loaded('gd'),
-
-        'extensions' => get_loaded_extensions(),
-
-    ];
-
-});
-Route::get('/test-pdf', function () {
-
-    return class_exists(
-        \Barryvdh\DomPDF\Facade\Pdf::class
-    );
-
-});
 /*
 |--------------------------------------------------------------------------
 | REDIRECTION
@@ -72,6 +38,18 @@ Route::get('/', function () {
 */
 
 Route::middleware(['auth'])->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| IDENTITÉ DE L'ÉCOLE
+|--------------------------------------------------------------------------
+*/
+
+    Route::get('/config/ecole-identite', [EcoleSettingController::class, 'index'])
+        ->name('config.ecole-identite');
+
+    Route::post('/config/ecole-identite', [EcoleSettingController::class, 'update'])
+        ->name('config.ecole-identite.update');
 
 /*
 |--------------------------------------------------------------------------
@@ -102,23 +80,33 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | UTILISATEURS
-    |--------------------------------------------------------------------------
-    */
+/*
+|--------------------------------------------------------------------------
+| UTILISATEURS
+|--------------------------------------------------------------------------
+*/
 
-    Route::get('/users/create', [ConfigController::class, 'usersCreate'])
-        ->name('config.users.create');
+    Route::middleware(['admin.only'])->group(function () {
 
-    Route::get('/users', [ConfigController::class, 'usersList'])
-        ->name('config.users.list');
+        Route::get('/users/create', [ConfigController::class, 'usersCreate'])
+            ->name('config.users.create');
 
-    Route::post('/users/store', [ConfigController::class, 'usersStore'])
-        ->name('config.users.store');
+        Route::get('/users', [ConfigController::class, 'usersList'])
+            ->name('config.users.list');
 
-    Route::delete('/users/{user}', [ConfigController::class, 'usersDelete'])
-        ->name('config.users.delete');
+        Route::post('/users/store', [ConfigController::class, 'usersStore'])
+            ->name('config.users.store');
+
+
+        Route::get('/users/{user}/edit', [ConfigController::class, 'usersEdit'])
+            ->name('config.users.edit');
+
+        Route::put('/users/{user}', [ConfigController::class, 'usersUpdate'])
+            ->name('config.users.update');
+
+        Route::delete('/users/{user}', [ConfigController::class, 'usersDelete'])
+            ->name('config.users.delete');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -251,15 +239,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/biblio/emprunt', [BibliothequeController::class, 'emprunt'])
         ->name('biblio.emprunt');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PARENTS
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/parents', [ParentController::class, 'index'])
-        ->name('parents.index');
 
     /*
     |--------------------------------------------------------------------------
@@ -479,15 +458,29 @@ Route::middleware(['auth'])->group(function () {
 
         /*
         |--------------------------------------------------------------------------
-        | UTILISATEURS
+    |       GESTION DES RÔLES
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/users/create', [ConfigController::class, 'usersCreate'])
-            ->name('users.create');
+        Route::middleware(['admin.only'])->group(function () {
+            Route::get('/roles', [RoleController::class, 'index'])
+                ->name('roles.index');
 
-        Route::get('/users', [ConfigController::class, 'usersList'])
-            ->name('users.list');
+            Route::get('/roles/create', [RoleController::class, 'create'])
+                ->name('roles.create');
+
+            Route::post('/roles', [RoleController::class, 'store'])
+                ->name('roles.store');
+
+            Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
+                ->name('roles.destroy');
+
+            Route::get('/roles/{role}/permissions', [RoleController::class, 'editPermissions'])
+                ->name('roles.permissions.edit');
+
+            Route::put('/roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
+                ->name('roles.permissions.update');
+        });
 
         /*
         |--------------------------------------------------------------------------

@@ -1,208 +1,202 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="container-fluid mt-4">
 
-<div class="container-fluid mt-4">
+        <div class="card border-0 shadow-lg student-card overflow-hidden">
 
-    <div class="card border-0 shadow-lg student-card overflow-hidden">
+            <!-- HEADER -->
+            <div class="student-header">
 
-        <!-- HEADER -->
-        <div class="student-header">
+                <div>
 
-            <div>
+                    <h3 class="mb-1 fw-bold">
+                        🎓 Fiche Élève
+                    </h3>
 
-                <h3 class="mb-1 fw-bold">
-                    🎓 Fiche Élève
-                </h3>
+                    <small class="text-light opacity-75">
+                        Informations complètes de l'élève
+                    </small>
 
-                <small class="text-light opacity-75">
-                    Informations complètes de l'élève
-                </small>
+                </div>
+
+                <div class="student-badge">
+
+                    {{ $eleve->matricule }}
+
+                </div>
 
             </div>
 
-            <div class="student-badge">
+            <!-- BODY -->
+            <div class="card-body p-0">
 
-                {{ $eleve->matricule }}
+                <div class="row g-0">
 
-            </div>
+                    <!-- LEFT PHOTO -->
+                    <div class="col-lg-4">
 
-        </div>
+                        <div class="photo-section">
 
-        <!-- BODY -->
-        <div class="card-body p-0">
+                            @if ($eleve->photo)
+                                <img src="{{ asset('storage/' . $eleve->photo) }}" class="student-profile-photo">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($eleve->nom . ' ' . $eleve->prenom) }}&background=0D8ABC&color=fff&size=300"
+                                    class="student-profile-photo">
+                            @endif
 
-            <div class="row g-0">
+                            <h4 class="student-name">
 
-                <!-- LEFT PHOTO -->
-                <div class="col-lg-4">
+                                {{ $eleve->nom }}
+                                {{ $eleve->prenom }}
 
-                    <div class="photo-section">
+                            </h4>
 
-                        @if ($eleve->photo)
+                            <div class="student-class">
 
-                            <img
-                                src="{{ asset('storage/' . $eleve->photo) }}"
-                                class="student-profile-photo">
+                                📚
+                                {{ $eleve->classe->nom ?? '-' }}
 
-                        @else
-
-                            <img
-                                src="https://ui-avatars.com/api/?name={{ urlencode($eleve->nom . ' ' . $eleve->prenom) }}&background=0D8ABC&color=fff&size=300"
-                                class="student-profile-photo">
-
-                        @endif
-
-                        <h4 class="student-name">
-
-                            {{ $eleve->nom }}
-                            {{ $eleve->prenom }}
-
-                        </h4>
-
-                        <div class="student-class">
-
-                            📚
-                            {{ $eleve->classe->nom ?? '-' }}
+                            </div>
 
                         </div>
 
                     </div>
 
-                </div>
+                    <!-- RIGHT INFOS -->
+                    <div class="col-lg-8">
 
-                <!-- RIGHT INFOS -->
-                <div class="col-lg-8">
+                        <div class="info-section">
 
-                    <div class="info-section">
+                            <div class="row">
 
-                        <div class="row">
+                                <!-- MATRICULE -->
+                                <div class="col-md-6 mb-4">
 
-                            <!-- MATRICULE -->
-                            <div class="col-md-6 mb-4">
+                                    <div class="info-card">
 
-                                <div class="info-card">
+                                        <div class="info-label">
+                                            Matricule
+                                        </div>
 
-                                    <div class="info-label">
-                                        Matricule
+                                        <div class="info-value">
+                                            {{ $eleve->matricule }}
+                                        </div>
+
                                     </div>
 
-                                    <div class="info-value">
-                                        {{ $eleve->matricule }}
+                                </div>
+
+                                <!-- SEXE -->
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="info-card">
+
+                                        <div class="info-label">
+                                            Sexe
+                                        </div>
+
+                                        <div class="info-value">
+                                            {{ $eleve->sexe }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- DATE -->
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="info-card">
+
+                                        <div class="info-label">
+                                            Date naissance
+                                        </div>
+
+                                        <div class="info-value">
+                                            {{ $eleve->date_naissance }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- CLASSE -->
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="info-card">
+
+                                        <div class="info-label">
+                                            Classe
+                                        </div>
+
+                                        <div class="info-value">
+                                            {{ $eleve->classe->nom ?? '-' }}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- NUMERO CLASSE -->
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="info-card">
+
+                                        <div class="info-label">
+                                            Numéro de classe
+                                        </div>
+
+                                        <div class="info-value">
+
+                                            N°
+                                            {{ $eleve->numero_classe }}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- CREATED -->
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="info-card">
+
+                                        <div class="info-label">
+                                            Date inscription
+                                        </div>
+
+                                        <div class="info-value">
+
+                                            {{ $eleve->created_at->format('d/m/Y') }}
+
+                                        </div>
+
                                     </div>
 
                                 </div>
 
                             </div>
 
-                            <!-- SEXE -->
-                            <div class="col-md-6 mb-4">
+                            <!-- BUTTONS -->
+                            <div class="mt-4 d-flex gap-2">
 
-                                <div class="info-card">
+                                @if (auth()->user()->aPermission('eleves.modifier'))
+                                    <a href="{{ route('eleves.edit', $eleve) }}" class="btn btn-warning btn-lg">
 
-                                    <div class="info-label">
-                                        Sexe
-                                    </div>
+                                        ✏ Modifier
 
-                                    <div class="info-value">
-                                        {{ $eleve->sexe }}
-                                    </div>
+                                    </a>
+                                @endif
 
-                                </div>
+                                <a href="{{ route('eleves.index') }}" class="btn btn-dark btn-lg">
 
-                            </div>
+                                    ⬅ Retour
 
-                            <!-- DATE -->
-                            <div class="col-md-6 mb-4">
-
-                                <div class="info-card">
-
-                                    <div class="info-label">
-                                        Date naissance
-                                    </div>
-
-                                    <div class="info-value">
-                                        {{ $eleve->date_naissance }}
-                                    </div>
-
-                                </div>
+                                </a>
 
                             </div>
-
-                            <!-- CLASSE -->
-                            <div class="col-md-6 mb-4">
-
-                                <div class="info-card">
-
-                                    <div class="info-label">
-                                        Classe
-                                    </div>
-
-                                    <div class="info-value">
-                                        {{ $eleve->classe->nom ?? '-' }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- NUMERO CLASSE -->
-                            <div class="col-md-6 mb-4">
-
-                                <div class="info-card">
-
-                                    <div class="info-label">
-                                        Numéro de classe
-                                    </div>
-
-                                    <div class="info-value">
-
-                                        N°
-                                        {{ $eleve->numero_classe }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- CREATED -->
-                            <div class="col-md-6 mb-4">
-
-                                <div class="info-card">
-
-                                    <div class="info-label">
-                                        Date inscription
-                                    </div>
-
-                                    <div class="info-value">
-
-                                        {{ $eleve->created_at->format('d/m/Y') }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- BUTTONS -->
-                        <div class="mt-4 d-flex gap-2">
-
-                            <a href="{{ route('eleves.edit', $eleve) }}"
-                               class="btn btn-warning btn-lg">
-
-                                ✏ Modifier
-
-                            </a>
-
-                            <a href="{{ route('eleves.index') }}"
-                               class="btn btn-dark btn-lg">
-
-                                ⬅ Retour
-
-                            </a>
 
                         </div>
 
@@ -216,221 +210,212 @@
 
     </div>
 
-</div>
+    <style>
+        /* MAIN CARD */
 
-<style>
+        .student-card {
 
-/* MAIN CARD */
+            border-radius: 25px;
 
-.student-card{
+            background: #ffffff;
+        }
 
-    border-radius:25px;
+        /* HEADER */
 
-    background:#ffffff;
-}
+        .student-header {
 
-/* HEADER */
+            background:
+                linear-gradient(135deg,
+                    #0f172a,
+                    #1e293b);
 
-.student-header{
+            color: white;
 
-    background:
-        linear-gradient(
-            135deg,
-            #0f172a,
-            #1e293b
-        );
+            padding: 25px 35px;
 
-    color:white;
+            display: flex;
 
-    padding:25px 35px;
+            justify-content: space-between;
 
-    display:flex;
+            align-items: center;
+        }
 
-    justify-content:space-between;
+        /* BADGE */
 
-    align-items:center;
-}
+        .student-badge {
 
-/* BADGE */
+            background: rgba(255, 255, 255, 0.15);
 
-.student-badge{
+            padding: 10px 18px;
 
-    background:rgba(255,255,255,0.15);
+            border-radius: 12px;
 
-    padding:10px 18px;
+            font-weight: bold;
 
-    border-radius:12px;
+            backdrop-filter: blur(10px);
+        }
 
-    font-weight:bold;
+        /* LEFT */
 
-    backdrop-filter:blur(10px);
-}
+        .photo-section {
 
-/* LEFT */
+            height: 100%;
 
-.photo-section{
+            background:
+                linear-gradient(180deg,
+                    #f8fafc,
+                    #eef2ff);
 
-    height:100%;
+            display: flex;
 
-    background:
-        linear-gradient(
-            180deg,
-            #f8fafc,
-            #eef2ff
-        );
+            flex-direction: column;
 
-    display:flex;
+            justify-content: center;
 
-    flex-direction:column;
+            align-items: center;
 
-    justify-content:center;
+            padding: 40px 20px;
+        }
 
-    align-items:center;
+        /* PHOTO */
 
-    padding:40px 20px;
-}
+        .student-profile-photo {
 
-/* PHOTO */
+            width: 220px;
 
-.student-profile-photo{
+            height: 220px;
 
-    width:220px;
+            border-radius: 50%;
 
-    height:220px;
+            object-fit: cover;
 
-    border-radius:50%;
+            border: 8px solid white;
 
-    object-fit:cover;
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.18);
 
-    border:8px solid white;
+            transition: 0.3s;
+        }
 
-    box-shadow:
-        0 15px 40px rgba(0,0,0,0.18);
+        .student-profile-photo:hover {
 
-    transition:0.3s;
-}
+            transform: scale(1.03);
+        }
 
-.student-profile-photo:hover{
+        /* NAME */
 
-    transform:scale(1.03);
-}
+        .student-name {
 
-/* NAME */
+            margin-top: 25px;
 
-.student-name{
+            font-weight: 700;
 
-    margin-top:25px;
+            color: #0f172a;
 
-    font-weight:700;
+            text-align: center;
+        }
 
-    color:#0f172a;
+        /* CLASS */
 
-    text-align:center;
-}
+        .student-class {
 
-/* CLASS */
+            margin-top: 10px;
 
-.student-class{
+            background: #2563eb;
 
-    margin-top:10px;
+            color: white;
 
-    background:#2563eb;
+            padding: 8px 18px;
 
-    color:white;
+            border-radius: 50px;
 
-    padding:8px 18px;
+            font-size: 14px;
 
-    border-radius:50px;
+            font-weight: 600;
+        }
 
-    font-size:14px;
+        /* RIGHT */
 
-    font-weight:600;
-}
+        .info-section {
 
-/* RIGHT */
+            padding: 40px;
+        }
 
-.info-section{
+        /* INFO CARD */
 
-    padding:40px;
-}
+        .info-card {
 
-/* INFO CARD */
+            background: #f8fafc;
 
-.info-card{
+            border-radius: 18px;
 
-    background:#f8fafc;
+            padding: 20px;
 
-    border-radius:18px;
+            border: 1px solid #e2e8f0;
 
-    padding:20px;
+            transition: 0.3s;
+        }
 
-    border:1px solid #e2e8f0;
+        .info-card:hover {
 
-    transition:0.3s;
-}
+            transform: translateY(-3px);
 
-.info-card:hover{
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.08);
+        }
 
-    transform:translateY(-3px);
+        /* LABEL */
 
-    box-shadow:
-        0 10px 25px rgba(0,0,0,0.08);
-}
+        .info-label {
 
-/* LABEL */
+            font-size: 13px;
 
-.info-label{
+            color: #64748b;
 
-    font-size:13px;
+            margin-bottom: 8px;
 
-    color:#64748b;
+            font-weight: 600;
+        }
 
-    margin-bottom:8px;
+        /* VALUE */
 
-    font-weight:600;
-}
+        .info-value {
 
-/* VALUE */
+            font-size: 18px;
 
-.info-value{
+            font-weight: 700;
 
-    font-size:18px;
+            color: #0f172a;
+        }
 
-    font-weight:700;
+        /* RESPONSIVE */
 
-    color:#0f172a;
-}
+        @media(max-width:991px) {
 
-/* RESPONSIVE */
+            .photo-section {
 
-@media(max-width:991px){
+                padding: 30px 15px;
+            }
 
-    .photo-section{
+            .student-profile-photo {
 
-        padding:30px 15px;
-    }
+                width: 170px;
+                height: 170px;
+            }
 
-    .student-profile-photo{
+            .info-section {
 
-        width:170px;
-        height:170px;
-    }
+                padding: 25px;
+            }
 
-    .info-section{
+            .student-header {
 
-        padding:25px;
-    }
+                flex-direction: column;
 
-    .student-header{
+                gap: 15px;
 
-        flex-direction:column;
-
-        gap:15px;
-
-        text-align:center;
-    }
-}
-
-</style>
-
+                text-align: center;
+            }
+        }
+    </style>
 @endsection

@@ -2,6 +2,10 @@
 
 @section('content')
 
+    @php
+        $peutCreer = auth()->user()->aPermission('parents.creer');
+    @endphp
+
     <div class="container-fluid px-3 px-md-4 py-4 parent-form-page">
 
         {{-- En-tête --}}
@@ -279,10 +283,12 @@
                     Annuler
                 </a>
 
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    Enregistrer le parent
-                </button>
+                @if ($peutCreer)
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Enregistrer le parent
+                    </button>
+                @endif
 
             </div>
 

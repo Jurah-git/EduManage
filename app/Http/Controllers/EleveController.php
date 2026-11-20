@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Eleve;
 use App\Models\Classe;
+use App\Models\Eleve;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,6 +16,7 @@ class EleveController extends Controller
 
     public function index(Request $request)
     {
+        $this->verifierPermission('eleves.voir');
         $query = Eleve::with('classe');
 
         /*
@@ -130,6 +130,7 @@ class EleveController extends Controller
 
     public function create()
     {
+        $this->verifierPermission('eleves.creer');
         $classes = Classe::all();
 
         return view('eleves.create', compact('classes'));
@@ -143,9 +144,10 @@ class EleveController extends Controller
 
     public function store(Request $request)
     {
+        $this->verifierPermission('eleves.creer');
         $request->validate([
-            'nom' => 'required',
-            'prenom' => 'required',
+            'nom'       => 'required',
+            'prenom'    => 'required',
             'classe_id' => 'required',
         ]);
 
@@ -177,8 +179,8 @@ class EleveController extends Controller
             : 1;
 
         $matricule = 'ELV-' .
-            date('Y') . '-' .
-            str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        date('Y') . '-' .
+        str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
         /*
     |--------------------------------------------------------------------------
@@ -203,14 +205,14 @@ class EleveController extends Controller
 
         Eleve::create([
 
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'matricule' => $matricule,
-            'sexe' => $request->sexe,
+            'nom'            => $request->nom,
+            'prenom'         => $request->prenom,
+            'matricule'      => $matricule,
+            'sexe'           => $request->sexe,
             'date_naissance' => $request->date_naissance,
-            'classe_id' => $request->classe_id,
-            'numero_classe' => $numeroClasse,
-            'photo' => $photoPath,
+            'classe_id'      => $request->classe_id,
+            'numero_classe'  => $numeroClasse,
+            'photo'          => $photoPath,
 
         ]);
 
@@ -227,6 +229,7 @@ class EleveController extends Controller
 
     public function edit(Eleve $eleve)
     {
+        $this->verifierPermission('eleves.modifier');
         $classes = Classe::all();
 
         return view('eleves.edit', compact(
@@ -243,6 +246,7 @@ class EleveController extends Controller
 
     public function update(Request $request, Eleve $eleve)
     {
+        $this->verifierPermission('eleves.modifier');
         /*
     |--------------------------------------------------------------------------
     | PHOTO
@@ -306,7 +310,7 @@ class EleveController extends Controller
             foreach ($anciens as $index => $e) {
 
                 $e->update([
-                    'numero_classe' => $index + 1
+                    'numero_classe' => $index + 1,
                 ]);
             }
 
@@ -337,13 +341,13 @@ class EleveController extends Controller
 
         $eleve->update([
 
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'sexe' => $request->sexe,
+            'nom'            => $request->nom,
+            'prenom'         => $request->prenom,
+            'sexe'           => $request->sexe,
             'date_naissance' => $request->date_naissance,
-            'classe_id' => $request->classe_id,
-            'numero_classe' => $nouveauNumero,
-            'photo' => $photoPath,
+            'classe_id'      => $request->classe_id,
+            'numero_classe'  => $nouveauNumero,
+            'photo'          => $photoPath,
 
         ]);
 
@@ -359,6 +363,7 @@ class EleveController extends Controller
     */
     public function destroy(Eleve $eleve)
     {
+        $this->verifierPermission('eleves.supprimer');
         $classeId = $eleve->classe_id;
         /*
 |--------------------------------------------------------------------------
@@ -388,7 +393,7 @@ class EleveController extends Controller
         foreach ($eleves as $index => $e) {
 
             $e->update([
-                'numero_classe' => $index + 1
+                'numero_classe' => $index + 1,
             ]);
         }
 
@@ -404,6 +409,22 @@ class EleveController extends Controller
 
     public function show(Eleve $eleve)
     {
+        $this->verifierPermission('eleves.voir');
         return view('eleves.show', compact('eleve'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFICATION DES PERMISSIONS
+    |--------------------------------------------------------------------------
+    */
+
+    private function verifierPermission(string $permission): void
+    {
+        $user = auth()->user();
+
+        if (! $user || ! $user->aPermission($permission)) {
+            abort(403, 'Vous n’avez pas la permission nécessaire pour cette action.');
+        }
     }
 }

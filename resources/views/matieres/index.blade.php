@@ -2,175 +2,125 @@
 
 @section('content')
 
-<div class="container mt-4">
+    <div class="container mt-4">
 
-    <div class="card shadow border-0">
+        <div class="card shadow border-0">
 
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
 
-            <h4 class="mb-0">
-                📖 Liste des matières
-            </h4>
+                <h4 class="mb-0">
+                    📖 Liste des matières
+                </h4>
 
-            <a
-                href="{{ route('matieres.create') }}"
-                class="btn btn-primary btn-sm">
+                @if (auth()->user()->aPermission('matieres.creer'))
+                    <a href="{{ route('matieres.create') }}" class="btn btn-primary btn-sm">
+                        ➕ Ajouter
+                    </a>
+                @endif
 
-                ➕ Ajouter
+            </div>
 
-            </a>
+            <div class="card-body">
 
-        </div>
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-        <div class="card-body">
+                <table class="table table-hover align-middle">
 
-            @if(session('success'))
-
-                <div class="alert alert-success">
-
-                    {{ session('success') }}
-
-                </div>
-
-            @endif
-
-            <table class="table table-hover align-middle">
-
-                <thead class="table-light">
-
-                    <tr>
-
-                        <th>Code</th>
-
-                        <th>Matière</th>
-
-
-                        <th>Classes</th>
-
-
-                        <th width="220">
-
-                            Actions
-
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse($matieres as $matiere)
-
+                    <thead class="table-light">
                         <tr>
+                            <th>Code</th>
+                            <th>Matière</th>
+                            <th>Classes</th>
 
-                            <!-- CODE -->
+                            @if (auth()->user()->aPermission('matieres.modifier') || auth()->user()->aPermission('matieres.supprimer'))
+                                <th width="220">Actions</th>
+                            @endif
+                        </tr>
+                    </thead>
 
-                            <td>
+                    <tbody>
 
-                                <span class="badge bg-primary">
+                        @forelse($matieres as $matiere)
+                            <tr>
 
-                                    {{ $matiere->code }}
-
-                                </span>
-
-                            </td>
-
-                            <!-- NOM -->
-
-                            <td>
-
-                                <strong>
-
-                                    {{ $matiere->nom }}
-
-                                </strong>
-
-                            </td>
-
-
-                            <!-- CLASSES -->
-
-                            <td>
-
-                                @foreach($matiere->classes as $classe)
-
-                                    <span class="badge bg-info text-dark mb-1">
-
-                                        {{ $classe->nom }}
-
+                                <!-- CODE -->
+                                <td>
+                                    <span class="badge bg-primary">
+                                        {{ $matiere->code }}
                                     </span>
+                                </td>
 
-                                @endforeach
+                                <!-- NOM -->
+                                <td>
+                                    <strong>
+                                        {{ $matiere->nom }}
+                                    </strong>
+                                </td>
 
-                            </td>
+                                <!-- CLASSES -->
+                                <td>
+                                    @foreach ($matiere->classes as $classe)
+                                        <span class="badge bg-info text-dark mb-1">
+                                            {{ $classe->nom }}
+                                        </span>
+                                    @endforeach
+                                </td>
 
+                                <!-- ACTIONS -->
+                                @if (auth()->user()->aPermission('matieres.modifier') || auth()->user()->aPermission('matieres.supprimer'))
+                                    <td>
+                                        <div class="d-flex gap-2">
 
-                            <!-- ACTIONS -->
+                                            <!-- MODIFIER -->
+                                            @if (auth()->user()->aPermission('matieres.modifier'))
+                                                <a href="{{ route('matieres.edit', $matiere) }}"
+                                                    class="btn btn-warning btn-sm">
+                                                    Modifier
+                                                </a>
+                                            @endif
 
-                            <td>
+                                            <!-- SUPPRIMER -->
+                                            @if (auth()->user()->aPermission('matieres.supprimer'))
+                                                <form action="{{ route('matieres.destroy', $matiere) }}" method="POST">
 
-                                <div class="d-flex gap-2">
+                                                    @csrf
+                                                    @method('DELETE')
 
-                                    <!-- EDIT -->
+                                                    <button onclick="return confirm('Supprimer cette matière ?')"
+                                                        class="btn btn-danger btn-sm">
+                                                        Supprimer
+                                                    </button>
 
-                                    <a
-                                        href="{{ route('matieres.edit', $matiere) }}"
-                                        class="btn btn-warning btn-sm">
+                                                </form>
+                                            @endif
 
-                                        Modifier
+                                        </div>
+                                    </td>
+                                @endif
 
-                                    </a>
+                            </tr>
 
-                                    <!-- DELETE -->
+                        @empty
 
-                                    <form
-                                        action="{{ route('matieres.destroy', $matiere) }}"
-                                        method="POST">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    Aucune matière trouvée
+                                </td>
+                            </tr>
+                        @endforelse
 
-                                        @csrf
-                                        @method('DELETE')
+                    </tbody>
 
-                                        <button
-                                            onclick="return confirm('Supprimer cette matière ?')"
-                                            class="btn btn-danger btn-sm">
+                </table>
 
-                                            Supprimer
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="6"
-                                class="text-center text-muted">
-
-                                Aucune matière trouvée
-
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 @endsection

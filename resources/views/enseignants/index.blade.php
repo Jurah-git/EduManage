@@ -1,134 +1,175 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container mt-4">
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-            <h2 class="mb-0"><i class="bi bi-people"></i> Liste des enseignants</h2>
+        {{-- EN-TÊTE --}}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">👨‍🏫 Liste des enseignants</h3>
 
-            <a href="{{ route('enseignants.create') }}" class="btn btn-primary">
-                <i class="bi bi-person-plus"></i> Ajouter un enseignant
-            </a>
+            @if (auth()->user()->aPermission('enseignants.creer'))
+                <a href="{{ route('enseignants.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Ajouter un enseignant
+                </a>
+            @endif
         </div>
 
+        {{-- MESSAGES --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <form action="{{ route('enseignants.index') }}" method="GET" class="row g-2">
-                    <div class="col-md-9">
-                        <input type="search" name="recherche" class="form-control" value="{{ $recherche }}"
-                            placeholder="Rechercher par matricule, nom, prénom, spécialité ou téléphone...">
-                    </div>
-                    <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-primary flex-fill" type="submit">
-                            <i class="bi bi-search"></i> Rechercher
-                        </button>
-                        <a href="{{ route('enseignants.index') }}" class="btn btn-outline-secondary">
-                            Effacer
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
+        {{-- RECHERCHE --}}
+        <form method="GET" action="{{ route('enseignants.index') }}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Rechercher un enseignant..."
+                    value="{{ request('search') }}">
 
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white d-flex justify-content-between">
-                <span><i class="bi bi-table"></i> Enseignants enregistrés</span>
-                <span>{{ $enseignants->total() }} résultat(s)</span>
+                <button class="btn btn-dark" type="submit">
+                    <i class="bi bi-search"></i> Rechercher
+                </button>
+
+                <a href="{{ route('enseignants.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                </a>
+            </div>
+        </form>
+
+        {{-- TABLEAU --}}
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    Enseignants enregistrés
+                    <span class="badge bg-light text-dark">
+                        {{ $enseignants->total() }}
+                    </span>
+                </h5>
             </div>
 
             <div class="card-body">
-                @if ($enseignants->count())
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered align-middle">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Photo</th>
-                                    <th>Matricule</th>
-                                    <th>Nom et prénom</th>
-                                    <th>Spécialité</th>
-                                    <th>Téléphone</th>
-                                    <th>Statut</th>
+
+                @php
+                    $show = auth()->user()->aPermission('enseignants.show');
+                    $modifier = auth()->user()->aPermission('enseignants.modifier');
+                    $supprimer = auth()->user()->aPermission('enseignants.supprimer');
+
+                    $afficherActions = $show || $modifier || $supprimer;
+                @endphp
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Photo</th>
+                                <th>Matricule</th>
+                                <th>Nom et prénom</th>
+                                <th>Spécialité</th>
+                                <th>Téléphone</th>
+                                <th>Statut</th>
+
+                                @if ($afficherActions)
                                     <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
+                                @endif
+                            </tr>
+                        </thead>
 
-                            <tbody>
-                                @foreach ($enseignants as $enseignant)
-                                    <tr>
+                        <tbody>
+                            @forelse($enseignants as $enseignant)
+                                <tr>
+                                    {{-- PHOTO --}}
+                                    <td class="text-center">
+                                        @if ($enseignant->photo)
+                                            <img src="{{ asset('storage/' . $enseignant->photo) }}" alt="Photo"
+                                                width="45" height="45" class="rounded-circle"
+                                                style="object-fit: cover;">
+                                        @else
+                                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto"
+                                                style="width:45px;height:45px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                        @endif
+                                    </td>
+
+                                    <td>{{ $enseignant->matricule }}</td>
+
+                                    <td>
+                                        <strong>{{ $enseignant->nom }} {{ $enseignant->prenom }}</strong>
+                                    </td>
+
+                                    <td>{{ $enseignant->specialite ?? '-' }}</td>
+
+                                    <td>{{ $enseignant->telephone ?? '-' }}</td>
+
+                                    <td>
+                                        @if ($enseignant->statut == 'actif')
+                                            <span class="badge bg-success">Actif</span>
+                                        @else
+                                            <span class="badge bg-danger">Inactif</span>
+                                        @endif
+                                    </td>
+
+                                    {{-- ACTIONS --}}
+                                    @if ($afficherActions)
                                         <td class="text-center">
-                                            @if ($enseignant->photo)
-                                                <img src="{{ asset('storage/' . $enseignant->photo) }}" alt="Photo"
-                                                    width="48" height="48" class="rounded-circle border"
-                                                    style="object-fit: cover;">
-                                            @else
-                                                <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center"
-                                                    style="width:48px;height:48px;">
-                                                    <i class="bi bi-person text-secondary fs-4"></i>
-                                                </div>
+
+                                            {{-- VOIR LA FICHE --}}
+                                            @if ($show)
+                                                <a href="{{ route('enseignants.show', $enseignant) }}"
+                                                    class="btn btn-sm btn-info text-white" title="Voir la fiche">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
                                             @endif
-                                        </td>
 
-                                        <td><strong>{{ $enseignant->matricule }}</strong></td>
-                                        <td>{{ $enseignant->nom }} {{ $enseignant->prenom }}</td>
-                                        <td>{{ $enseignant->specialite ?: '—' }}</td>
-                                        <td>{{ $enseignant->telephone ?: '—' }}</td>
-
-                                        <td>
-                                            @if ($enseignant->statut === 'actif')
-                                                <span class="badge bg-success">Actif</span>
-                                            @else
-                                                <span class="badge bg-secondary">Inactif</span>
+                                            {{-- MODIFIER --}}
+                                            @if ($modifier)
+                                                <a href="{{ route('enseignants.edit', $enseignant) }}"
+                                                    class="btn btn-sm btn-warning" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
                                             @endif
+
+                                            {{-- SUPPRIMER --}}
+                                            @if ($supprimer)
+                                                <form action="{{ route('enseignants.destroy', $enseignant) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('Voulez-vous vraiment supprimer cet enseignant ?')">
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
                                         </td>
+                                    @endif
+                                </tr>
 
-                                        <td class="text-center text-nowrap">
-                                            <a href="{{ route('enseignants.show', $enseignant) }}"
-                                                class="btn btn-sm btn-info" title="Voir">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ $afficherActions ? 7 : 6 }}" class="text-center py-4">
+                                        <i class="bi bi-info-circle"></i>
+                                        Aucun enseignant trouvé.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
 
-                                            <a href="{{ route('enseignants.edit', $enseignant) }}"
-                                                class="btn btn-sm btn-warning" title="Modifier">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
+                    </table>
+                </div>
 
-                                            <form action="{{ route('enseignants.destroy', $enseignant) }}" method="POST"
-                                                class="d-inline"
-                                                onsubmit="return confirm('Voulez-vous vraiment supprimer cet enseignant ?')">
-                                                @csrf
-                                                @method('DELETE')
+                {{-- PAGINATION --}}
+                <div class="mt-3">
+                    {{ $enseignants->links() }}
+                </div>
 
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3">
-                        {{ $enseignants->links() }}
-                    </div>
-                @else
-                    <div class="alert alert-info text-center mb-0">
-                        <i class="bi bi-info-circle"></i>
-                        Aucun enseignant trouvé.
-                    </div>
-                @endif
             </div>
         </div>
 

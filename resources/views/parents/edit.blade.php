@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $peutModifier = auth()->user()->aPermission('parents.modifier');
+    @endphp
     <div class="container-fluid px-3 px-md-4 py-4 parent-edit-page">
 
         {{-- En-tête --}}
@@ -297,10 +300,12 @@
                     Annuler
                 </a>
 
-                <button type="submit" class="btn btn-primary px-4" id="btnEnregistrer">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    Enregistrer les modifications
-                </button>
+                @if ($peutModifier)
+                    <button type="submit" class="btn btn-primary px-4" id="btnEnregistrer">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Enregistrer les modifications
+                    </button>
+                @endif
             </div>
 
         </form>

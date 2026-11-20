@@ -1,56 +1,74 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>
+    <div class="container mt-4">
 
-        📚 Coefficients par matière
+        <div class="card shadow border-0">
 
-    </h3>
+            <div class="card-header bg-dark text-white">
 
-    <table class="table table-bordered">
+                <h4 class="mb-0">
+                    📚 Coefficients par matière
+                </h4>
 
-        <thead>
+            </div>
 
-            <tr>
+            <div class="card-body">
 
-                <th>Matière</th>
+                <table class="table table-bordered table-hover align-middle">
 
-                <th>Action</th>
+                    <thead class="table-light">
 
-            </tr>
+                        <tr>
+                            <th>Matière</th>
 
-        </thead>
+                            @if (auth()->user()->aPermission('coefficients.modifier'))
+                                <th width="180">Action</th>
+                            @endif
+                        </tr>
 
-        <tbody>
+                    </thead>
 
-            @foreach ($matieres as $matiere)
-                <tr>
+                    <tbody>
 
-                    <td>
+                        @forelse ($matieres as $matiere)
+                            <tr>
 
-                        {{ $matiere->nom }}
+                                <td>
+                                    {{ $matiere->nom }}
+                                </td>
 
-                    </td>
+                                @if (auth()->user()->aPermission('coefficients.modifier'))
+                                    <td>
 
-                    <td>
+                                        <a href="{{ route('coefficients.edit', $matiere->id) }}"
+                                            class="btn btn-primary btn-sm">
 
-                        <a href="{{ route(
-                            'coefficients.edit',
-                        
-                            $matiere->id,
-                        ) }}"
-                            class="btn btn-primary">
+                                            Configurer
 
-                            Configurer
+                                        </a>
 
-                        </a>
+                                    </td>
+                                @endif
 
-                    </td>
+                            </tr>
 
-                </tr>
-            @endforeach
+                        @empty
 
-        </tbody>
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">
+                                    Aucune matière trouvée.
+                                </td>
+                            </tr>
+                        @endforelse
 
-    </table>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 @endsection

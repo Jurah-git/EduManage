@@ -8,8 +8,15 @@ use Illuminate\Validation\Rule;
 
 class EnseignantController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | LISTE
+    |--------------------------------------------------------------------------
+    */
     public function index(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.voir'), 403);
+
         $recherche = $request->input('recherche');
 
         $enseignants = Enseignant::query()
@@ -30,13 +37,27 @@ class EnseignantController extends Controller
         return view('enseignants.index', compact('enseignants', 'recherche'));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE AJOUT
+    |--------------------------------------------------------------------------
+    */
     public function create()
     {
+        abort_unless(auth()->user()->aPermission('enseignants.creer'), 403);
+
         return view('enseignants.create');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENREGISTRER
+    |--------------------------------------------------------------------------
+    */
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.creer'), 403);
+
         $validated = $request->validate([
             'nom'              => ['required', 'string', 'max:100'],
             'prenom'           => ['required', 'string', 'max:100'],
@@ -72,18 +93,39 @@ class EnseignantController extends Controller
             ->with('success', 'Enseignant ajouté avec succès. Matricule : ' . $enseignant->matricule);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | CONSULTER UNE FICHE
+    |--------------------------------------------------------------------------
+    */
     public function show(Enseignant $enseignant)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.show'), 403);
+
         return view('enseignants.show', compact('enseignant'));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE MODIFICATION
+    |--------------------------------------------------------------------------
+    */
     public function edit(Enseignant $enseignant)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.modifier'), 403);
+
         return view('enseignants.edit', compact('enseignant'));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | METTRE A JOUR
+    |--------------------------------------------------------------------------
+    */
     public function update(Request $request, Enseignant $enseignant)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.modifier'), 403);
+
         $validated = $request->validate([
             'nom'              => ['required', 'string', 'max:100'],
             'prenom'           => ['required', 'string', 'max:100'],
@@ -122,8 +164,15 @@ class EnseignantController extends Controller
             ->with('success', 'Fiche de l’enseignant modifiée avec succès.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SUPPRIMER
+    |--------------------------------------------------------------------------
+    */
     public function destroy(Enseignant $enseignant)
     {
+        abort_unless(auth()->user()->aPermission('enseignants.supprimer'), 403);
+
         if ($enseignant->photo) {
             Storage::disk('public')->delete($enseignant->photo);
         }

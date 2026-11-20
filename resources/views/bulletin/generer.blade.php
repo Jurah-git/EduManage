@@ -1,272 +1,210 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $peutVoir = auth()->user()->aPermission('bulletins.afficher');
+        $peutGenerer = auth()->user()->aPermission('bulletins.creer');
+        $peutTelecharger = auth()->user()->aPermission('bulletins.telecharger');
+        $peutImprimer = auth()->user()->aPermission('bulletins.imprimer');
+
+        $afficherActions = $peutVoir || $peutGenerer || $peutTelecharger || $peutImprimer;
+    @endphp
+
     <h3 class="mb-4">
         📄 Génération des bulletins
     </h3>
 
     <div id="alertePeriode" class="alert alert-danger" style="display:none;">
-
         Veuillez sélectionner au moins une période.
-
     </div>
 
     <form id="formBulletin" method="POST" action="{{ route('bulletin.afficher') }}">
-
         @csrf
 
         <div class="card mb-4">
-
             <div class="card-header">
-
                 Choix des périodes
-
             </div>
 
             <div class="card-body">
-
                 @foreach ($periodes as $periode)
                     <label class="me-4">
-
                         <input type="checkbox" name="periodes[]" value="{{ $periode->id }}">
-
                         {{ $periode->nom }}
-
                     </label>
                 @endforeach
-
             </div>
-
         </div>
 
         <table class="table table-bordered">
-
             <thead>
-
                 <tr>
-
                     <th>Nom</th>
-
                     <th>Classe</th>
 
-                    <th>Actions</th>
-
+                    @if ($afficherActions)
+                        <th>Actions</th>
+                    @endif
                 </tr>
-
             </thead>
 
             <tbody>
-
                 @foreach ($eleves as $eleve)
                     @php
-
                         $bulletin = \App\Models\Bulletin::where('eleve_id', $eleve->id)->latest()->first();
-
                     @endphp
 
                     <tr>
-
                         <td>
-
                             {{ $eleve->nom }}
-
                             {{ $eleve->prenom }}
-
                         </td>
 
                         <td>
-
-                            {{ $eleve->classe->nom }}
-
+                            {{ $eleve->classe->nom ?? 'Non affecté' }}
                         </td>
 
-                        <td>
-                            <button type="submit" name="eleve_id" value="{{ $eleve->id }}"
-                                class="btn btn-success btn-sm">
-                                Générer
-                            </button>
+                        @if ($afficherActions)
+                            <td>
 
-                            <button type="button" class="btn btn-primary btn-sm btn-voir" data-eleve="{{ $eleve->id }}">
-                                👁 Voir
-                            </button>
-
-                            @if ($bulletin)
-                                <div class="dropdown d-inline-block">
-
-                                    <button class="btn btn-warning btn-sm dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-
-                                        📥 Télécharger
-
+                                {{-- GENERER --}}
+                                @if ($peutGenerer)
+                                    <button type="submit" name="eleve_id" value="{{ $eleve->id }}"
+                                        class="btn btn-success btn-sm">
+                                        Générer
                                     </button>
+                                @endif
 
-                                    <ul class="dropdown-menu">
+                                {{-- VOIR --}}
+                                @if ($peutVoir)
+                                    <button type="button" class="btn btn-primary btn-sm btn-voir"
+                                        data-eleve="{{ $eleve->id }}">
+                                        👁 Voir
+                                    </button>
+                                @endif
 
-                                        <li>
-                                            <a href="#" class="dropdown-item btn-download-png"
-                                                data-eleve="{{ $eleve->id }}">
-                                                🖼 PNG
-                                            </a>
-                                        </li>
+                                {{-- TELECHARGER --}}
+                                @if ($peutTelecharger && $bulletin)
+                                    <div class="dropdown d-inline-block">
 
-                                        <li>
-                                            <a href="#" class="dropdown-item btn-download-pdf"
-                                                data-eleve="{{ $eleve->id }}">
-                                                📄 PDF
-                                            </a>
-                                        </li>
+                                        <button class="btn btn-warning btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            📥 Télécharger
+                                        </button>
 
-                                    </ul>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="#" class="dropdown-item btn-download-png"
+                                                    data-eleve="{{ $eleve->id }}">
+                                                    🖼 PNG
+                                                </a>
+                                            </li>
 
-                                </div>
-                            @endif
+                                            <li>
+                                                <a href="#" class="dropdown-item btn-download-pdf"
+                                                    data-eleve="{{ $eleve->id }}">
+                                                    📄 PDF
+                                                </a>
+                                            </li>
+                                        </ul>
 
-                            <button type="button" class="btn btn-danger btn-sm btn-print"
-                                data-eleve="{{ $eleve->id }}">
-                                🖨 Imprimer
-                            </button>
+                                    </div>
+                                @endif
 
-                        </td>
+                                {{-- IMPRIMER --}}
+                                @if ($peutImprimer)
+                                    <button type="button" class="btn btn-danger btn-sm btn-print"
+                                        data-eleve="{{ $eleve->id }}">
+                                        🖨 Imprimer
+                                    </button>
+                                @endif
 
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
-
             </tbody>
-
         </table>
-
     </form>
 
     <script>
         function getPeriodes() {
             let ids = [];
 
-            document
-                .querySelectorAll(
-                    'input[name="periodes[]"]:checked'
-                )
-                .forEach(cb => {
-                    ids.push(cb.value);
-                });
+            document.querySelectorAll('input[name="periodes[]"]:checked')
+                .forEach(cb => ids.push(cb.value));
 
             return ids.join(',');
         }
 
-        document.querySelectorAll('.btn-voir')
-            .forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let periodes = getPeriodes();
-
-                    if (!periodes) {
-                        alert(
-                            'Choisissez au moins une période.'
-                        );
-
-                        return;
-                    }
-
-                    window.location.href =
-                        '/bulletin/voir-direct' +
-                        '?eleve_id=' +
-                        this.dataset.eleve +
-                        '&periodes=' +
-                        periodes;
-                });
-            });
-
-        document.querySelectorAll('.btn-download')
-            .forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let periodes = getPeriodes();
-
-                    if (!periodes) {
-                        alert(
-                            'Choisissez au moins une période.'
-                        );
-
-                        return;
-                    }
-
-                    window.location.href =
-                        '/bulletin/download-direct' +
-                        '?eleve_id=' +
-                        this.dataset.eleve +
-                        '&periodes=' +
-                        periodes;
-                });
-            });
-
-        document.querySelectorAll('.btn-print')
-            .forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let periodes = getPeriodes();
-
-                    if (!periodes) {
-                        alert(
-                            'Choisissez au moins une période.'
-                        );
-
-                        return;
-                    }
-
-                    window.open(
-                        '/bulletin/print-direct' +
-                        '?eleve_id=' +
-                        this.dataset.eleve +
-                        '&periodes=' +
-                        periodes,
-                        '_blank'
-                    );
-                });
-            });
-
-        document.querySelectorAll('.btn-download-png').forEach(btn => {
-
-            btn.addEventListener('click', function(e) {
-
-                e.preventDefault();
-
+        document.querySelectorAll('.btn-voir').forEach(btn => {
+            btn.addEventListener('click', function() {
                 let periodes = getPeriodes();
 
                 if (!periodes) {
-                    alert('Choisissez au moins une période');
+                    alert('Choisissez au moins une période.');
                     return;
                 }
 
                 window.location.href =
-                    '/bulletin/download-direct-png' +
-                    '?eleve_id=' +
+                    '/bulletin/voir-direct?eleve_id=' +
                     this.dataset.eleve +
-                    '&periodes=' +
-                    periodes;
-
+                    '&periodes=' + encodeURIComponent(periodes);
             });
-
         });
 
+        document.querySelectorAll('.btn-print').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let periodes = getPeriodes();
 
-        document.querySelectorAll('.btn-download-pdf').forEach(btn => {
+                if (!periodes) {
+                    alert('Choisissez au moins une période.');
+                    return;
+                }
 
+                window.open(
+                    '/bulletin/print-direct?eleve_id=' +
+                    this.dataset.eleve +
+                    '&periodes=' + encodeURIComponent(periodes),
+                    '_blank'
+                );
+            });
+        });
+
+        document.querySelectorAll('.btn-download-png').forEach(btn => {
             btn.addEventListener('click', function(e) {
-
                 e.preventDefault();
 
                 let periodes = getPeriodes();
 
                 if (!periodes) {
-                    alert('Choisissez au moins une période');
+                    alert('Choisissez au moins une période.');
                     return;
                 }
 
                 window.location.href =
-                    '/bulletin/download-direct-pdf' +
-                    '?eleve_id=' +
+                    '/bulletin/download-direct-png?eleve_id=' +
                     this.dataset.eleve +
-                    '&periodes=' +
-                    periodes;
-
+                    '&periodes=' + encodeURIComponent(periodes);
             });
+        });
 
+        document.querySelectorAll('.btn-download-pdf').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                let periodes = getPeriodes();
+
+                if (!periodes) {
+                    alert('Choisissez au moins une période.');
+                    return;
+                }
+
+                window.location.href =
+                    '/bulletin/download-direct-pdf?eleve_id=' +
+                    this.dataset.eleve +
+                    '&periodes=' + encodeURIComponent(periodes);
+            });
         });
     </script>
 @endsection

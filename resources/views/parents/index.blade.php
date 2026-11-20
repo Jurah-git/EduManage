@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $user = auth()->user();
+
+        $peutVoir = $user->aPermission('parents.voir');
+        $peutCreer = $user->aPermission('parents.creer');
+        $peutModifier = $user->aPermission('parents.modifier');
+        $peutSupprimer = $user->aPermission('parents.supprimer');
+
+        $afficherActions = $peutVoir || $peutModifier || $peutSupprimer;
+    @endphp
     <div class="container-fluid px-3 px-md-4 py-4 parents-page">
 
         {{-- En-tête --}}
@@ -15,10 +25,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('parents.create') }}" class="btn btn-primary px-4">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Ajouter un parent
-            </a>
+            @if ($peutCreer)
+                <a href="{{ route('parents.create') }}" class="btn btn-primary px-4">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    Ajouter un parent
+                </a>
+            @endif
         </div>
 
         {{-- Message de confirmation --}}
@@ -98,29 +110,41 @@
                                 </td>
 
                                 <td>
-                                    <div class="d-flex justify-content-center gap-1">
-                                        <a href="{{ route('parents.show', $parent) }}"
-                                            class="btn btn-sm btn-light action-btn" title="Consulter"
-                                            aria-label="Consulter">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
+                                    @if ($afficherActions)
+                                        <div class="d-flex justify-content-center gap-1">
 
-                                        <a href="{{ route('parents.edit', $parent) }}"
-                                            class="btn btn-sm btn-light action-btn" title="Modifier" aria-label="Modifier">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                            @if ($peutVoir)
+                                                <a href="{{ route('parents.show', $parent) }}"
+                                                    class="btn btn-sm btn-light action-btn" title="Consulter"
+                                                    aria-label="Consulter">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            @endif
 
-                                        <form action="{{ route('parents.destroy', $parent) }}" method="POST"
-                                            onsubmit="return confirm('Voulez-vous vraiment supprimer cette fiche parent ?');">
-                                            @csrf
-                                            @method('DELETE')
+                                            @if ($peutModifier)
+                                                <a href="{{ route('parents.edit', $parent) }}"
+                                                    class="btn btn-sm btn-light action-btn" title="Modifier"
+                                                    aria-label="Modifier">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            @endif
 
-                                            <button type="submit" class="btn btn-sm btn-light text-danger action-btn"
-                                                title="Supprimer" aria-label="Supprimer">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                            @if ($peutSupprimer)
+                                                <form action="{{ route('parents.destroy', $parent) }}" method="POST"
+                                                    onsubmit="return confirm('Voulez-vous vraiment supprimer cette fiche parent ?');">
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-light text-danger action-btn"
+                                                        title="Supprimer" aria-label="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -131,10 +155,12 @@
                                     <p class="text-secondary mb-3">
                                         Commencez par ajouter la première fiche parent.
                                     </p>
-                                    <a href="{{ route('parents.create') }}" class="btn btn-primary">
-                                        <i class="bi bi-person-plus me-2"></i>
-                                        Ajouter un parent
-                                    </a>
+                                    @if ($peutCreer)
+                                        <a href="{{ route('parents.create') }}" class="btn btn-primary">
+                                            <i class="bi bi-person-plus me-2"></i>
+                                            Ajouter un parent
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse

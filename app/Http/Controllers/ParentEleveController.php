@@ -10,6 +10,11 @@ class ParentEleveController extends Controller
 {
     public function index()
     {
+        $this->verifierPermission(
+            'parents.voir',
+            'Vous n’avez pas la permission de consulter les parents.'
+        );
+
         $parents = ParentEleve::withCount('eleves')
             ->orderBy('nom')
             ->orderBy('prenom')
@@ -20,6 +25,11 @@ class ParentEleveController extends Controller
 
     public function create()
     {
+        $this->verifierPermission(
+            'parents.creer',
+            'Vous n’avez pas la permission d’ajouter un parent.'
+        );
+
         $eleves = Eleve::orderBy('nom')
             ->orderBy('prenom')
             ->get();
@@ -51,6 +61,10 @@ class ParentEleveController extends Controller
             'eleves.*.responsable_legal' => ['nullable', 'boolean'],
             'eleves.*.contact_principal' => ['nullable', 'boolean'],
         ]);
+        $this->verifierPermission(
+            'parents.creer',
+            'Vous n’avez pas la permission d’enregistrer un parent.'
+        );
 
         $parent = ParentEleve::create([
             'nom'                  => $validated['nom'],
@@ -71,6 +85,11 @@ class ParentEleveController extends Controller
 
     public function show(ParentEleve $parent)
     {
+        $this->verifierPermission(
+            'parents.voir',
+            'Vous n’avez pas la permission de consulter cette fiche parent.'
+        );
+
         $parent->load('eleves');
 
         return view('parents.show', compact('parent'));
@@ -78,6 +97,11 @@ class ParentEleveController extends Controller
 
     public function edit(ParentEleve $parent)
     {
+        $this->verifierPermission(
+            'parents.modifier',
+            'Vous n’avez pas la permission de modifier un parent.'
+        );
+
         $parent->load('eleves');
 
         $eleves = Eleve::orderBy('nom')
@@ -89,6 +113,10 @@ class ParentEleveController extends Controller
 
     public function update(Request $request, ParentEleve $parent)
     {
+        $this->verifierPermission(
+            'parents.modifier',
+            'Vous n’avez pas la permission de modifier un parent.'
+        );
         $validated = $request->validate([
             'nom'                        => ['required', 'string', 'max:255'],
             'prenom'                     => ['required', 'string', 'max:255'],
@@ -131,6 +159,10 @@ class ParentEleveController extends Controller
 
     public function destroy(ParentEleve $parent)
     {
+        $this->verifierPermission(
+            'parents.supprimer',
+            'Vous n’avez pas la permission de supprimer un parent.'
+        );
         // Supprime la fiche parent et ses associations,
         // sans supprimer les élèves ni leur fiche.
         $parent->delete();
@@ -157,5 +189,16 @@ class ParentEleveController extends Controller
         }
 
         $parent->eleves()->sync($associations);
+    }
+
+    private function verifierPermission(
+        string $permission,
+        string $message
+    ): void {
+        $user = auth()->user();
+
+        if (! $user || ! $user->aPermission($permission)) {
+            abort(403, $message);
+        }
     }
 }

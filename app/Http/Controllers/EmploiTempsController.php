@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 use App\Models\AnneeScolaire;
 use App\Models\Classe;
 use App\Models\EmploiTemps;
+use App\Models\Enseignant;
+use App\Models\Matiere;
+use App\Models\Salle;
 use Illuminate\Http\Request;
 
 class EmploiTempsController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | LISTE DES EMPLOIS DU TEMPS
+    |--------------------------------------------------------------------------
+    */
     public function index(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.voir'), 403);
+
         $query = EmploiTemps::with(['classe', 'anneeScolaire'])
             ->withCount('creneaux');
 
@@ -18,10 +28,7 @@ class EmploiTempsController extends Controller
         }
 
         if ($request->filled('annee_scolaire_id')) {
-            $query->where(
-                'annee_scolaire_id',
-                $request->annee_scolaire_id
-            );
+            $query->where('annee_scolaire_id', $request->annee_scolaire_id);
         }
 
         if ($request->filled('statut')) {
@@ -40,8 +47,15 @@ class EmploiTempsController extends Controller
         ));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE DE CRÉATION
+    |--------------------------------------------------------------------------
+    */
     public function create()
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.creer'), 403);
+
         $classes         = Classe::orderBy('id')->get();
         $anneesScolaires = AnneeScolaire::orderByDesc('id')->get();
 
@@ -51,8 +65,15 @@ class EmploiTempsController extends Controller
         ));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENREGISTRER UN EMPLOI DU TEMPS
+    |--------------------------------------------------------------------------
+    */
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.creer'), 403);
+
         $validated = $request->validate([
             'classe_id'         => ['required', 'exists:classes,id'],
             'annee_scolaire_id' => [
@@ -74,8 +95,7 @@ class EmploiTempsController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'classe_id' =>
-                    'Un emploi du temps existe déjà pour cette classe et cette année scolaire.',
+                    'classe_id' => 'Un emploi du temps existe déjà pour cette classe et cette année scolaire.',
                 ]);
         }
 
@@ -89,45 +109,51 @@ class EmploiTempsController extends Controller
             ->with('success', 'Emploi du temps créé avec succès.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | VOIR LES DÉTAILS
+    |--------------------------------------------------------------------------
+    */
+    public function show(EmploiTemps $emploiTemps)
+    {
+        abort_unless(auth()->user()->aPermission('emploi_temps.show'), 403);
 
-public function show(EmploiTemps $emploiTemps)
-{
-    // Charger les relations de l'emploi du temps.
-    $emploiTemps->load([
-        'classe',
-        'anneeScolaire',
-        'creneaux.matiere',
-        'creneaux.enseignant',
-        'creneaux.salle',
-    ]);
+        $emploiTemps->load([
+            'classe',
+            'anneeScolaire',
+            'creneaux.matiere',
+            'creneaux.enseignant',
+            'creneaux.salle',
+        ]);
 
-    // Récupérer les matières associées à la classe.
-    $matieres = \App\Models\Matiere::whereHas(
-        'classes',
-        function ($query) use ($emploiTemps) {
-            $query->where('classes.id', $emploiTemps->classe_id);
-        }
-    )->orderBy('nom')->get();
+        $matieres = Matiere::whereHas(
+            'classes',
+            function ($query) use ($emploiTemps) {
+                $query->where('classes.id', $emploiTemps->classe_id);
+            }
+        )->orderBy('nom')->get();
 
-    // Récupérer les enseignants.
-    $enseignants = \App\Models\Enseignant::orderBy('nom')->get();
+        $enseignants = Enseignant::orderBy('nom')->get();
 
-    // Récupérer les salles.
-    $salles = \App\Models\Salle::orderBy('nom')->get();
+        $salles = Salle::orderBy('nom')->get();
 
-    // Envoyer toutes les données à la vue.
-    return view('emplois_temps.show', compact(
-        'emploiTemps',
-        'matieres',
-        'enseignants',
-        'salles'
-    ));
-}
+        return view('emplois_temps.show', compact(
+            'emploiTemps',
+            'matieres',
+            'enseignants',
+            'salles'
+        ));
+    }
 
-
-
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE DE MODIFICATION
+    |--------------------------------------------------------------------------
+    */
     public function edit(EmploiTemps $emploiTemps)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.modifier'), 403);
+
         if ($emploiTemps->statut === 'publie') {
             return redirect()
                 ->route('emplois-temps.show', $emploiTemps)
@@ -144,8 +170,15 @@ public function show(EmploiTemps $emploiTemps)
         ));
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | METTRE À JOUR
+    |--------------------------------------------------------------------------
+    */
     public function update(Request $request, EmploiTemps $emploiTemps)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.modifier'), 403);
+
         if ($emploiTemps->statut === 'publie') {
             return redirect()
                 ->route('emplois-temps.show', $emploiTemps)
@@ -173,8 +206,7 @@ public function show(EmploiTemps $emploiTemps)
             return back()
                 ->withInput()
                 ->withErrors([
-                    'classe_id' =>
-                    'Un emploi du temps existe déjà pour cette classe et cette année scolaire.',
+                    'classe_id' => 'Un emploi du temps existe déjà pour cette classe et cette année scolaire.',
                 ]);
         }
 
@@ -185,8 +217,15 @@ public function show(EmploiTemps $emploiTemps)
             ->with('success', 'Emploi du temps modifié avec succès.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SUPPRIMER
+    |--------------------------------------------------------------------------
+    */
     public function destroy(EmploiTemps $emploiTemps)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.supprimer'), 403);
+
         if ($emploiTemps->statut === 'publie') {
             return back()->with(
                 'error',
@@ -201,8 +240,15 @@ public function show(EmploiTemps $emploiTemps)
             ->with('success', 'Emploi du temps supprimé avec succès.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | PUBLIER
+    |--------------------------------------------------------------------------
+    */
     public function publier(EmploiTemps $emploiTemps)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.valider'), 403);
+
         if (! $emploiTemps->creneaux()->exists()) {
             return back()->with(
                 'error',
@@ -217,8 +263,15 @@ public function show(EmploiTemps $emploiTemps)
             ->with('success', 'Emploi du temps publié avec succès.');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | REMETTRE EN BROUILLON
+    |--------------------------------------------------------------------------
+    */
     public function brouillon(EmploiTemps $emploiTemps)
     {
+        abort_unless(auth()->user()->aPermission('emploi_temps.valider'), 403);
+
         $emploiTemps->update(['statut' => 'brouillon']);
 
         return redirect()

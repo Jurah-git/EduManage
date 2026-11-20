@@ -1,11 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Models\Matiere;
 use App\Models\Classe;
+use App\Models\Matiere;
+use Illuminate\Http\Request;
 
 class MatiereController extends Controller
 {
@@ -14,17 +12,15 @@ class MatiereController extends Controller
     | LISTE
     |--------------------------------------------------------------------------
     */
-
     public function index()
     {
+        abort_unless(auth()->user()->aPermission('matieres.voir'), 403);
+
         $matieres = Matiere::with('classes')
             ->latest()
             ->get();
 
-        return view(
-            'matieres.index',
-            compact('matieres')
-        );
+        return view('matieres.index', compact('matieres'));
     }
 
     /*
@@ -32,15 +28,13 @@ class MatiereController extends Controller
     | CREATE FORM
     |--------------------------------------------------------------------------
     */
-
     public function create()
     {
+        abort_unless(auth()->user()->aPermission('matieres.creer'), 403);
+
         $classes = Classe::all();
 
-        return view(
-            'matieres.create',
-            compact('classes')
-        );
+        return view('matieres.create', compact('classes'));
     }
 
     /*
@@ -48,62 +42,37 @@ class MatiereController extends Controller
     | STORE
     |--------------------------------------------------------------------------
     */
-
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->aPermission('matieres.creer'), 403);
+
         $request->validate([
-
             'nom' => 'required',
-
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | CODE AUTO
-        |--------------------------------------------------------------------------
-        */
-
+        // CODE AUTO
         $last = Matiere::latest()->first();
 
         $nextId = $last
             ? $last->id + 1
             : 1;
 
-        $code = 'MAT-' .
-            str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        $code = 'MAT-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE
-        |--------------------------------------------------------------------------
-        */
-
+        // CREATE
         $matiere = Matiere::create([
-
             'code' => $code,
-            'nom' => $request->nom,
-
+            'nom'  => $request->nom,
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | RELATION CLASSES
-        |--------------------------------------------------------------------------
-        */
-
+        // RELATION CLASSES
         if ($request->classes) {
-
-            $matiere->classes()->attach(
-                $request->classes
-            );
+            $matiere->classes()->attach($request->classes);
         }
 
         return redirect()
             ->route('matieres.index')
-            ->with(
-                'success',
-                'Matière ajoutée avec succès'
-            );
+            ->with('success', 'Matière ajoutée avec succès');
     }
 
     /*
@@ -111,18 +80,13 @@ class MatiereController extends Controller
     | EDIT
     |--------------------------------------------------------------------------
     */
-
     public function edit(Matiere $matiere)
     {
+        abort_unless(auth()->user()->aPermission('matieres.modifier'), 403);
+
         $classes = Classe::all();
 
-        return view(
-            'matieres.edit',
-            compact(
-                'matiere',
-                'classes'
-            )
-        );
+        return view('matieres.edit', compact('matiere', 'classes'));
     }
 
     /*
@@ -130,39 +94,24 @@ class MatiereController extends Controller
     | UPDATE
     |--------------------------------------------------------------------------
     */
+    public function update(Request $request, Matiere $matiere)
+    {
+        abort_unless(auth()->user()->aPermission('matieres.modifier'), 403);
 
-    public function update(
-        Request $request,
-        Matiere $matiere
-    ) {
         $request->validate([
-
             'nom' => 'required',
-
         ]);
 
         $matiere->update([
-
             'nom' => $request->nom,
-
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | UPDATE RELATION CLASSES
-        |--------------------------------------------------------------------------
-        */
-
-        $matiere->classes()->sync(
-            $request->classes ?? []
-        );
+        // UPDATE RELATION CLASSES
+        $matiere->classes()->sync($request->classes ?? []);
 
         return redirect()
             ->route('matieres.index')
-            ->with(
-                'success',
-                'Matière modifiée'
-            );
+            ->with('success', 'Matière modifiée');
     }
 
     /*
@@ -170,16 +119,14 @@ class MatiereController extends Controller
     | DELETE
     |--------------------------------------------------------------------------
     */
-
     public function destroy(Matiere $matiere)
     {
+        abort_unless(auth()->user()->aPermission('matieres.supprimer'), 403);
+
         $matiere->classes()->detach();
 
         $matiere->delete();
 
-        return back()->with(
-            'success',
-            'Matière supprimée'
-        );
+        return back()->with('success', 'Matière supprimée');
     }
 }
