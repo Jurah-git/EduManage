@@ -97,7 +97,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/users/store', [ConfigController::class, 'usersStore'])
             ->name('config.users.store');
 
-
         Route::get('/users/{user}/edit', [ConfigController::class, 'usersEdit'])
             ->name('config.users.edit');
 
@@ -106,6 +105,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::delete('/users/{user}', [ConfigController::class, 'usersDelete'])
             ->name('config.users.delete');
+            
+        Route::get('/users/{user}/show', [ConfigController::class, 'usersShow'])
+            ->name('config.users.show');
+
     });
 
     /*
