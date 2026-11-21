@@ -12,16 +12,28 @@ class MatiereController extends Controller
     | LISTE
     |--------------------------------------------------------------------------
     */
-    public function index()
-    {
-        abort_unless(auth()->user()->aPermission('matieres.voir'), 403);
+    
+public function index(Request $request)
+{
+    abort_unless(
+        auth()->user()->aPermission('matieres.voir'),
+        403
+    );
 
-        $matieres = Matiere::with('classes')
-            ->latest()
-            ->get();
+    $perPage = (int) $request->input('per_page', 10);
 
-        return view('matieres.index', compact('matieres'));
+    if (!in_array($perPage, [10, 15, 25, 50])) {
+        $perPage = 10;
     }
+
+    $matieres = Matiere::with('classes')
+        ->latest()
+        ->paginate($perPage)
+        ->withQueryString();
+
+    return view('matieres.index', compact('matieres', 'perPage'));
+}
+
 
     /*
     |--------------------------------------------------------------------------

@@ -122,6 +122,12 @@
 
                                         <div class="d-flex justify-content-center align-items-center gap-2">
 
+                                            {{-- VOIR --}}
+                                            <a href="{{ route('config.users.show', $user) }}"
+                                                class="btn btn-info btn-sm text-white" title="Voir les détails">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
                                             {{-- MODIFIER --}}
                                             <a href="{{ route('config.users.edit', $user) }}"
                                                 class="btn btn-warning btn-sm" title="Modifier">
