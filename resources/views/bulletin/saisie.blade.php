@@ -1,72 +1,265 @@
-```blade
 @extends('layouts.app')
 
 @section('content')
-    <h3>📝 Saisie des notes</h3>
+    @php
+        $classesFiltre = collect($eleves)->map(fn($e) => $e->classe->nom ?? null)->filter()->unique()->sort()->values();
+    @endphp
 
-    <div id="liste-eleves">
+    <style>
+        .notes-page {
+            background-color: #f8fafc;
+            min-height: calc(100vh - 60px);
+        }
 
-        <table class="table table-bordered text-center">
+        .card-modern {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+            background: #ffffff;
+        }
 
-            <thead>
+        .avatar-initials {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
-                <tr>
-                    <th>Nom</th>
-                    <th>Classe</th>
-                    <th>Action</th>
-                </tr>
+        .table-modern thead th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 16px;
+        }
 
-            </thead>
+        .table-modern tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
 
-            <tbody>
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
 
-                @foreach ($eleves as $eleve)
-                    <tr>
+        .badge-classe {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+        }
 
-                        <td>
-                            {{ $eleve->nom }}
-                            {{ $eleve->prenom }}
-                        </td>
+        .filter-control {
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
 
-                        <td>
-                            {{ $eleve->classe->nom }}
-                        </td>
+        .btn-action {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 6px 14px;
+            font-size: 0.84rem;
+            transition: transform 0.1s ease;
+        }
 
-                        <td>
+        .btn-action:active {
+            transform: scale(0.97);
+        }
 
-                            <button class="btn btn-primary" onclick="loadEleve({{ $eleve->id }})">
+        /* =====================================================
+               POPUP ENREGISTREMENT
+            ====================================================== */
+        .popup-save {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
 
-                                Saisir
+        .popup-box {
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            min-width: 380px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
 
-                            </button>
+        .popup-erreur {
+            border: 2px solid red !important;
+        }
 
-                        </td>
+        .erreur-periode {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
 
-                    </tr>
-                @endforeach
+    <div class="notes-page py-4">
+        <div class="container-fluid px-4">
 
-            </tbody>
+            {{-- EN-TÊTE DE PAGE --}}
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">
+                        📝 Saisie des notes
+                    </h3>
+                    <p class="text-muted small mb-0">
+                        Sélectionnez un élève pour saisir ou consulter ses notes journalières et de composition.
+                    </p>
+                </div>
+                <div>
+                    <span class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-sm">
+                        Affichés : <strong id="compteurEleves">{{ count($eleves) }}</strong> / {{ count($eleves) }} élève(s)
+                    </span>
+                </div>
+            </div>
 
-        </table>
+            <div id="liste-eleves">
+                <div class="card card-modern">
+                    <div class="card-header bg-white border-bottom py-3 px-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+                            <span class="fw-bold text-dark">
+                                🎓 Liste des élèves
+                            </span>
 
+                            {{-- RECHERCHE, FILTRE ET TRI --}}
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <input type="text" id="searchEleve"
+                                    class="form-control form-control-sm filter-control px-3" style="min-width: 210px;"
+                                    placeholder="🔍 Nom, prénom...">
+
+                                <select id="filterClasse" class="form-select form-select-sm filter-control"
+                                    style="width: auto;">
+                                    <option value="">Toutes les classes</option>
+                                    @foreach ($classesFiltre as $nomClasse)
+                                        <option value="{{ mb_strtolower($nomClasse) }}">{{ $nomClasse }}</option>
+                                    @endforeach
+                                    <option value="__non_affecte__">Non affecté</option>
+                                </select>
+
+                                <select id="sortEleves" class="form-select form-select-sm filter-control"
+                                    style="width: auto;">
+                                    <option value="az">Ordre : A → Z</option>
+                                    <option value="za">Ordre : Z → A</option>
+                                    <option value="classe_az">Classe : A → Z</option>
+                                </select>
+
+                                <button type="button" id="btnResetFiltres"
+                                    class="btn btn-light btn-sm border filter-control text-secondary"
+                                    title="Réinitialiser les filtres">
+                                    ↺ Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-modern text-center mb-0" id="tableEleves">
+                            <thead>
+                                <tr>
+                                    <th class="text-start">Nom</th>
+                                    <th>Classe</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @forelse ($eleves as $eleve)
+                                    @php
+                                        $initiales = strtoupper(
+                                            mb_substr($eleve->nom, 0, 1) . mb_substr($eleve->prenom, 0, 1),
+                                        );
+                                        $nomComplet = trim($eleve->nom . ' ' . $eleve->prenom);
+                                        $classeNom = $eleve->classe->nom ?? 'zzz_non_affecte';
+                                        $classeSlug = $eleve->classe
+                                            ? mb_strtolower($eleve->classe->nom)
+                                            : '__non_affecte__';
+                                    @endphp
+
+                                    <tr class="eleve-row" data-nom="{{ mb_strtolower($nomComplet) }}"
+                                        data-classe="{{ $classeSlug }}" data-classe-tri="{{ mb_strtolower($classeNom) }}">
+                                        <td class="text-start">
+                                            <div class="d-flex align-items-center justify-content-start gap-3">
+                                                <div class="avatar-initials">
+                                                    {{ $initiales }}
+                                                </div>
+                                                <div class="fw-semibold text-dark">
+                                                    {{ $eleve->nom }}
+                                                    {{ $eleve->prenom }}
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            @if ($eleve->classe)
+                                                <span class="badge-classe">{{ $eleve->classe->nom }}</span>
+                                            @else
+                                                <span class="badge bg-light text-secondary border">Non affecté</span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-sm btn-action"
+                                                onclick="loadEleve({{ $eleve->id }})">
+                                                ✏️ Saisir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted">
+                                            Aucun élève trouvé.
+                                        </td>
+                                    </tr>
+                                @endforelse
+
+                                <tr id="aucunResultatFiltre" style="display:none;">
+                                    <td colspan="3" class="text-center py-5 text-muted">
+                                        Aucun élève ne correspond aux filtres sélectionnés.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =====================================================
+                         ZONE FORMULAIRE ELEVE
+                    ====================================================== -->
+            <div id="zone"></div>
+
+        </div>
     </div>
 
-
     <!-- =====================================================
-             ZONE FORMULAIRE ELEVE
-        ====================================================== -->
-
-    <div id="zone"></div>
-
-
-    <!-- =====================================================
-             POPUP ENREGISTREMENT
-        ====================================================== -->
-
+                 POPUP ENREGISTREMENT
+            ====================================================== -->
     <div id="popup-save" class="popup-save">
-
         <div class="popup-box">
-
             <h5>
                 ✅ Enregistrement réussi
             </h5>
@@ -74,77 +267,93 @@
             <p id="popup-text"></p>
 
             <button onclick="closePopup()" class="btn btn-success">
-
                 OK
-
             </button>
-
         </div>
-
     </div>
 
-
-    <style>
-        .popup-save {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background: rgba(0, 0, 0, .4);
-
-            display: none;
-
-            justify-content: center;
-
-            align-items: center;
-
-            z-index: 9999;
-
-        }
-
-
-        .popup-box {
-
-            background: white;
-
-            padding: 30px;
-
-            border-radius: 12px;
-
-            min-width: 400px;
-
-            text-align: center;
-
-            box-shadow: 0 0 20px rgba(0, 0, 0, .2);
-
-        }
-
-
-        .popup-erreur {
-
-            border: 2px solid red !important;
-
-        }
-
-
-        .erreur-periode {
-
-            color: red;
-
-            font-size: 12px;
-
-            margin-top: 5px;
-
-        }
-    </style>
-
-
     <script>
+        // =====================================================
+        // FILTRAGE ET TRI DE LA LISTE DES ELEVES
+        // =====================================================
+
+        function appliquerFiltresEtTri() {
+            const tbody = document.querySelector('#tableEleves tbody');
+            if (!tbody) return;
+
+            const rows = Array.from(tbody.querySelectorAll('tr.eleve-row'));
+            const terme = (document.getElementById('searchEleve')?.value || '').toLowerCase().trim();
+            const classeChoisie = document.getElementById('filterClasse')?.value || '';
+            const ordre = document.getElementById('sortEleves')?.value || 'az';
+
+            rows.sort((a, b) => {
+                const nomA = a.dataset.nom || '';
+                const nomB = b.dataset.nom || '';
+                const classeA = a.dataset.classeTri || '';
+                const classeB = b.dataset.classeTri || '';
+
+                if (ordre === 'az') {
+                    return nomA.localeCompare(nomB, 'fr', {
+                        sensitivity: 'base'
+                    });
+                }
+                if (ordre === 'za') {
+                    return nomB.localeCompare(nomA, 'fr', {
+                        sensitivity: 'base'
+                    });
+                }
+                if (ordre === 'classe_az') {
+                    if (classeA === classeB) return nomA.localeCompare(nomB, 'fr', {
+                        sensitivity: 'base'
+                    });
+                    return classeA.localeCompare(classeB, 'fr', {
+                        sensitivity: 'base'
+                    });
+                }
+                return 0;
+            });
+
+            let visibles = 0;
+            const emptyRow = document.getElementById('aucunResultatFiltre');
+
+            rows.forEach(row => {
+                tbody.appendChild(row);
+
+                const nom = row.dataset.nom || '';
+                const classe = row.dataset.classe || '';
+
+                const matchNom = !terme || nom.includes(terme) || classe.includes(terme);
+                const matchClasse = !classeChoisie || classe === classeChoisie;
+
+                const afficher = matchNom && matchClasse;
+                row.style.display = afficher ? '' : 'none';
+                if (afficher) visibles++;
+            });
+
+            if (emptyRow) {
+                emptyRow.style.display = visibles === 0 ? '' : 'none';
+            }
+
+            const compteur = document.getElementById('compteurEleves');
+            if (compteur) {
+                compteur.textContent = visibles;
+            }
+        }
+
+        document.getElementById('searchEleve')?.addEventListener('input', appliquerFiltresEtTri);
+        document.getElementById('filterClasse')?.addEventListener('change', appliquerFiltresEtTri);
+        document.getElementById('sortEleves')?.addEventListener('change', appliquerFiltresEtTri);
+
+        document.getElementById('btnResetFiltres')?.addEventListener('click', function() {
+            document.getElementById('searchEleve').value = '';
+            document.getElementById('filterClasse').value = '';
+            document.getElementById('sortEleves').value = 'az';
+            appliquerFiltresEtTri();
+        });
+
+        // Appliquer le tri A -> Z au chargement
+        appliquerFiltresEtTri();
+
         // =====================================================
         // CHARGER UN ELEVE
         // =====================================================
@@ -1053,4 +1262,3 @@
         }
     </script>
 @endsection
-```

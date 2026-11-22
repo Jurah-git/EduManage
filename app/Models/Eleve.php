@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Eleve extends Model
 {
@@ -29,6 +30,12 @@ class Eleve extends Model
         return $this->belongsTo(Classe::class);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION PARENTS
+    |--------------------------------------------------------------------------
+    */
+
     public function parents(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -43,11 +50,27 @@ class Eleve extends Model
                 'contact_principal',
             ])
             ->withTimestamps();
-
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION COMPTE UTILISATEUR
+    |--------------------------------------------------------------------------
+    */
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION INSCRIPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    public function inscriptions(): HasMany
+    {
+        return $this->hasMany(Inscription::class, 'eleve_id');
     }
 }
