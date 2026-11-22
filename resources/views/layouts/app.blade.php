@@ -686,8 +686,12 @@
                     <i class="bi bi-chevron-right menu-arrow"></i>
                 </a>
                 <div id="inscriptions" class="submenu">
-                    <a href="{{ route('eleves.create') }}">Nouvelle inscription</a>
-                    <a href="{{ route('eleves.index') }}">Liste des élèves inscrits</a>
+
+                    <a href="{{ route('inscriptions.index') }}">
+                        <i class="bi bi-list-ul"></i>
+                        Liste des inscriptions
+                    </a>
+
                 </div>
             @endif
 
@@ -994,7 +998,233 @@
             });
         });
     </script>
+    <!-- ======================================================
+     SÉLECTEUR DE THÈMES (SIDEBAR TOUJOURS SOMBRE)
+     Ajout non destructif — à placer juste avant </body>
+====================================================== -->
+    <style id="edumanage-themes-dark-sidebar">
+        /* Verrouillage de la sidebar toujours sombre */
+        html body .sidebar {
+            background: linear-gradient(165deg, #0b1933 0%, #061329 100%) !important;
+            color: #e8efff !important;
+            border-right: 1px solid rgba(125, 161, 220, 0.14) !important;
+        }
 
+        /* Sélecteur dans la topbar */
+        .theme-select-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 11px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+            color: #1e293b;
+            transition: all 0.2s ease;
+        }
+
+        .theme-select-wrap select {
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 600;
+            color: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* ==========================================
+       1. MODE SOMBRE COMPLET (Contenu + Topbar)
+    ========================================== */
+        html[data-app-theme="dark"] body,
+        html[data-app-theme="dark"] .content {
+            background: #090e1a !important;
+            color: #e2e8f0 !important;
+        }
+
+        html[data-app-theme="dark"] .topbar {
+            background: rgba(13, 21, 38, 0.95) !important;
+            border-bottom-color: #1e293b !important;
+        }
+
+        html[data-app-theme="dark"] .school-name,
+        html[data-app-theme="dark"] .topbar h4,
+        html[data-app-theme="dark"] .username {
+            color: #f8fafc !important;
+        }
+
+        html[data-app-theme="dark"] .school-meta,
+        html[data-app-theme="dark"] .topbar p {
+            color: #94a3b8 !important;
+        }
+
+        html[data-app-theme="dark"] .user-box,
+        html[data-app-theme="dark"] .theme-select-wrap {
+            background: #162036 !important;
+            border-color: #263554 !important;
+            color: #f1f5f9 !important;
+        }
+
+        html[data-app-theme="dark"] .theme-select-wrap select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        html[data-app-theme="dark"] .content>.p-4 .card,
+        html[data-app-theme="dark"] .content>.p-4 .modal-content {
+            background-color: #111827 !important;
+            color: #e2e8f0 !important;
+            border-color: #1e293b !important;
+        }
+
+        html[data-app-theme="dark"] .content>.p-4 .table {
+            color: #e2e8f0 !important;
+            border-color: #1e293b !important;
+        }
+
+        html[data-app-theme="dark"] .content>.p-4 .form-control,
+        html[data-app-theme="dark"] .content>.p-4 .form-select {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        /* ==========================================
+       2. ULTRA PRO (Glassmorphism & Royal Gold)
+    ========================================== */
+        html[data-app-theme="ultra-pro"] body,
+        html[data-app-theme="ultra-pro"] .content {
+            background: #eef3fa !important;
+            background-image: radial-gradient(circle at 15% 0%, rgba(37, 99, 235, 0.07), transparent 45%) !important;
+        }
+
+        html[data-app-theme="ultra-pro"] .topbar {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(14px);
+            border-bottom-color: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        html[data-app-theme="ultra-pro"] .user-box,
+        html[data-app-theme="ultra-pro"] .theme-select-wrap {
+            border-radius: 999px !important;
+            border-color: rgba(37, 99, 235, 0.18) !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        html[data-app-theme="ultra-pro"] .avatar {
+            border-color: #ffc928 !important;
+        }
+
+        html[data-app-theme="ultra-pro"] .content>.p-4 .card {
+            border-radius: 14px !important;
+            border-color: rgba(15, 23, 42, 0.07) !important;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05) !important;
+        }
+
+        /* ==========================================
+       3. ÉMERAUDE DOUX (Contenu apaisant)
+    ========================================== */
+        html[data-app-theme="emerald"] body,
+        html[data-app-theme="emerald"] .content {
+            background: #f0f7f4 !important;
+        }
+
+        html[data-app-theme="emerald"] .topbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom-color: #d1e7dd !important;
+        }
+
+        html[data-app-theme="emerald"] .sidebar-menu>a.active {
+            background: linear-gradient(100deg, #059669, #047857) !important;
+            box-shadow: inset 3px 0 0 #6ee7b7 !important;
+        }
+
+        /* ==========================================
+       4. CRÈME PRESTIGE (Chaud & Académique)
+    ========================================== */
+        html[data-app-theme="warm"] body,
+        html[data-app-theme="warm"] .content {
+            background: #faf7f2 !important;
+        }
+
+        html[data-app-theme="warm"] .topbar {
+            background: rgba(255, 253, 250, 0.96) !important;
+            border-bottom-color: #e7e0d5 !important;
+        }
+
+        html[data-app-theme="warm"] .sidebar-menu>a.active {
+            background: linear-gradient(100deg, #b45309, #92400e) !important;
+            box-shadow: inset 3px 0 0 #fde68a !important;
+        }
+    </style>
+
+    <script id="edumanage-themes-dark-sidebar-script">
+        (function() {
+            const KEY = 'edumanage_theme_choice';
+            const themes = [{
+                    id: 'default',
+                    label: '☀️ Clair Classique'
+                },
+                {
+                    id: 'dark',
+                    label: '🌙 Mode Sombre'
+                },
+                {
+                    id: 'ultra-pro',
+                    label: '💎 Ultra Pro'
+                },
+                {
+                    id: 'emerald',
+                    label: '🌿 Émeraude Doux'
+                },
+                {
+                    id: 'warm',
+                    label: '📜 Crème Prestige'
+                }
+            ];
+
+            function applyTheme(id) {
+                const valid = themes.some(t => t.id === id) ? id : 'default';
+                document.documentElement.setAttribute('data-app-theme', valid);
+                try {
+                    localStorage.setItem(KEY, valid);
+                } catch (e) {}
+                const sel = document.getElementById('edumanage-theme-select');
+                if (sel) sel.value = valid;
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const topbarRight = document.querySelector('.topbar .topbar-right');
+                if (!topbarRight) return;
+
+                const wrap = document.createElement('label');
+                wrap.className = 'theme-select-wrap';
+                wrap.innerHTML = '<i class="bi bi-palette2"></i>';
+
+                const select = document.createElement('select');
+                select.id = 'edumanage-theme-select';
+                select.setAttribute('aria-label', 'Sélectionner un thème');
+
+                themes.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = t.label;
+                    select.appendChild(opt);
+                });
+
+                select.addEventListener('change', e => applyTheme(e.target.value));
+                wrap.appendChild(select);
+                topbarRight.prepend(wrap);
+
+                let saved = 'default';
+                try {
+                    saved = localStorage.getItem(KEY) || 'default';
+                } catch (e) {}
+                applyTheme(saved);
+            });
+        })();
+    </script>
 </body>
 
 </html>

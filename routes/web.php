@@ -13,6 +13,7 @@ use App\Http\Controllers\EcoleSettingController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiTempsController;
 use App\Http\Controllers\EnseignantController;
+use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\ParentEleveController;
@@ -105,7 +106,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::delete('/users/{user}', [ConfigController::class, 'usersDelete'])
             ->name('config.users.delete');
-            
+
         Route::get('/users/{user}/show', [ConfigController::class, 'usersShow'])
             ->name('config.users.show');
 
@@ -173,6 +174,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('eleves', EleveController::class)
         ->parameters([
             'eleves' => 'eleve',
+        ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | INSCRIPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource('inscriptions', InscriptionController::class)
+        ->parameters([
+            'inscriptions' => 'inscription',
         ]);
 
     /*
