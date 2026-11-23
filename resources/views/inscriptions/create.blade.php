@@ -4,12 +4,21 @@
 
     <style>
         /* =========================================================
-                                                                   INSCRIPTION - FORMULAIRE PREMIUM
-                                                                ========================================================= */
+       INSCRIPTION — ULTRA PRO PREMIUM
+    ========================================================= */
 
         .ins-create {
             padding: 24px;
             color: #1e293b;
+            min-height: 100vh;
+            --ins-bg: #ffffff;
+            --ins-border: #e7edf4;
+            --ins-text: #1e293b;
+            --ins-muted: #94a3b8;
+            --ins-input-bg: #ffffff;
+            --ins-input-border: #dce4ed;
+            --ins-soft: #f8fafc;
+            --ins-hover: #f5f9ff;
         }
 
         .ins-create-header {
@@ -55,6 +64,7 @@
         }
 
         /* BANNER */
+
         .ins-create-banner {
             display: flex;
             align-items: center;
@@ -91,7 +101,8 @@
             margin: 0;
         }
 
-        /* ACTIVE YEAR */
+        /* ANNÉE SCOLAIRE */
+
         .ins-year-card {
             display: flex;
             align-items: center;
@@ -145,7 +156,8 @@
             font-weight: 800;
         }
 
-        /* FORM LAYOUT */
+        /* LAYOUT */
+
         .ins-create-layout {
             display: grid;
             grid-template-columns: minmax(0, 1fr) 300px;
@@ -159,7 +171,8 @@
             gap: 20px;
         }
 
-        /* SECTION CARD */
+        /* CARTES */
+
         .ins-create-card {
             background: #fff;
             border: 1px solid #e7edf4;
@@ -219,7 +232,8 @@
             padding: 22px;
         }
 
-        /* FIELDS */
+        /* CHAMPS */
+
         .ins-create-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -227,7 +241,7 @@
         }
 
         .ins-create-field.full {
-            grid-column: 1 / -1;
+            grid-column: 1/-1;
         }
 
         .ins-create-field label {
@@ -292,7 +306,8 @@
             margin-top: 6px;
         }
 
-        /* STUDENT SELECT */
+        /* NOTE */
+
         .ins-student-note {
             background: #f8fafc;
             border: 1px dashed #dbe4ee;
@@ -307,7 +322,8 @@
             line-height: 1.6;
         }
 
-        /* TYPE SELECTION */
+        /* TYPE AUTOMATIQUE */
+
         .ins-type-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -359,7 +375,8 @@
             font-weight: 500;
         }
 
-        /* SUMMARY SIDEBAR */
+        /* RÉCAPITULATIF */
+
         .ins-create-summary {
             position: sticky;
             top: 20px;
@@ -440,7 +457,8 @@
             color: #1e293b;
         }
 
-        /* ACTIONS */
+        /* BOUTONS */
+
         .ins-create-actions {
             display: flex;
             flex-direction: column;
@@ -467,6 +485,12 @@
             box-shadow: 0 7px 18px rgba(37, 99, 235, .22);
         }
 
+        .ins-submit-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .ins-cancel-btn {
             display: flex;
             justify-content: center;
@@ -486,58 +510,12 @@
             background: #f8fafc;
         }
 
-        /* VALIDATION ALERT */
         .ins-validation-alert {
             border-radius: 12px;
             margin-bottom: 20px;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 1100px) {
-            .ins-create-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .ins-create-summary {
-                position: static;
-            }
-        }
-
-        @media (max-width: 650px) {
-            .ins-create {
-                padding: 12px;
-            }
-
-            .ins-create-header h2 {
-                font-size: 22px;
-            }
-
-            .ins-create-banner {
-                padding: 17px;
-            }
-
-            .ins-create-card-header,
-            .ins-create-card-body {
-                padding: 16px;
-            }
-
-            .ins-create-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .ins-create-field.full {
-                grid-column: auto;
-            }
-
-            .ins-type-options {
-                grid-template-columns: 1fr;
-            }
-        }
-
-
-        /* =====================================
-                                               SÉLECTION PROFESSIONNELLE DES ÉLÈVES
-                                            ===================================== */
+        /* ÉLÈVE SÉLECTIONNÉ */
 
         .ins-selected-student {
             display: flex;
@@ -603,7 +581,7 @@
             background: #18558e;
         }
 
-        /* FENÊTRE MODALE */
+        /* MODALE */
 
         .ins-eleve-modal {
             border: 0;
@@ -705,24 +683,7 @@
             padding: 15px 22px;
         }
 
-        @media(max-width: 600px) {
-            .ins-selected-student {
-                align-items: flex-start;
-            }
-
-            .ins-change-student {
-                width: 100%;
-            }
-
-            .ins-eleve-modal .modal-body {
-                padding: 13px;
-            }
-        }
-
-
-        /* ==========================================
-                           TABLEAU ÉLÈVES - MENU DE SÉLECTION
-                        ========================================== */
+        /* TABLEAU DE SÉLECTION */
 
         #modalSelectionEleve .ins-eleve-table {
             width: 100%;
@@ -746,13 +707,11 @@
 
         #modalSelectionEleve .ins-eleve-row {
             cursor: pointer;
-            background: #ffffff;
+            background: #fff;
             outline: 2px solid transparent;
             outline-offset: -2px;
-            transition: background .2s ease,
-                outline-color .2s ease,
-                transform .2s ease,
-                box-shadow .2s ease;
+            transition: background .2s ease, outline-color .2s ease,
+                transform .2s ease, box-shadow .2s ease;
         }
 
         #modalSelectionEleve .ins-eleve-row td {
@@ -774,7 +733,6 @@
             border-radius: 0 10px 10px 0;
         }
 
-        /* Effet au passage du curseur */
         #modalSelectionEleve .ins-eleve-row:hover {
             background: #edf5ff;
             outline-color: #4389d8;
@@ -787,19 +745,17 @@
             color: #174d83;
         }
 
-        /* Effet clavier */
         #modalSelectionEleve .ins-eleve-row:focus {
             outline: 2px solid #2874b9;
             background: #edf5ff;
         }
 
-        /* Photos */
         #modalSelectionEleve .ins-modal-avatar {
             width: 44px;
             height: 44px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #ffffff;
+            border: 2px solid #fff;
             box-shadow: 0 2px 7px rgba(15, 23, 42, .12);
         }
 
@@ -813,13 +769,11 @@
             font-weight: 800;
         }
 
-        /* Texte des élèves */
         #modalSelectionEleve .ins-eleve-row strong {
             color: #1e293b;
             font-weight: 800;
         }
 
-        /* Barre de recherche */
         #modalSelectionEleve .ins-modal-search {
             border: 1px solid #dce5f0;
             background: #f8fafc;
@@ -832,8 +786,458 @@
             box-shadow: 0 0 0 3px rgba(67, 137, 216, .12);
         }
 
-        /* Adaptation mobile */
-        @media (max-width: 768px) {
+        /* =========================================================
+       MODE SOMBRE — ADAPTATION ULTRA PRO
+       Les autres thèmes ne sont pas modifiés.
+    ========================================================= */
+
+        html[data-app-theme="dark"] .ins-create {
+            color: #e2e8f0;
+            --ins-bg: #182338;
+            --ins-border: #2b3a52;
+            --ins-text: #e2e8f0;
+            --ins-muted: #94a3b8;
+            --ins-input-bg: #111c30;
+            --ins-input-border: #334155;
+            --ins-soft: #111c30;
+        }
+
+        html[data-app-theme="dark"] .ins-create-header h2 {
+            color: #f1f5f9;
+        }
+
+        html[data-app-theme="dark"] .ins-create-header p {
+            color: #94a3b8;
+        }
+
+        html[data-app-theme="dark"] .ins-back-btn {
+            background: #1b2940;
+            border-color: #34445e;
+            color: #cbd5e1 !important;
+        }
+
+        html[data-app-theme="dark"] .ins-back-btn:hover {
+            background: #253650;
+            border-color: #47617f;
+        }
+
+        /* Banner remains blue, slightly richer contrast */
+        html[data-app-theme="dark"] .ins-create-banner {
+            box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
+        }
+
+        /* Year card */
+        html[data-app-theme="dark"] .ins-year-card {
+            background: #182338;
+            border-color: #2b3a52;
+            box-shadow: 0 5px 16px rgba(0, 0, 0, .12);
+        }
+
+        html[data-app-theme="dark"] .ins-year-icon {
+            background: #203653;
+            color: #60a5fa;
+        }
+
+        html[data-app-theme="dark"] .ins-year-label small {
+            color: #8294ad;
+        }
+
+        html[data-app-theme="dark"] .ins-year-label strong {
+            color: #e5edf8;
+        }
+
+        html[data-app-theme="dark"] .ins-year-status {
+            background: #15372f;
+            color: #4ade80;
+        }
+
+        /* Main cards */
+        html[data-app-theme="dark"] .ins-create-card {
+            background: #182338;
+            border-color: #2b3a52;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .14);
+        }
+
+        html[data-app-theme="dark"] .ins-create-card-header {
+            border-bottom-color: #2b3a52;
+            background: #1b2940;
+        }
+
+        html[data-app-theme="dark"] .ins-create-card-header h5 {
+            color: #edf4ff;
+        }
+
+        html[data-app-theme="dark"] .ins-create-card-header p {
+            color: #8ea2bc;
+        }
+
+        html[data-app-theme="dark"] .ins-section-blue {
+            background: #203653;
+            color: #60a5fa;
+        }
+
+        html[data-app-theme="dark"] .ins-section-purple {
+            background: #30284b;
+            color: #c4b5fd;
+        }
+
+        html[data-app-theme="dark"] .ins-section-orange {
+            background: #493126;
+            color: #fdba74;
+        }
+
+        /* Form fields */
+        html[data-app-theme="dark"] .ins-create-field label {
+            color: #cbd5e1;
+        }
+
+        html[data-app-theme="dark"] .ins-create-input,
+        html[data-app-theme="dark"] .ins-create-select,
+        html[data-app-theme="dark"] .ins-create-textarea {
+            background: #111c30;
+            border-color: #33445e;
+            color: #e2e8f0;
+        }
+
+        html[data-app-theme="dark"] .ins-create-input::placeholder,
+        html[data-app-theme="dark"] .ins-create-textarea::placeholder {
+            color: #71839c;
+        }
+
+        html[data-app-theme="dark"] .ins-create-input:focus,
+        html[data-app-theme="dark"] .ins-create-select:focus,
+        html[data-app-theme="dark"] .ins-create-textarea:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, .12);
+        }
+
+        html[data-app-theme="dark"] .ins-create-input[readonly] {
+            background: #1c2b43;
+            color: #a9bdd6;
+        }
+
+        html[data-app-theme="dark"] .ins-create-select option {
+            background: #111c30;
+            color: #e2e8f0;
+        }
+
+        html[data-app-theme="dark"] .ins-field-help {
+            color: #8294ad;
+        }
+
+        html[data-app-theme="dark"] .ins-field-error {
+            color: #f87171;
+        }
+
+        /* Notes */
+        html[data-app-theme="dark"] .ins-student-note {
+            background: #1b2940;
+            border-color: #34445e;
+            color: #a7b7cc;
+        }
+
+        html[data-app-theme="dark"] .ins-student-note strong {
+            color: #dce8f8;
+        }
+
+        /* Selected student */
+        html[data-app-theme="dark"] .ins-selected-student {
+            background: #1b2b43;
+            border-color: #334b69;
+        }
+
+        html[data-app-theme="dark"] .ins-selected-avatar {
+            background: #254264;
+            color: #93c5fd;
+        }
+
+        html[data-app-theme="dark"] .ins-selected-info strong {
+            color: #e6eef9;
+        }
+
+        html[data-app-theme="dark"] .ins-selected-info span {
+            color: #95a9c3;
+        }
+
+        html[data-app-theme="dark"] .ins-change-student {
+            background: #2563a6;
+            color: #fff;
+        }
+
+        html[data-app-theme="dark"] .ins-change-student:hover {
+            background: #347dc2;
+        }
+
+        /* Type automatique */
+        html[data-app-theme="dark"] #type_inscription_auto {
+            background: #1b2940;
+            border: 1px solid #34445e;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        html[data-app-theme="dark"] #type_inscription_titre {
+            color: #e5edf8;
+        }
+
+        html[data-app-theme="dark"] #type_inscription_description {
+            color: #95a9c3;
+        }
+
+        /* Summary */
+        html[data-app-theme="dark"] .ins-summary-card {
+            background: #182338;
+            border-color: #2b3a52;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .14);
+        }
+
+        html[data-app-theme="dark"] .ins-summary-header {
+            background: #1b2940;
+            border-bottom-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-header h5 {
+            color: #edf4ff;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-header p {
+            color: #8ea2bc;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-row span {
+            color: #8ea2bc;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-row strong {
+            color: #dce6f4;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-divider {
+            border-top-color: #34445e;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-total {
+            background: #111c30;
+            border: 1px solid #2b3a52;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-total span {
+            color: #94a3b8;
+        }
+
+        html[data-app-theme="dark"] .ins-summary-total strong {
+            color: #f1f5f9;
+        }
+
+        /* Cancel */
+        html[data-app-theme="dark"] .ins-cancel-btn {
+            background: #1b2940;
+            border-color: #34445e;
+            color: #aebed2 !important;
+        }
+
+        html[data-app-theme="dark"] .ins-cancel-btn:hover {
+            background: #253650;
+        }
+
+        /* Alerts */
+        html[data-app-theme="dark"] .ins-validation-alert {
+            background: #3b202b;
+            border-color: #713343;
+            color: #fecdd3;
+        }
+
+        html[data-app-theme="dark"] .ins-create .alert-warning {
+            background: #3b3220;
+            border-color: #66502b;
+            color: #fcd38b;
+        }
+
+        html[data-app-theme="dark"] .ins-create .alert-danger {
+            background: #3b202b;
+            border-color: #713343;
+            color: #fecdd3;
+        }
+
+        /* Modal dark */
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-modal {
+            background: #182338;
+            border: 1px solid #2b3a52;
+            box-shadow: 0 20px 65px rgba(0, 0, 0, .45);
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-header {
+            border-bottom-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .modal-body {
+            background: #141f33;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-search {
+            background: #111c30;
+            border-color: #33445e;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-search span {
+            color: #94a3b8;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-search input {
+            color: #e2e8f0;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-search input::placeholder {
+            color: #71839c;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-table {
+            color: #cbd5e1;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-table thead th {
+            background: #202d43;
+            color: #9fb1c8;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row {
+            background: #182338;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row td {
+            background: #182338;
+            color: #cbd5e1;
+            border-top-color: #2b3a52;
+            border-bottom-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row td:first-child {
+            border-left-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row td:last-child {
+            border-right-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row strong {
+            color: #e5edf8;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row:hover {
+            background: #233651;
+            outline-color: #60a5fa;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, .15);
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row:hover td {
+            background: #233651;
+            color: #dbeafe;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-eleve-row:focus {
+            outline-color: #60a5fa;
+            background: #233651;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-avatar {
+            border-color: #34445e;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .ins-modal-initial {
+            background: linear-gradient(135deg, #254264, #315b83);
+            color: #bfdbfe;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .badge.bg-primary {
+            background: #254c79 !important;
+            color: #bfdbfe;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .badge.bg-dark {
+            background: #334155 !important;
+            color: #e2e8f0;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .badge.bg-secondary {
+            background: #3b4b63 !important;
+            color: #dbeafe;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .modal-footer {
+            background: #1b2940;
+            border-top-color: #2b3a52;
+        }
+
+        html[data-app-theme="dark"] #modalSelectionEleve .modal-footer .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        /* Close button */
+        html[data-app-theme="dark"] #modalSelectionEleve .btn-close {
+            opacity: .85;
+        }
+
+        /* Modal backdrop */
+        html[data-app-theme="dark"] .modal-backdrop.show {
+            opacity: .72;
+        }
+
+        /* Responsive */
+        @media (max-width:1100px) {
+            .ins-create-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .ins-create-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width:650px) {
+            .ins-create {
+                padding: 12px;
+            }
+
+            .ins-create-header h2 {
+                font-size: 22px;
+            }
+
+            .ins-create-banner {
+                padding: 17px;
+            }
+
+            .ins-create-card-header,
+            .ins-create-card-body {
+                padding: 16px;
+            }
+
+            .ins-create-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ins-create-field.full {
+                grid-column: auto;
+            }
+
+            .ins-type-options {
+                grid-template-columns: 1fr;
+            }
+
+            .ins-selected-student {
+                align-items: flex-start;
+            }
+
+            .ins-change-student {
+                width: 100%;
+            }
+
+            .ins-eleve-modal .modal-body {
+                padding: 13px;
+            }
+        }
+
+        @media (max-width:768px) {
             #modalSelectionEleve .ins-eleve-table {
                 min-width: 850px;
             }
@@ -848,88 +1252,59 @@
 
         {{-- HEADER --}}
         <div class="ins-create-header">
-
             <div>
                 <h2>🎓 Nouvelle inscription</h2>
-
-                <p>
-                    Création d'un dossier administratif et affectation scolaire d'un élève.
-                </p>
+                <p>Création d'un dossier administratif et affectation scolaire d'un élève.</p>
             </div>
 
             <a href="{{ route('inscriptions.index') }}" class="ins-back-btn">
                 ← Retour à la liste
             </a>
-
         </div>
 
         {{-- BANNER --}}
         <div class="ins-create-banner">
-
-            <div class="ins-create-banner-icon">
-                🎓
-            </div>
-
+            <div class="ins-create-banner-icon">🎓</div>
             <div>
                 <h4>Bienvenue dans le formulaire d'inscription</h4>
-
                 <p>
                     Sélectionnez un élève existant et renseignez les informations
                     de son inscription pour l'année scolaire.
                 </p>
             </div>
-
         </div>
 
         {{-- ANNÉE SCOLAIRE ACTIVE --}}
         <div class="ins-year-card">
-
             <div class="ins-year-label">
-
-                <div class="ins-year-icon">
-                    📅
-                </div>
-
+                <div class="ins-year-icon">📅</div>
                 <div>
                     <small>ANNÉE SCOLAIRE ACTIVE</small>
-
-                    <strong>
-                        {{ $anneeScolaire->nom ?? 'Aucune année scolaire active' }}
-                    </strong>
+                    <strong>{{ $anneeScolaire->nom ?? 'Aucune année scolaire active' }}</strong>
                 </div>
-
             </div>
 
             @if ($anneeScolaire)
-                <span class="ins-year-status">
-                    ● Année active
-                </span>
+                <span class="ins-year-status">● Année active</span>
             @else
-                <span class="badge bg-danger">
-                    Aucune année active
-                </span>
+                <span class="badge bg-danger">Aucune année active</span>
             @endif
-
         </div>
 
         {{-- ERREURS --}}
         @if ($errors->any())
             <div class="alert alert-danger ins-validation-alert">
-
                 <strong>⚠️ Vérifiez les informations du formulaire.</strong>
-
                 <ul class="mb-0 mt-2">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-
             </div>
         @endif
 
         {{-- FORMULAIRE --}}
         <form action="{{ route('inscriptions.store') }}" method="POST">
-
             @csrf
 
             <div class="ins-create-layout">
@@ -937,52 +1312,31 @@
                 {{-- COLONNE PRINCIPALE --}}
                 <div class="ins-create-main">
 
-                    {{-- =========================================
-                     1. ÉLÈVE
-                ========================================== --}}
-
+                    {{-- 1. ÉLÈVE --}}
                     <div class="ins-create-card">
-
                         <div class="ins-create-card-header">
-
-                            <div class="ins-create-section-icon ins-section-blue">
-                                👤
-                            </div>
-
+                            <div class="ins-create-section-icon ins-section-blue">👤</div>
                             <div>
                                 <h5>Identification de l'élève</h5>
                                 <p>Recherchez et sélectionnez l'élève à inscrire.</p>
                             </div>
-
                         </div>
 
                         <div class="ins-create-card-body">
-
-                            {{-- CHAMP CACHÉ POUR LE FORMULAIRE --}}
                             <input type="hidden" name="eleve_id" id="eleve_id" value="{{ old('eleve_id') }}">
 
-                            {{-- ÉLÈVE SÉLECTIONNÉ --}}
                             <div id="eleveSelectionne" class="ins-selected-student">
-
-                                <div class="ins-selected-avatar" id="eleveAvatar">
-                                    👨‍🎓
-                                </div>
+                                <div class="ins-selected-avatar" id="eleveAvatar">👨‍🎓</div>
 
                                 <div class="ins-selected-info">
-                                    <strong id="eleveNomAffiche">
-                                        Aucun élève sélectionné
-                                    </strong>
-
-                                    <span id="eleveMatriculeAffiche">
-                                        Veuillez choisir un élève dans la liste.
-                                    </span>
+                                    <strong id="eleveNomAffiche">Aucun élève sélectionné</strong>
+                                    <span id="eleveMatriculeAffiche">Veuillez choisir un élève dans la liste.</span>
                                 </div>
 
                                 <button type="button" class="ins-change-student" data-bs-toggle="modal"
                                     data-bs-target="#modalSelectionEleve">
                                     👥 Choisir un élève
                                 </button>
-
                             </div>
 
                             @error('eleve_id')
@@ -996,43 +1350,30 @@
                                     Elle ne crée pas de nouvelle fiche élève et ne modifie pas son matricule.
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
 
                     {{-- POPUP DE SÉLECTION DES ÉLÈVES --}}
                     <div class="modal fade" id="modalSelectionEleve" tabindex="-1" aria-hidden="true">
-
                         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-
                             <div class="modal-content ins-eleve-modal">
-
                                 <div class="modal-header ins-modal-header">
-
                                     <div>
                                         <h5 class="modal-title">🎓 Sélectionner un élève</h5>
                                         <p>Recherchez l'élève concerné par cette inscription.</p>
                                     </div>
-
                                     <button type="button" class="btn-close btn-close-white"
                                         data-bs-dismiss="modal"></button>
-
                                 </div>
 
                                 <div class="modal-body">
-
-                                    {{-- RECHERCHE --}}
                                     <div class="ins-modal-search">
                                         <span>🔍</span>
                                         <input type="text" id="rechercheEleveModal"
                                             placeholder="Rechercher par nom, prénom ou matricule...">
                                     </div>
 
-                                    {{-- TABLEAU DES ÉLÈVES --}}
                                     <div class="table-responsive">
-
-
                                         <table class="table align-middle ins-eleve-table">
                                             <thead>
                                                 <tr>
@@ -1047,7 +1388,6 @@
                                             </thead>
 
                                             <tbody id="listeElevesModal">
-
                                                 @foreach ($eleves as $eleve)
                                                     <tr class="ins-eleve-row" role="button" tabindex="0"
                                                         data-id="{{ $eleve->id }}" data-nom="{{ $eleve->nom }}"
@@ -1068,10 +1408,7 @@
                                                             @endif
                                                         </td>
 
-                                                        <td>
-                                                            <strong>{{ $eleve->nom }}</strong>
-                                                        </td>
-
+                                                        <td><strong>{{ $eleve->nom }}</strong></td>
                                                         <td>{{ $eleve->prenom }}</td>
 
                                                         <td>
@@ -1093,7 +1430,6 @@
                                                                 {{ $eleve->matricule }}
                                                             </span>
                                                         </td>
-
                                                     </tr>
                                                 @endforeach
 
@@ -1102,12 +1438,9 @@
                                                         Aucun élève correspondant à votre recherche.
                                                     </td>
                                                 </tr>
-
                                             </tbody>
                                         </table>
-
                                     </div>
-
                                 </div>
 
                                 <div class="modal-footer">
@@ -1115,103 +1448,68 @@
                                         {{ count($eleves) }} élève(s) disponible(s)
                                     </span>
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
 
-
-                    {{-- =========================================
-                     2. AFFECTATION SCOLAIRE
-                ========================================== --}}
+                    {{-- 2. AFFECTATION SCOLAIRE --}}
                     <div class="ins-create-card">
-
                         <div class="ins-create-card-header">
-
-                            <div class="ins-create-section-icon ins-section-purple">
-                                📚
-                            </div>
-
+                            <div class="ins-create-section-icon ins-section-purple">📚</div>
                             <div>
                                 <h5>Affectation scolaire</h5>
-
-                                <p>
-                                    Définissez la classe et les informations de l'inscription.
-                                </p>
+                                <p>Définissez la classe et les informations de l'inscription.</p>
                             </div>
-
                         </div>
 
                         <div class="ins-create-card-body">
-
                             <div class="ins-create-grid">
 
                                 {{-- ANNÉE SCOLAIRE --}}
                                 <div class="ins-create-field full">
-
-                                    <label>
-                                        Année scolaire <span class="ins-required">*</span>
-                                    </label>
+                                    <label>Année scolaire <span class="ins-required">*</span></label>
 
                                     @if ($anneeScolaire)
                                         <input type="hidden" name="annee_scolaire_id"
                                             value="{{ old('annee_scolaire_id', $anneeScolaire->id) }}">
-
                                         <input type="text" class="ins-create-input" value="{{ $anneeScolaire->nom }}"
                                             readonly>
                                     @else
                                         <input type="hidden" name="annee_scolaire_id" value="">
-
                                         <div class="alert alert-warning mb-0">
-                                            Vous devez activer une année scolaire
-                                            avant de créer une inscription.
+                                            Vous devez activer une année scolaire avant de créer une inscription.
                                         </div>
                                     @endif
 
                                     @error('annee_scolaire_id')
-                                        <div class="ins-field-error">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="ins-field-error">{{ $message }}</div>
                                     @enderror
-
                                 </div>
 
                                 {{-- CLASSE --}}
                                 <div class="ins-create-field">
-
                                     <label for="classe_id">
                                         Classe attribuée <span class="ins-required">*</span>
                                     </label>
 
                                     <select name="classe_id" id="classe_id"
                                         class="ins-create-select @error('classe_id') is-invalid @enderror" required>
-
-                                        <option value="">
-                                            -- Choisir une classe --
-                                        </option>
-
+                                        <option value="">-- Choisir une classe --</option>
                                         @foreach ($classes as $classe)
                                             <option value="{{ $classe->id }}"
                                                 {{ old('classe_id') == $classe->id ? 'selected' : '' }}>
                                                 {{ $classe->nom }}
                                             </option>
                                         @endforeach
-
                                     </select>
 
                                     @error('classe_id')
-                                        <div class="ins-field-error">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="ins-field-error">{{ $message }}</div>
                                     @enderror
-
                                 </div>
 
                                 {{-- DATE --}}
                                 <div class="ins-create-field">
-
                                     <label for="date_inscription">
                                         Date d'inscription <span class="ins-required">*</span>
                                     </label>
@@ -1221,82 +1519,47 @@
                                         value="{{ old('date_inscription', date('Y-m-d')) }}" required>
 
                                     @error('date_inscription')
-                                        <div class="ins-field-error">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="ins-field-error">{{ $message }}</div>
                                     @enderror
-
                                 </div>
 
-                                {{-- TYPE D'INSCRIPTION AUTOMATIQUE --}}
+                                {{-- TYPE AUTOMATIQUE --}}
                                 <div class="ins-create-field full">
-
-                                    <label>
-                                        Type d'inscription
-                                    </label>
+                                    <label>Type d'inscription</label>
 
                                     <div class="ins-type-options">
-
                                         <div class="ins-type-option" id="type_inscription_auto">
-
                                             <div class="ins-type-badge">
-
-                                                <strong id="type_inscription_titre">
-                                                    👤 Sélectionnez un élève
-                                                </strong>
-
+                                                <strong id="type_inscription_titre">👤 Sélectionnez un élève</strong>
                                                 <span id="type_inscription_description">
                                                     Le type d'inscription sera déterminé automatiquement.
                                                 </span>
-
                                             </div>
-
                                         </div>
-
                                     </div>
 
-                                    {{-- Champ caché : Laravel déterminera le type côté serveur --}}
                                     <input type="hidden" name="type" value="">
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
 
-                    {{-- =========================================
-                     3. FRAIS ET OBSERVATIONS
-                ========================================== --}}
+                    {{-- 3. FRAIS ET OBSERVATIONS --}}
                     <div class="ins-create-card">
-
                         <div class="ins-create-card-header">
-
-                            <div class="ins-create-section-icon ins-section-orange">
-                                💰
-                            </div>
-
+                            <div class="ins-create-section-icon ins-section-orange">💰</div>
                             <div>
                                 <h5>Informations financières et administratives</h5>
-
-                                <p>
-                                    Renseignez les frais et les remarques éventuelles.
-                                </p>
+                                <p>Renseignez les frais et les remarques éventuelles.</p>
                             </div>
-
                         </div>
 
                         <div class="ins-create-card-body">
-
                             <div class="ins-create-grid">
 
                                 {{-- FRAIS --}}
                                 <div class="ins-create-field full">
-
-                                    <label for="frais_inscription">
-                                        Frais d'inscription (Ar)
-                                    </label>
+                                    <label for="frais_inscription">Frais d'inscription (Ar)</label>
 
                                     <input type="number" name="frais_inscription" id="frais_inscription"
                                         class="ins-create-input @error('frais_inscription') is-invalid @enderror"
@@ -1308,100 +1571,66 @@
                                     </div>
 
                                     @error('frais_inscription')
-                                        <div class="ins-field-error">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="ins-field-error">{{ $message }}</div>
                                     @enderror
-
                                 </div>
 
                                 {{-- OBSERVATIONS --}}
                                 <div class="ins-create-field full">
-
-                                    <label for="observations">
-                                        Observations administratives
-                                    </label>
+                                    <label for="observations">Observations administratives</label>
 
                                     <textarea name="observations" id="observations"
                                         class="ins-create-textarea @error('observations') is-invalid @enderror" rows="4"
                                         placeholder="Informations complémentaires, remarques administratives...">{{ old('observations') }}</textarea>
 
                                     @error('observations')
-                                        <div class="ins-field-error">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="ins-field-error">{{ $message }}</div>
                                     @enderror
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
 
                 </div>
 
                 {{-- COLONNE RÉCAPITULATIF --}}
                 <div class="ins-create-summary">
-
                     <div class="ins-summary-card">
-
                         <div class="ins-summary-header">
-
                             <h5>📋 Récapitulatif</h5>
-
                             <p>Résumé du dossier à enregistrer.</p>
-
                         </div>
 
                         <div class="ins-summary-body">
-
                             <div class="ins-summary-row">
                                 <span>Année scolaire</span>
-
-                                <strong>
-                                    {{ $anneeScolaire->nom ?? 'Non définie' }}
-                                </strong>
+                                <strong>{{ $anneeScolaire->nom ?? 'Non définie' }}</strong>
                             </div>
 
                             <div class="ins-summary-row">
                                 <span>Type de dossier</span>
-
-                                <strong id="ins_summary_type">
-                                    Nouvelle inscription
-                                </strong>
+                                <strong id="ins_summary_type">Nouvelle inscription</strong>
                             </div>
 
                             <div class="ins-summary-row">
                                 <span>Date</span>
-
-                                <strong id="ins_summary_date">
-                                    {{ date('d/m/Y') }}
-                                </strong>
+                                <strong id="ins_summary_date">{{ date('d/m/Y') }}</strong>
                             </div>
 
                             <div class="ins-summary-row">
                                 <span>Classe choisie</span>
-
-                                <strong id="ins_summary_classe">
-                                    Non sélectionnée
-                                </strong>
+                                <strong id="ins_summary_classe">Non sélectionnée</strong>
                             </div>
 
                             <hr class="ins-summary-divider">
 
                             <div class="ins-summary-total">
                                 <span>Frais d'inscription</span>
-
-                                <strong id="ins_summary_frais">
-                                    0 Ar
-                                </strong>
+                                <strong id="ins_summary_frais">0 Ar</strong>
                             </div>
 
                             {{-- ACTIONS --}}
                             <div class="ins-create-actions">
-
                                 <button type="submit" class="ins-submit-btn" {{ !$anneeScolaire ? 'disabled' : '' }}>
                                     ✓ Enregistrer l'inscription
                                 </button>
@@ -1409,45 +1638,29 @@
                                 <a href="{{ route('inscriptions.index') }}" class="ins-cancel-btn">
                                     Annuler
                                 </a>
-
                             </div>
-
                         </div>
-
                     </div>
 
                     {{-- INFORMATION --}}
                     <div class="ins-student-note mt-3">
-
                         <span>🔐</span>
-
                         <div>
                             Le dossier sera enregistré avec le statut
                             <strong>En attente</strong>.
                             Il devra être validé ultérieurement.
                         </div>
-
                     </div>
-
                 </div>
 
             </div>
-
         </form>
-
     </div>
-
-    {{-- =========================================================
-     RÉCAPITULATIF DYNAMIQUE
-========================================================= --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // ==========================================
-            // 1. ÉLÉMENTS DU FORMULAIRE ET DU RÉSUMÉ
-            // ==========================================
-
+            // 1. FORMULAIRE ET RÉSUMÉ
             const classeSelect = document.getElementById('classe_id');
             const dateInput = document.getElementById('date_inscription');
             const fraisInput = document.getElementById('frais_inscription');
@@ -1457,10 +1670,7 @@
             const summaryFrais = document.getElementById('ins_summary_frais');
             const summaryType = document.getElementById('ins_summary_type');
 
-            // ==========================================
-            // 2. ÉLÉMENTS DE SÉLECTION DE L'ÉLÈVE
-            // ==========================================
-
+            // 2. SÉLECTION ÉLÈVE
             const modal = document.getElementById('modalSelectionEleve');
             const recherche = document.getElementById('rechercheEleveModal');
             const lignes = document.querySelectorAll('.ins-eleve-row');
@@ -1474,45 +1684,28 @@
             const typeTitre = document.getElementById('type_inscription_titre');
             const typeDescription = document.getElementById('type_inscription_description');
 
-            // ==========================================
-            // 3. RÉSUMÉ DE LA CLASSE
-            // ==========================================
-
+            // 3. RÉSUMÉ CLASSE
             function updateClasse() {
-
                 const option = classeSelect.options[classeSelect.selectedIndex];
 
                 summaryClasse.textContent =
-                    option && option.value !== '' ?
-                    option.text.trim() :
-                    'Non sélectionnée';
+                    option && option.value !== '' ? option.text.trim() : 'Non sélectionnée';
             }
 
-            // ==========================================
-            // 4. RÉSUMÉ DE LA DATE
-            // ==========================================
-
+            // 4. RÉSUMÉ DATE
             function updateDate() {
-
                 if (!dateInput.value) {
                     summaryDate.textContent = 'Non définie';
                     return;
                 }
 
                 const parts = dateInput.value.split('-');
-
                 summaryDate.textContent =
-                    parts.length === 3 ?
-                    parts[2] + '/' + parts[1] + '/' + parts[0] :
-                    dateInput.value;
+                    parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : dateInput.value;
             }
 
-            // ==========================================
-            // 5. RÉSUMÉ DES FRAIS
-            // ==========================================
-
+            // 5. RÉSUMÉ FRAIS
             function updateFrais() {
-
                 const montant = parseFloat(fraisInput.value) || 0;
 
                 summaryFrais.textContent =
@@ -1521,86 +1714,50 @@
                     }).format(montant) + ' Ar';
             }
 
-            // ==========================================
             // 6. TYPE D'INSCRIPTION AUTOMATIQUE
-            // ==========================================
-
             function actualiserTypeInscription(dejaInscrit) {
-
                 if (dejaInscrit) {
-
-                    if (typeTitre) {
-                        typeTitre.textContent = '🔄 Réinscription';
-                    }
+                    if (typeTitre) typeTitre.textContent = '🔄 Réinscription';
 
                     if (typeDescription) {
                         typeDescription.textContent =
                             'Cet élève possède déjà un historique dans l’établissement.';
                     }
 
-                    if (summaryType) {
-                        summaryType.textContent = 'Réinscription';
-                    }
-
+                    if (summaryType) summaryType.textContent = 'Réinscription';
                 } else {
-
-                    if (typeTitre) {
-                        typeTitre.textContent = '🆕 Nouvelle inscription';
-                    }
+                    if (typeTitre) typeTitre.textContent = '🆕 Nouvelle inscription';
 
                     if (typeDescription) {
                         typeDescription.textContent =
                             'Cet élève sera inscrit pour la première fois dans l’établissement.';
                     }
 
-                    if (summaryType) {
-                        summaryType.textContent = 'Nouvelle inscription';
-                    }
-
+                    if (summaryType) summaryType.textContent = 'Nouvelle inscription';
                 }
             }
 
-            // ==========================================
-            // 7. RECHERCHE DANS LA POPUP
-            // ==========================================
-
+            // 7. RECHERCHE POPUP
             if (recherche) {
-
                 recherche.addEventListener('input', function() {
-
                     const terme = this.value.toLowerCase().trim();
-
                     let nombreVisible = 0;
 
                     lignes.forEach(function(ligne) {
-
                         const contenu = ligne.dataset.recherche || '';
-
                         const correspond = contenu.includes(terme);
 
                         ligne.style.display = correspond ? '' : 'none';
-
-                        if (correspond) {
-                            nombreVisible++;
-                        }
-
+                        if (correspond) nombreVisible++;
                     });
 
                     if (aucunResultat) {
-                        aucunResultat.style.display =
-                            nombreVisible === 0 ? '' : 'none';
+                        aucunResultat.style.display = nombreVisible === 0 ? '' : 'none';
                     }
-
                 });
-
             }
 
-            // ==========================================
-            // 8. SÉLECTION D'UN ÉLÈVE
-            // ==========================================
-
-
-
+            // 8. SÉLECTION ÉLÈVE ET FERMETURE IMMÉDIATE
             function fermerPopupEleve() {
                 const modalElement = document.getElementById('modalSelectionEleve');
 
@@ -1619,7 +1776,6 @@
             }
 
             function selectionnerEleve(ligne) {
-
                 const id = ligne.dataset.id;
                 const nom = ligne.dataset.nom;
                 const prenom = ligne.dataset.prenom;
@@ -1627,13 +1783,10 @@
                 const photo = ligne.dataset.photo;
                 const dejaInscrit = ligne.dataset.dejaInscrit;
 
-                // Enregistrer l'élève sélectionné
                 champEleve.value = id;
-
                 nomAffiche.textContent = nom + ' ' + prenom;
                 matriculeAffiche.textContent = 'Matricule : ' + matricule;
 
-                // Actualiser la photo ou l'avatar
                 avatar.innerHTML = '';
 
                 if (photo) {
@@ -1645,23 +1798,18 @@
                     avatar.textContent = prenom.charAt(0).toUpperCase();
                 }
 
-                // Actualiser le type d'inscription
                 actualiserTypeInscription(dejaInscrit === 'oui');
-                
-                // Fermer le popup sans dépendre de Bootstrap
+
                 fermerPopupEleve();
             }
 
-
-
-
-            // Sélection au clic sur toute la ligne
+            // Clic sur toute la ligne
             lignes.forEach(function(ligne) {
                 ligne.addEventListener('click', function() {
                     selectionnerEleve(this);
                 });
 
-                // Sélection également avec Entrée ou Espace
+                // Entrée ou espace au clavier
                 ligne.addEventListener('keydown', function(event) {
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();
@@ -1670,15 +1818,9 @@
                 });
             });
 
-
-            // ==========================================
-            // 9. RÉINITIALISER LA RECHERCHE À L'OUVERTURE
-            // ==========================================
-
+            // 9. RÉINITIALISER RECHERCHE À L'OUVERTURE
             if (modal) {
-
                 modal.addEventListener('show.bs.modal', function() {
-
                     recherche.value = '';
 
                     lignes.forEach(function(ligne) {
@@ -1692,16 +1834,10 @@
                     setTimeout(function() {
                         recherche.focus();
                     }, 300);
-
                 });
-
             }
 
-            // ==========================================
-            // 10. RESTAURER L'ÉLÈVE APRÈS UNE ERREUR
-            // ==========================================
-
-
+            // 10. RESTAURER L'ÉLÈVE APRÈS ERREUR
             const ancienEleveId = champEleve.value;
 
             if (ancienEleveId) {
@@ -1714,22 +1850,16 @@
                 }
             }
 
-
-            // ==========================================
-            // 11. ÉVÉNEMENTS DU RÉSUMÉ
-            // ==========================================
-
+            // 11. ÉVÉNEMENTS RÉCAPITULATIF
             classeSelect.addEventListener('change', updateClasse);
             dateInput.addEventListener('change', updateDate);
             fraisInput.addEventListener('input', updateFrais);
 
-            // Initialisation
+            // INITIALISATION
             updateClasse();
             updateDate();
             updateFrais();
-
         });
     </script>
-
 
 @endsection

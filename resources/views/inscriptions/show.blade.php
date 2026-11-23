@@ -1,22 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-4 inscription-show-page">
 
         <style>
+            /* =====================================================
+                   CONFIGURATION GÉNÉRALE
+                ===================================================== */
+
+            .inscription-show-page {
+                --show-bg: #f4f7fc;
+                --show-card: #ffffff;
+                --show-text: #263445;
+                --show-muted: #7b8795;
+                --show-border: #e7edf4;
+                --show-soft: #f7f9fc;
+                --show-primary: #2469a8;
+                --show-shadow: 0 5px 22px rgba(30, 50, 80, .055);
+
+                color: var(--show-text);
+            }
+
             .show-inscription {
                 max-width: 1250px;
                 margin: auto;
-                color: #263445;
             }
 
+            /* =====================================================
+                   EN-TÊTE
+                ===================================================== */
+
             .show-header {
+                position: relative;
+                overflow: hidden;
                 background: linear-gradient(120deg, #172f50, #2874b9);
                 color: white;
-                border-radius: 18px;
-                padding: 28px 32px;
+                border-radius: 20px;
+                padding: 30px 34px;
                 margin-bottom: 25px;
-                box-shadow: 0 8px 25px rgba(20, 50, 85, .13);
+                box-shadow: 0 10px 28px rgba(20, 50, 85, .15);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -24,141 +46,231 @@
                 gap: 20px;
             }
 
+            .show-header::after {
+                content: "";
+                position: absolute;
+                width: 260px;
+                height: 260px;
+                right: -85px;
+                top: -145px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, .07);
+                pointer-events: none;
+            }
+
+            .show-header-content,
+            .show-reference {
+                position: relative;
+                z-index: 1;
+            }
+
             .show-header h3 {
-                font-weight: 750;
+                font-weight: 800;
+                font-size: 25px;
                 margin: 0 0 8px;
+                letter-spacing: -.4px;
             }
 
             .show-header p {
                 margin: 0;
-                opacity: .85;
+                color: rgba(255, 255, 255, .82);
+                font-size: 14px;
+            }
+
+            .show-header-icon {
+                width: 43px;
+                height: 43px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, .15);
+                margin-right: 9px;
+                font-size: 20px;
+                vertical-align: middle;
             }
 
             .show-reference {
                 background: rgba(255, 255, 255, .13);
-                border: 1px solid rgba(255, 255, 255, .2);
-                border-radius: 12px;
-                padding: 13px 18px;
+                border: 1px solid rgba(255, 255, 255, .22);
+                border-radius: 14px;
+                padding: 14px 20px;
                 text-align: center;
+                backdrop-filter: blur(5px);
             }
 
             .show-reference small {
                 display: block;
-                opacity: .8;
-                margin-bottom: 4px;
+                color: rgba(255, 255, 255, .8);
+                font-size: 10px;
+                font-weight: 750;
+                letter-spacing: 1.1px;
+                margin-bottom: 5px;
             }
 
             .show-reference strong {
-                font-size: 20px;
+                font-size: 21px;
                 letter-spacing: 1px;
             }
 
+            /* =====================================================
+                   CARTES
+                ===================================================== */
+
             .show-card {
-                background: white;
-                border: 1px solid #e8edf3;
-                border-radius: 16px;
-                box-shadow: 0 5px 20px rgba(30, 50, 80, .05);
+                background: var(--show-card);
+                border: 1px solid var(--show-border);
+                border-radius: 17px;
+                box-shadow: var(--show-shadow);
                 margin-bottom: 22px;
                 overflow: hidden;
+                transition: border-color .2s, box-shadow .2s;
             }
 
             .show-card-header {
-                padding: 19px 23px;
-                border-bottom: 1px solid #edf0f4;
+                padding: 19px 24px;
+                border-bottom: 1px solid var(--show-border);
+                display: flex;
+                align-items: center;
+                gap: 13px;
+            }
+
+            .show-section-icon {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                background: #eaf3ff;
+                color: #2469a8;
+                font-size: 18px;
             }
 
             .show-card-header h5 {
                 margin: 0;
-                font-size: 16px;
-                font-weight: 750;
+                font-size: 15px;
+                font-weight: 800;
+                color: var(--show-text);
             }
 
             .show-card-header p {
                 margin: 5px 0 0;
-                color: #7b8795;
-                font-size: 13px;
+                color: var(--show-muted);
+                font-size: 12px;
             }
 
             .show-card-body {
                 padding: 24px;
             }
 
+            /* =====================================================
+                   PROFIL ÉLÈVE
+                ===================================================== */
+
             .student-profile {
                 display: flex;
                 align-items: center;
-                gap: 20px;
-                padding: 20px;
-                background: #f7f9fc;
-                border: 1px solid #e7edf4;
-                border-radius: 14px;
+                gap: 21px;
+                padding: 21px;
+                background: var(--show-soft);
+                border: 1px solid var(--show-border);
+                border-radius: 15px;
             }
 
-            .student-photo {
-                width: 95px;
-                height: 95px;
+            .student-photo,
+            .student-initial {
+                width: 96px;
+                height: 96px;
                 border-radius: 50%;
-                object-fit: cover;
-                border: 4px solid white;
-                box-shadow: 0 3px 12px rgba(0, 0, 0, .10);
                 flex-shrink: 0;
             }
 
+            .student-photo {
+                object-fit: cover;
+                border: 4px solid var(--show-card);
+                box-shadow: 0 3px 12px rgba(0, 0, 0, .12);
+            }
+
             .student-initial {
-                width: 95px;
-                height: 95px;
-                border-radius: 50%;
                 background: #dcecff;
                 color: #2469a8;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 30px;
-                font-weight: 800;
-                flex-shrink: 0;
+                font-size: 31px;
+                font-weight: 850;
+                border: 4px solid var(--show-card);
             }
 
             .student-profile h4 {
-                font-weight: 800;
-                margin: 0 0 7px;
+                font-weight: 850;
+                font-size: 20px;
+                margin: 0 0 9px;
+                color: var(--show-text);
             }
 
             .student-profile p {
-                margin: 0 0 5px;
-                color: #718096;
+                margin: 0 0 6px;
+                color: var(--show-muted);
                 font-size: 13px;
             }
 
+            .student-profile p strong {
+                color: var(--show-text);
+                font-weight: 750;
+            }
+
+            /* =====================================================
+                   INFORMATIONS
+                ===================================================== */
+
             .info-item {
-                padding: 15px;
-                border: 1px solid #edf0f4;
-                border-radius: 12px;
+                padding: 17px;
+                border: 1px solid var(--show-border);
+                border-radius: 13px;
                 height: 100%;
+                background: var(--show-card);
+                transition: .2s ease;
+            }
+
+            .info-item:hover {
+                border-color: #c5d9ee;
+                transform: translateY(-2px);
             }
 
             .info-label {
                 display: block;
-                color: #8290a2;
-                font-size: 12px;
-                font-weight: 700;
-                margin-bottom: 7px;
+                color: var(--show-muted);
+                font-size: 10px;
+                font-weight: 800;
+                margin-bottom: 9px;
                 text-transform: uppercase;
-                letter-spacing: .4px;
+                letter-spacing: .65px;
             }
 
             .info-value {
                 display: block;
-                color: #263445;
-                font-size: 15px;
+                color: var(--show-text);
+                font-size: 14px;
                 font-weight: 750;
                 overflow-wrap: anywhere;
             }
 
-            .status-badge {
-                display: inline-block;
-                padding: 7px 13px;
+            /* =====================================================
+                   BADGES
+                ===================================================== */
+
+            .status-badge,
+            .type-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 13px;
                 border-radius: 30px;
-                font-size: 12px;
-                font-weight: 750;
+                font-size: 11px;
+                font-weight: 800;
             }
 
             .status-attente {
@@ -177,68 +289,104 @@
             }
 
             .type-badge {
-                display: inline-block;
-                padding: 7px 12px;
-                border-radius: 8px;
+                border-radius: 9px;
                 background: #eaf3ff;
                 color: #2469a8;
-                font-size: 12px;
-                font-weight: 750;
             }
+
+            /* =====================================================
+                   FINANCES
+                ===================================================== */
 
             .financial-box {
-                padding: 22px;
-                border-radius: 14px;
+                padding: 24px;
+                border-radius: 15px;
                 background: linear-gradient(120deg, #edf6ff, #f7fbff);
                 border: 1px solid #dceafa;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 15px;
             }
 
-            .financial-box span {
+            .financial-label {
                 display: block;
                 color: #718096;
                 font-size: 13px;
-                margin-bottom: 8px;
+                font-weight: 700;
+                margin-bottom: 7px;
             }
 
             .financial-box strong {
                 color: #205d96;
-                font-size: 27px;
-                font-weight: 800;
+                font-size: 29px;
+                font-weight: 850;
             }
 
-            .observation-box {
-                background: #f8fafc;
-                border: 1px solid #e8edf3;
-                border-radius: 12px;
-                padding: 18px;
-                color: #526174;
-                line-height: 1.7;
-                white-space: pre-line;
+            .financial-icon {
+                width: 55px;
+                height: 55px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(36, 105, 168, .1);
+                color: #2469a8;
+                border-radius: 15px;
+                font-size: 25px;
             }
+
+            /* =====================================================
+                   OBSERVATIONS
+                ===================================================== */
+
+            .observation-box {
+                background: var(--show-soft);
+                border: 1px solid var(--show-border);
+                border-radius: 13px;
+                padding: 19px;
+                color: var(--show-text);
+                font-size: 14px;
+                line-height: 1.8;
+                white-space: pre-line;
+                overflow-wrap: anywhere;
+            }
+
+            /* =====================================================
+                   BOUTONS
+                ===================================================== */
 
             .show-actions {
                 display: flex;
                 justify-content: flex-end;
                 gap: 10px;
                 flex-wrap: wrap;
-                margin-top: 10px;
+                margin-top: 8px;
             }
 
             .show-btn {
                 border: 0;
-                border-radius: 10px;
-                padding: 12px 19px;
-                font-weight: 700;
+                border-radius: 11px;
+                padding: 12px 18px;
+                font-size: 13px;
+                font-weight: 750;
                 text-decoration: none;
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 cursor: pointer;
+                transition: .2s ease;
+            }
+
+            .show-btn:hover {
+                transform: translateY(-2px);
             }
 
             .show-btn-primary {
                 background: #2469a8;
                 color: white;
+                box-shadow: 0 4px 12px rgba(36, 105, 168, .18);
             }
 
             .show-btn-primary:hover {
@@ -247,80 +395,288 @@
             }
 
             .show-btn-secondary {
-                background: #edf1f5;
-                color: #44546a;
+                background: var(--show-soft);
+                border: 1px solid var(--show-border);
+                color: var(--show-text);
             }
 
             .show-btn-secondary:hover {
-                background: #dfe5ec;
-                color: #263445;
+                background: var(--show-border);
+                color: var(--show-text);
             }
 
-            @media(max-width: 600px) {
+            /* =====================================================
+                   THÈME SOMBRE
+                ===================================================== */
+
+            html[data-app-theme="dark"] .inscription-show-page {
+                --show-bg: #111827;
+                --show-card: #1e293b;
+                --show-text: #e5edf7;
+                --show-muted: #9aaabe;
+                --show-border: #334155;
+                --show-soft: #263449;
+                --show-primary: #60a5fa;
+                --show-shadow: 0 5px 22px rgba(0, 0, 0, .15);
+            }
+
+            html[data-app-theme="dark"] .show-section-icon {
+                background: #263f5d;
+                color: #93c5fd;
+            }
+
+            html[data-app-theme="dark"] .student-initial {
+                background: #263f5d;
+                color: #93c5fd;
+                border-color: #334155;
+            }
+
+            html[data-app-theme="dark"] .student-photo {
+                border-color: #334155;
+            }
+
+            html[data-app-theme="dark"] .info-item:hover {
+                border-color: #52749b;
+            }
+
+            html[data-app-theme="dark"] .type-badge {
+                background: #263f5d;
+                color: #93c5fd;
+            }
+
+            html[data-app-theme="dark"] .status-attente {
+                background: #493b1c;
+                color: #facc75;
+            }
+
+            html[data-app-theme="dark"] .status-validee {
+                background: #173e35;
+                color: #86efac;
+            }
+
+            html[data-app-theme="dark"] .status-annulee {
+                background: #49272e;
+                color: #fda4af;
+            }
+
+            html[data-app-theme="dark"] .financial-box {
+                background: linear-gradient(120deg, #203b58, #263449);
+                border-color: #385575;
+            }
+
+            html[data-app-theme="dark"] .financial-label {
+                color: #a8bad0;
+            }
+
+            html[data-app-theme="dark"] .financial-box strong {
+                color: #93c5fd;
+            }
+
+            html[data-app-theme="dark"] .financial-icon {
+                background: rgba(147, 197, 253, .12);
+                color: #93c5fd;
+            }
+
+            /* =====================================================
+                   AUTRES THÈMES SOMBRES / PERSONNALISÉS
+                ===================================================== */
+
+            html[data-app-theme="ultra-pro"] .inscription-show-page {
+                --show-bg: #111827;
+                --show-card: #1e293b;
+                --show-text: #e5edf7;
+                --show-muted: #9aaabe;
+                --show-border: #334155;
+                --show-soft: #263449;
+                --show-shadow: 0 5px 22px rgba(0, 0, 0, .15);
+            }
+
+            html[data-app-theme="ultra-pro"] .show-section-icon,
+            html[data-app-theme="ultra-pro"] .type-badge {
+                background: #263f5d;
+                color: #93c5fd;
+            }
+
+            html[data-app-theme="emerald"] .inscription-show-page {
+                --show-primary: #16865d;
+            }
+
+            html[data-app-theme="emerald"] .show-section-icon {
+                background: #e2f5eb;
+                color: #16865d;
+            }
+
+            html[data-app-theme="warm"] .inscription-show-page {
+                --show-primary: #b66b37;
+            }
+
+            html[data-app-theme="warm"] .show-section-icon {
+                background: #fff0df;
+                color: #b66b37;
+            }
+
+            /* =====================================================
+                   RESPONSIVE
+                ===================================================== */
+
+            @media(max-width: 768px) {
                 .show-header {
-                    padding: 22px;
+                    padding: 23px;
+                }
+
+                .show-header h3 {
+                    font-size: 21px;
                 }
 
                 .show-card-body {
                     padding: 17px;
                 }
 
-                .student-profile {
-                    align-items: flex-start;
-                    flex-direction: column;
+                .show-card-header {
+                    padding: 16px 18px;
+                }
+
+                .financial-box strong {
+                    font-size: 24px;
+                }
+            }
+
+            @media(max-width: 600px) {
+                .show-header {
+                    align-items: stretch;
                 }
 
                 .show-reference {
                     width: 100%;
                 }
+
+                .student-profile {
+                    align-items: center;
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .student-profile h4 {
+                    font-size: 18px;
+                }
+
+                .show-actions {
+                    flex-direction: column;
+                }
+
+                .show-btn {
+                    width: 100%;
+                }
             }
 
+            /* =====================================================
+                   IMPRESSION
+                ===================================================== */
+
             @media print {
+                @page {
+                    size: A4;
+                    margin: 15mm;
+                }
+
                 body {
                     background: white !important;
+                    color: #263445 !important;
                 }
 
                 .show-actions,
                 .sidebar,
-                .topbar {
+                .topbar,
+                .show-btn {
                     display: none !important;
+                }
+
+                .inscription-show-page {
+                    padding: 0 !important;
                 }
 
                 .show-inscription {
                     max-width: 100%;
                 }
 
-                .show-card,
-                .show-header {
-                    box-shadow: none;
+                .show-card {
+                    background: white !important;
+                    border: 1px solid #ddd !important;
+                    box-shadow: none !important;
                     break-inside: avoid;
+                }
+
+                .show-card-header h5,
+                .info-value,
+                .student-profile h4,
+                .observation-box {
+                    color: #263445 !important;
+                }
+
+                .show-header {
+                    box-shadow: none !important;
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+
+                .student-profile,
+                .info-item,
+                .observation-box {
+                    background: white !important;
+                }
+
+                .financial-box {
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
                 }
             }
         </style>
 
         <div class="show-inscription">
 
-            {{-- EN-TÊTE --}}
+            {{-- =====================================================
+                 EN-TÊTE
+            ====================================================== --}}
+
             <div class="show-header">
 
-                <div>
-                    <h3>📋 Dossier d'inscription</h3>
-                    <p>Consultation détaillée du dossier de l'élève.</p>
+                <div class="show-header-content">
+                    <h3>
+                        <span class="show-header-icon">
+                            <i class="bi bi-folder2-open"></i>
+                        </span>
+                        Dossier d'inscription
+                    </h3>
+
+                    <p>
+                        Consultation détaillée et suivi du dossier de l'élève.
+                    </p>
                 </div>
 
                 <div class="show-reference">
                     <small>NUMÉRO DU DOSSIER</small>
-                    <strong>INS-{{ str_pad($inscription->id, 5, '0', STR_PAD_LEFT) }}</strong>
+                    <strong>
+                        INS-{{ str_pad($inscription->id, 5, '0', STR_PAD_LEFT) }}
+                    </strong>
                 </div>
 
             </div>
 
-            {{-- PROFIL DE L'ÉLÈVE --}}
+            {{-- =====================================================
+                 IDENTITÉ DE L'ÉLÈVE
+            ====================================================== --}}
+
             <div class="show-card">
 
                 <div class="show-card-header">
-                    <h5>👨‍🎓 Identité de l'élève</h5>
-                    <p>Informations personnelles de l'élève concerné.</p>
+                    <div class="show-section-icon">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+
+                    <div>
+                        <h5>Identité de l'élève</h5>
+                        <p>Informations personnelles de l'élève concerné.</p>
+                    </div>
                 </div>
 
                 <div class="show-card-body">
@@ -343,13 +699,19 @@
                             </h4>
 
                             <p>
+                                <i class="bi bi-upc-scan me-1"></i>
                                 Matricule :
-                                <strong>{{ $inscription->eleve->matricule ?? 'Non renseigné' }}</strong>
+                                <strong>
+                                    {{ $inscription->eleve->matricule ?? 'Non renseigné' }}
+                                </strong>
                             </p>
 
                             <p>
+                                <i class="bi bi-list-ol me-1"></i>
                                 Numéro dans la classe :
-                                <strong>{{ $inscription->eleve->numero_classe ?? 'Non renseigné' }}</strong>
+                                <strong>
+                                    {{ $inscription->eleve->numero_classe ?? 'Non renseigné' }}
+                                </strong>
                             </p>
                         </div>
 
@@ -370,7 +732,9 @@
                             <div class="info-item">
                                 <span class="info-label">Date de naissance</span>
                                 <span class="info-value">
-                                    {{ $inscription->eleve->date_naissance ? \Carbon\Carbon::parse($inscription->eleve->date_naissance)->format('d/m/Y') : 'Non renseignée' }}
+                                    {{ $inscription->eleve->date_naissance
+                                        ? \Carbon\Carbon::parse($inscription->eleve->date_naissance)->format('d/m/Y')
+                                        : 'Non renseignée' }}
                                 </span>
                             </div>
                         </div>
@@ -389,12 +753,21 @@
                 </div>
             </div>
 
-            {{-- DÉTAILS DE L'INSCRIPTION --}}
+            {{-- =====================================================
+                 INFORMATIONS DE L'INSCRIPTION
+            ====================================================== --}}
+
             <div class="show-card">
 
                 <div class="show-card-header">
-                    <h5>📚 Informations de l'inscription</h5>
-                    <p>Année scolaire, classe et statut du dossier.</p>
+                    <div class="show-section-icon">
+                        <i class="bi bi-journal-check"></i>
+                    </div>
+
+                    <div>
+                        <h5>Informations de l'inscription</h5>
+                        <p>Année scolaire, classe et statut du dossier.</p>
+                    </div>
                 </div>
 
                 <div class="show-card-body">
@@ -404,11 +777,18 @@
                         <div class="col-md-6">
                             <div class="info-item">
                                 <span class="info-label">Type d'inscription</span>
+
                                 <span class="info-value">
                                     @if ($inscription->type === 'reinscription')
-                                        <span class="type-badge">🔄 Réinscription</span>
+                                        <span class="type-badge">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                            Réinscription
+                                        </span>
                                     @else
-                                        <span class="type-badge">🆕 Nouvelle inscription</span>
+                                        <span class="type-badge">
+                                            <i class="bi bi-person-plus"></i>
+                                            Nouvelle inscription
+                                        </span>
                                     @endif
                                 </span>
                             </div>
@@ -417,13 +797,23 @@
                         <div class="col-md-6">
                             <div class="info-item">
                                 <span class="info-label">Statut du dossier</span>
+
                                 <span class="info-value">
                                     @if ($inscription->statut === 'validee')
-                                        <span class="status-badge status-validee">✓ Validée</span>
+                                        <span class="status-badge status-validee">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Validée
+                                        </span>
                                     @elseif($inscription->statut === 'annulee')
-                                        <span class="status-badge status-annulee">✕ Annulée</span>
+                                        <span class="status-badge status-annulee">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            Annulée
+                                        </span>
                                     @else
-                                        <span class="status-badge status-attente">◷ En attente</span>
+                                        <span class="status-badge status-attente">
+                                            <i class="bi bi-clock-fill"></i>
+                                            En attente
+                                        </span>
                                     @endif
                                 </span>
                             </div>
@@ -470,33 +860,62 @@
                 </div>
             </div>
 
-            {{-- INFORMATIONS FINANCIÈRES --}}
+            {{-- =====================================================
+                 INFORMATIONS FINANCIÈRES
+            ====================================================== --}}
+
             <div class="show-card">
 
                 <div class="show-card-header">
-                    <h5>💰 Informations financières</h5>
-                    <p>Montant des frais d'inscription enregistrés.</p>
+                    <div class="show-section-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                    <div>
+                        <h5>Informations financières</h5>
+                        <p>Montant des frais d'inscription enregistrés.</p>
+                    </div>
                 </div>
 
                 <div class="show-card-body">
 
                     <div class="financial-box">
-                        <span>Frais d'inscription</span>
-                        <strong>
-                            {{ number_format((float) $inscription->frais_inscription, 2, ',', ' ') }}
-                            Ar
-                        </strong>
+
+                        <div>
+                            <span class="financial-label">
+                                Frais d'inscription
+                            </span>
+
+                            <strong>
+                                {{ number_format((float) $inscription->frais_inscription, 2, ',', ' ') }}
+                                Ar
+                            </strong>
+                        </div>
+
+                        <div class="financial-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+
                     </div>
 
                 </div>
             </div>
 
-            {{-- OBSERVATIONS --}}
+            {{-- =====================================================
+                 OBSERVATIONS
+            ====================================================== --}}
+
             <div class="show-card">
 
                 <div class="show-card-header">
-                    <h5>📝 Observations</h5>
-                    <p>Informations complémentaires relatives à ce dossier.</p>
+                    <div class="show-section-icon">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+
+                    <div>
+                        <h5>Observations</h5>
+                        <p>Informations complémentaires relatives à ce dossier.</p>
+                    </div>
                 </div>
 
                 <div class="show-card-body">
@@ -508,24 +927,29 @@
                 </div>
             </div>
 
-            {{-- ACTIONS --}}
+            {{-- =====================================================
+                 ACTIONS
+            ====================================================== --}}
+
             <div class="show-actions">
 
                 <a href="{{ route('inscriptions.index') }}" class="show-btn show-btn-secondary">
-                    ← Retour à la liste
+                    <i class="bi bi-arrow-left"></i>
+                    Retour à la liste
                 </a>
 
                 <button type="button" onclick="window.print()" class="show-btn show-btn-secondary">
-                    🖨️ Imprimer
+                    <i class="bi bi-printer"></i>
+                    Imprimer
                 </button>
 
                 <a href="{{ route('inscriptions.edit', $inscription->id) }}" class="show-btn show-btn-primary">
-                    ✏️ Modifier le dossier
+                    <i class="bi bi-pencil-square"></i>
+                    Modifier le dossier
                 </a>
 
             </div>
 
         </div>
-
     </div>
 @endsection

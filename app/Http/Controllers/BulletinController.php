@@ -279,7 +279,43 @@ class BulletinController extends Controller
             ]);
     }
 
+/**
+ * =========================================================
+ * ÉTAPE 1 : RÉCEPTION DU FORMULAIRE (POST)
+ * Valider puis rediriger vers une URL GET
+ * =========================================================
+ */
     public function afficherBulletin(Request $request)
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            abort(401, 'Vous devez être connecté.');
+        }
+
+        if (! $user->aPermission('bulletins.creer')) {
+            abort(403, 'Vous n’avez pas la permission de générer un bulletin.');
+        }
+
+        $request->validate([
+            'eleve_id'   => 'required|integer|exists:eleves,id',
+            'periodes'   => 'required|array|min:1',
+            'periodes.*' => 'required|integer|exists:periodes,id',
+        ]);
+
+        // Redirection POST vers GET pour éviter la répétition du formulaire
+        return redirect()->route('bulletin.affichageGet', [
+            'eleve_id' => $request->eleve_id,
+            'periodes' => $request->periodes,
+        ]);
+    }
+
+/**
+ * =========================================================
+ * ÉTAPE 2 : AFFICHAGE DU BULLETIN (GET)
+ * =========================================================
+ */
+    public function afficherBulletinGet(Request $request)
     {
         $user = Auth::user();
 
@@ -303,6 +339,7 @@ class BulletinController extends Controller
         $bulletins = [];
 
         foreach ($request->periodes as $periode_id) {
+
             $periode = Periode::findOrFail($periode_id);
 
             $notes = Note::where('eleve_id', $eleve->id)
@@ -329,6 +366,7 @@ class BulletinController extends Controller
             compact('eleve', 'bulletins')
         );
     }
+
     // =========================
     // SAVE IMAGE BASE 64
     // =========================
@@ -341,25 +379,68 @@ class BulletinController extends Controller
             'periodes_ids' => 'required|string',
         ]);
 
-        // Vérifier que l'utilisateur est connecté.
+        // =====================================================
+        // 1. VÉRIFIER L'AUTHENTIFICATION
+        // =====================================================
+
         $user = Auth::user();
 
         if (! $user) {
             abort(401, 'Vous devez être connecté.');
         }
 
-        // Administrateur : accès complet.
+        // =====================================================
+        // 2. VÉRIFIER LES PERMISSIONS
+        // =====================================================
+
         if (
             (int) $user->id !== 1 &&
             ! $user->hasRole('Administrateur')
         ) {
-            // Vérifier que l'utilisateur a le droit de créer un bulletin.
             if (! $user->aPermission('bulletins.creer')) {
                 abort(403, 'Vous n’avez pas la permission de créer un bulletin.');
             }
         }
 
-        // Vérifier que l'image est bien une image encodée en Base64.
+        // =====================================================
+        // 3. NORMALISER LES PÉRIODES
+        //    2,3,4 = 4,2,3 = 3,4,2
+        // =====================================================
+
+        $normaliserPeriodes = function ($valeur) {
+            $ids = explode(',', (string) $valeur);
+
+            $ids = array_map('trim', $ids);
+
+            // Vérifier que chaque période est un entier positif
+            foreach ($ids as $id) {
+                if ($id === '' || ! ctype_digit($id) || (int) $id <= 0) {
+                    return null;
+                }
+            }
+
+            // Supprimer les doublons
+            $ids = array_unique(array_map('intval', $ids));
+
+            // Trier numériquement
+            sort($ids, SORT_NUMERIC);
+
+            return implode(',', $ids);
+        };
+
+        $periodesNormalisees = $normaliserPeriodes($request->periodes_ids);
+
+        if (! $periodesNormalisees) {
+            return response()->json([
+                'ok'      => false,
+                'message' => 'Les périodes sélectionnées sont invalides.',
+            ], 422);
+        }
+
+        // =====================================================
+        // 4. VÉRIFIER LE FORMAT BASE64
+        // =====================================================
+
         if (! preg_match(
             '/^data:image\/(png|jpeg|jpg|gif|webp);base64,(.*)$/s',
             $request->image,
@@ -380,7 +461,10 @@ class BulletinController extends Controller
             ], 422);
         }
 
-        // Vérifier le véritable type de fichier.
+        // =====================================================
+        // 5. VÉRIFIER LE VRAI TYPE DE FICHIER
+        // =====================================================
+
         $mime = (new \finfo(FILEINFO_MIME_TYPE))->buffer($imageDecodee);
 
         if (! in_array($mime, [
@@ -395,18 +479,91 @@ class BulletinController extends Controller
             ], 422);
         }
 
+        // =====================================================
+        // 6. ENREGISTRER OU REMPLACER LE BULLETIN EXISTANT
+        // =====================================================
+
         try {
-            $bulletin = Bulletin::create([
-                'eleve_id'     => $request->eleve_id,
-                'image_base64' => $request->image,
-                'periodes_ids' => $request->periodes_ids,
-            ]);
+
+            $resultat = \Illuminate\Support\Facades\DB::transaction(function () use (
+                $request,
+                $normaliserPeriodes,
+                $periodesNormalisees
+            ) {
+
+                // Récupérer les bulletins de cet élève
+                // et verrouiller les lignes pendant l'opération
+                $bulletinsEleve = Bulletin::where('eleve_id', $request->eleve_id)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get();
+
+                // Rechercher les bulletins ayant exactement les mêmes périodes
+                $bulletinsCorrespondants = $bulletinsEleve->filter(function ($bulletin) use (
+                    $normaliserPeriodes,
+                    $periodesNormalisees
+                ) {
+                    return $normaliserPeriodes($bulletin->periodes_ids) === $periodesNormalisees;
+                });
+
+                // -------------------------------------------------
+                // CAS 1 : LE BULLETIN EXISTE DÉJÀ
+                // -------------------------------------------------
+
+                if ($bulletinsCorrespondants->isNotEmpty()) {
+
+                    // Conserver le premier enregistrement
+                    $bulletin = $bulletinsCorrespondants->first();
+
+                    // Supprimer les éventuels doublons existants
+                    foreach ($bulletinsCorrespondants->skip(1) as $doublon) {
+                        $doublon->delete();
+                    }
+
+                    // Remplacer l'image et harmoniser les périodes
+                    $bulletin->update([
+                        'image_base64' => $request->image,
+                        'periodes_ids' => $periodesNormalisees,
+                    ]);
+
+                    return [
+                        'bulletin' => $bulletin,
+                        'action'   => 'updated',
+                    ];
+                }
+
+                // -------------------------------------------------
+                // CAS 2 : AUCUN BULLETIN IDENTIQUE
+                // CRÉER UN NOUVEL ENREGISTREMENT
+                // -------------------------------------------------
+
+                $bulletin = Bulletin::create([
+                    'eleve_id'     => $request->eleve_id,
+                    'image_base64' => $request->image,
+                    'periodes_ids' => $periodesNormalisees,
+                ]);
+
+                return [
+                    'bulletin' => $bulletin,
+                    'action'   => 'created',
+                ];
+            });
+
+            // =====================================================
+            // 7. RETOUR AU NAVIGATEUR
+            // =====================================================
 
             return response()->json([
-                'ok' => true,
-                'id' => $bulletin->id,
+                'ok'      => true,
+                'id'      => $resultat['bulletin']->id,
+                'action'  => $resultat['action'],
+                'message' => $resultat['action'] === 'updated'
+                    ? 'Le bulletin existant a été remplacé avec succès.'
+                    : 'Le bulletin a été enregistré avec succès.',
             ]);
+
         } catch (\Exception $e) {
+
             report($e);
 
             return response()->json([

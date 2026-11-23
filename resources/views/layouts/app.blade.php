@@ -955,48 +955,61 @@
     <!-- JS -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggles = document.querySelectorAll('.menu-toggle');
+        (function() {
+            function initMenus() {
+                const menuToggles = document.querySelectorAll('.menu-toggle');
 
-            menuToggles.forEach(function(item) {
-                const target = item.getAttribute('data-target');
-                const submenu = document.getElementById(target);
+                menuToggles.forEach(function(item) {
+                    if (item.dataset.menuInitialized === 'true') {
+                        return;
+                    }
 
-                if (!submenu) {
-                    return;
-                }
+                    item.dataset.menuInitialized = 'true';
 
-                // Préparer l'état initial
-                item.setAttribute('aria-expanded', 'false');
-                submenu.style.display = 'none';
+                    const target = item.getAttribute('data-target');
+                    const submenu = document.getElementById(target);
 
-                item.addEventListener('click', function(event) {
-                    event.preventDefault();
+                    if (!submenu) return;
 
-                    const isOpen = submenu.style.display === 'block';
+                    item.setAttribute('aria-expanded', 'false');
+                    submenu.style.display = 'none';
 
-                    // Fermer tous les autres sous-menus
-                    menuToggles.forEach(function(otherItem) {
-                        const otherTarget = otherItem.getAttribute('data-target');
-                        const otherSubmenu = document.getElementById(otherTarget);
+                    item.addEventListener('click', function(event) {
+                        event.preventDefault();
 
-                        if (otherSubmenu && otherSubmenu !== submenu) {
-                            otherSubmenu.style.display = 'none';
-                            otherItem.setAttribute('aria-expanded', 'false');
+                        const isOpen = submenu.style.display === 'block';
+
+                        menuToggles.forEach(function(otherItem) {
+                            const otherTarget = otherItem.getAttribute('data-target');
+                            const otherSubmenu = document.getElementById(otherTarget);
+
+                            if (otherSubmenu && otherSubmenu !== submenu) {
+                                otherSubmenu.style.display = 'none';
+                                otherItem.setAttribute('aria-expanded', 'false');
+                            }
+                        });
+
+                        if (isOpen) {
+                            submenu.style.display = 'none';
+                            item.setAttribute('aria-expanded', 'false');
+                        } else {
+                            submenu.style.display = 'block';
+                            item.setAttribute('aria-expanded', 'true');
                         }
                     });
-
-                    // Ouvrir ou fermer le sous-menu sélectionné
-                    if (isOpen) {
-                        submenu.style.display = 'none';
-                        item.setAttribute('aria-expanded', 'false');
-                    } else {
-                        submenu.style.display = 'block';
-                        item.setAttribute('aria-expanded', 'true');
-                    }
                 });
-            });
-        });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMenus, {
+                    once: true
+                });
+            } else {
+                initMenus();
+            }
+
+            window.addEventListener('pageshow', initMenus);
+        })();
     </script>
     <!-- ======================================================
      SÉLECTEUR DE THÈMES (SIDEBAR TOUJOURS SOMBRE)
@@ -1011,17 +1024,95 @@
         }
 
         /* Sélecteur dans la topbar */
-        .theme-select-wrap {
+        /* =====================================================
+   MENU APPARENCE - EDUMANAGE
+===================================================== */
+
+        .theme-dropdown {
+            position: relative;
+        }
+
+        .theme-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 11px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            font-size: 12px;
-            color: #1e293b;
-            transition: all 0.2s ease;
+            justify-content: center;
+            gap: 9px;
+            height: 42px;
+            padding: 0 16px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #334155, #1e293b);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .25s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
+        }
+
+        .theme-btn:hover,
+        .theme-btn:focus {
+            background: linear-gradient(135deg, #475569, #334155);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(0, 0, 0, .16);
+        }
+
+        .theme-btn i {
+            font-size: 16px;
+        }
+
+        .theme-menu {
+            min-width: 210px;
+            padding: 7px;
+            margin-top: 8px !important;
+            border: 1px solid #e5eaf1;
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, .16);
+            z-index: 2000;
+        }
+
+        .theme-menu .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            margin: 2px 0;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #334155;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .theme-menu .dropdown-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .theme-menu .dropdown-item:hover {
+            background: #edf3ff;
+            color: #2563eb;
+        }
+
+        .theme-menu .dropdown-item.active-theme {
+            background: #e8f0ff;
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        /* Adaptation du bouton dans le topbar sur petits écrans */
+        @media (max-width: 768px) {
+            .theme-btn {
+                height: 38px;
+                padding: 0 11px;
+                font-size: 12px;
+            }
+
+            .theme-menu {
+                min-width: 195px;
+            }
         }
 
         .theme-select-wrap select {
@@ -1159,72 +1250,151 @@
         }
     </style>
 
-    <script id="edumanage-themes-dark-sidebar-script">
+    <script id="edumanage-theme-dropdown-script">
         (function() {
             const KEY = 'edumanage_theme_choice';
+
             const themes = [{
                     id: 'default',
-                    label: '☀️ Clair Classique'
+                    label: 'Clair Classique',
+                    icon: 'bi-sun'
                 },
                 {
                     id: 'dark',
-                    label: '🌙 Mode Sombre'
+                    label: 'Mode Sombre',
+                    icon: 'bi-moon'
                 },
                 {
                     id: 'ultra-pro',
-                    label: '💎 Ultra Pro'
+                    label: 'Ultra Pro',
+                    icon: 'bi-gem'
                 },
                 {
                     id: 'emerald',
-                    label: '🌿 Émeraude Doux'
+                    label: 'Émeraude',
+                    icon: 'bi-leaf'
                 },
                 {
                     id: 'warm',
-                    label: '📜 Crème Prestige'
+                    label: 'Crème Prestige',
+                    icon: 'bi-cup-hot'
                 }
             ];
 
-            function applyTheme(id) {
-                const valid = themes.some(t => t.id === id) ? id : 'default';
-                document.documentElement.setAttribute('data-app-theme', valid);
+            function getSavedTheme() {
                 try {
-                    localStorage.setItem(KEY, valid);
-                } catch (e) {}
-                const sel = document.getElementById('edumanage-theme-select');
-                if (sel) sel.value = valid;
+                    const saved = localStorage.getItem(KEY) || 'default';
+                    return themes.some(t => t.id === saved) ? saved : 'default';
+                } catch (e) {
+                    return 'default';
+                }
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
+            function applyTheme(themeId) {
+                const validTheme = themes.some(t => t.id === themeId) ?
+                    themeId :
+                    'default';
+
+                document.documentElement.setAttribute('data-app-theme', validTheme);
+
+                try {
+                    localStorage.setItem(KEY, validTheme);
+                } catch (e) {}
+
+                document.querySelectorAll('.theme-menu [data-theme]').forEach(item => {
+                    item.classList.toggle(
+                        'active-theme',
+                        item.dataset.theme === validTheme
+                    );
+                });
+            }
+
+            function initThemeDropdown() {
                 const topbarRight = document.querySelector('.topbar .topbar-right');
+
                 if (!topbarRight) return;
 
-                const wrap = document.createElement('label');
-                wrap.className = 'theme-select-wrap';
-                wrap.innerHTML = '<i class="bi bi-palette2"></i>';
+                // Empêche la création de plusieurs boutons
+                if (document.getElementById('edumanage-theme-dropdown')) {
+                    applyTheme(getSavedTheme());
+                    return;
+                }
 
-                const select = document.createElement('select');
-                select.id = 'edumanage-theme-select';
-                select.setAttribute('aria-label', 'Sélectionner un thème');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dropdown theme-dropdown';
+                wrapper.id = 'edumanage-theme-dropdown';
 
-                themes.forEach(t => {
-                    const opt = document.createElement('option');
-                    opt.value = t.id;
-                    opt.textContent = t.label;
-                    select.appendChild(opt);
+                wrapper.innerHTML = `
+            <button type="button"
+                class="theme-btn dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+
+                <i class="bi bi-palette2"></i>
+                <span>Apparence</span>
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end theme-menu">
+                ${themes.map(theme => `
+                        <li>
+                            <button type="button"
+                                class="dropdown-item"
+                                data-theme="${theme.id}">
+                                <i class="bi ${theme.icon}"></i>
+                                <span>${theme.label}</span>
+                            </button>
+                        </li>
+                    `).join('')}
+            </ul>
+        `;
+
+                // Gestion du clic sur les thèmes
+                wrapper.querySelectorAll('[data-theme]').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const selectedTheme = this.dataset.theme;
+
+                        // Appliquer le thème immédiatement
+                        applyTheme(selectedTheme);
+
+                        // Fermer le dropdown immédiatement
+                        const toggle = wrapper.querySelector('.theme-btn');
+
+                        if (window.bootstrap && toggle) {
+                            const dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                            dropdown.hide();
+                        }
+                    });
                 });
 
-                select.addEventListener('change', e => applyTheme(e.target.value));
-                wrap.appendChild(select);
-                topbarRight.prepend(wrap);
+                // Ajouter le bouton dans la barre supérieure
+                topbarRight.prepend(wrapper);
 
-                let saved = 'default';
-                try {
-                    saved = localStorage.getItem(KEY) || 'default';
-                } catch (e) {}
-                applyTheme(saved);
+                // Restaurer le thème sauvegardé
+                applyTheme(getSavedTheme());
+            }
+
+            function startTheme() {
+                applyTheme(getSavedTheme());
+                initThemeDropdown();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startTheme, {
+                    once: true
+                });
+            } else {
+                startTheme();
+            }
+
+            window.addEventListener('pageshow', function() {
+                applyTheme(getSavedTheme());
+                initThemeDropdown();
             });
+
         })();
     </script>
+
 </body>
 
 </html>

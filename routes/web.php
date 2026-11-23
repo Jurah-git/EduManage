@@ -384,6 +384,11 @@ Route::middleware(['auth'])->group(function () {
                     'afficher'
                 );
 
+            Route::get(
+                '/affichage',
+                [BulletinController::class, 'afficherBulletinGet']
+            )->name('affichageGet');
+
             Route::post(
 
                 '/save-image',

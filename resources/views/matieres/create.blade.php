@@ -3,12 +3,30 @@
 @section('content')
 
     <style>
+        /* =========================================================
+       MATIERE CREATE - VARIABLES
+    ========================================================= */
+
         .matiere-create-page {
+            --mc-surface: #ffffff;
+            --mc-surface-soft: #f7f9fc;
+            --mc-text: #34445b;
+            --mc-heading: #243b59;
+            --mc-muted: #8794a7;
+            --mc-border: #e6ebf2;
+            --mc-primary: #2868aa;
+            --mc-primary-soft: #eaf2ff;
+            --mc-shadow: 0 8px 25px rgba(20, 40, 70, .06);
+
             padding: 24px;
             max-width: 1250px;
             margin: auto;
-            color: #243247;
+            color: var(--mc-text);
         }
+
+        /* =========================================================
+       HERO
+    ========================================================= */
 
         .matiere-hero {
             position: relative;
@@ -23,44 +41,124 @@
 
         .matiere-hero::after {
             content: "\f02d";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
+            font-family: "bootstrap-icons";
+            font-weight: normal;
             position: absolute;
             right: 45px;
             top: 15px;
             font-size: 115px;
             opacity: .10;
             transform: rotate(-12deg);
+            pointer-events: none;
+        }
+
+        .matiere-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .matiere-hero-icon {
+            width: 49px;
+            height: 49px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, .15);
+            border: 1px solid rgba(255, 255, 255, .2);
+            font-size: 23px;
+        }
+
+        .matiere-hero-eyebrow {
+            font-size: 10px;
+            letter-spacing: 1.8px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, .8);
         }
 
         .matiere-hero h3 {
+            font-size: 25px;
             font-weight: 800;
-            margin-bottom: 8px;
+            margin: 12px 0 8px;
             position: relative;
             z-index: 1;
+            color: white;
         }
 
         .matiere-hero p {
             margin: 0;
             opacity: .85;
+            font-size: 13px;
             position: relative;
             z-index: 1;
+            max-width: 650px;
         }
 
+        /* =========================================================
+       BREADCRUMB
+    ========================================================= */
+
+        .matiere-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: -7px 0 20px;
+            color: var(--mc-muted);
+            font-size: 12px;
+        }
+
+        .matiere-breadcrumb i {
+            font-size: 10px;
+        }
+
+        .matiere-breadcrumb strong {
+            color: var(--mc-primary);
+        }
+
+        /* =========================================================
+       ALERTES
+    ========================================================= */
+
+        .matiere-alert {
+            border-radius: 11px;
+            font-size: 13px;
+            padding: 15px 18px;
+            border: 1px solid #f1c9c9;
+            background: #fff1f0;
+            color: #b93832;
+        }
+
+        .matiere-alert .alert-heading {
+            font-size: 13px;
+        }
+
+        .matiere-alert ul {
+            margin-top: 7px;
+        }
+
+        /* =========================================================
+       CARTE PRINCIPALE
+    ========================================================= */
+
         .matiere-form-card {
-            background: #fff;
-            border: 1px solid #e8edf4;
+            background: var(--mc-surface);
+            border: 1px solid var(--mc-border);
             border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(20, 40, 70, .06);
+            box-shadow: var(--mc-shadow);
             overflow: hidden;
         }
 
+        /* =========================================================
+       EN-TÊTES DES SECTIONS
+    ========================================================= */
+
         .matiere-section-header {
             padding: 20px 25px;
-            border-bottom: 1px solid #edf0f5;
+            border-bottom: 1px solid var(--mc-border);
             display: flex;
             align-items: center;
             gap: 13px;
+            background: var(--mc-surface);
         }
 
         .matiere-section-icon {
@@ -70,22 +168,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #eaf2ff;
-            color: #2563a6;
+            background: var(--mc-primary-soft);
+            color: var(--mc-primary);
             font-size: 19px;
+            flex-shrink: 0;
         }
 
         .matiere-section-header h5 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             margin: 0 0 4px;
+            color: var(--mc-heading);
         }
 
         .matiere-section-header p {
             margin: 0;
-            color: #8491a5;
-            font-size: 12px;
+            color: var(--mc-muted);
+            font-size: 11px;
         }
+
+        /* =========================================================
+       CORPS DU FORMULAIRE
+    ========================================================= */
 
         .matiere-form-body {
             padding: 27px;
@@ -94,52 +198,85 @@
         .matiere-label {
             font-size: 13px;
             font-weight: 700;
-            color: #34445b;
+            color: var(--mc-text);
             margin-bottom: 9px;
         }
 
         .matiere-input {
             height: 49px;
             border-radius: 11px;
-            border: 1px solid #dce3ed;
+            border: 1px solid var(--mc-border);
             padding: 10px 15px;
-            font-size: 14px;
+            font-size: 13px;
+            background: var(--mc-surface);
+            color: var(--mc-text);
             transition: .2s;
+        }
+
+        .matiere-input::placeholder {
+            color: var(--mc-muted);
+            opacity: .8;
         }
 
         .matiere-input:focus {
             border-color: #3478c5;
             box-shadow: 0 0 0 3px rgba(52, 120, 197, .10);
+            background: var(--mc-surface);
+            color: var(--mc-text);
         }
 
         .matiere-help {
-            color: #8a96a8;
-            font-size: 12px;
+            color: var(--mc-muted);
+            font-size: 11px;
             margin-top: 8px;
         }
 
+        /* =========================================================
+       STATISTIQUE CLASSES DISPONIBLES
+    ========================================================= */
+
         .matiere-stat {
             height: 100%;
-            padding: 17px;
+            padding: 18px;
             border-radius: 13px;
-            background: #f5f8fc;
-            border: 1px solid #e9eef5;
+            background: var(--mc-surface-soft);
+            border: 1px solid var(--mc-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .matiere-stat-label {
-            font-size: 11px;
-            color: #8290a4;
-            font-weight: 700;
+            font-size: 10px;
+            color: var(--mc-muted);
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: .5px;
+            letter-spacing: .7px;
         }
 
         .matiere-stat-value {
-            font-size: 25px;
+            font-size: 27px;
             font-weight: 800;
-            color: #24466e;
+            color: var(--mc-heading);
             margin-top: 5px;
         }
+
+        .matiere-stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--mc-primary-soft);
+            color: var(--mc-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+        /* =========================================================
+       BARRE DES CLASSES
+    ========================================================= */
 
         .classes-toolbar {
             display: flex;
@@ -147,52 +284,99 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 17px;
         }
+
+        .classes-toolbar-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--mc-heading);
+        }
+
+        .classes-toolbar-subtitle {
+            color: var(--mc-muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .classes-toolbar-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .classes-toolbar-actions button {
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 8px 12px;
+        }
+
+        /* =========================================================
+       RECHERCHE
+    ========================================================= */
 
         .classes-search {
             position: relative;
-            flex: 1;
-            min-width: 220px;
-            max-width: 360px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 15px;
         }
 
-        .classes-search i {
+        .classes-search>i {
             position: absolute;
-            left: 13px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a1b4;
+            color: var(--mc-muted);
+            font-size: 13px;
         }
 
         .classes-search input {
             width: 100%;
-            height: 41px;
-            padding: 8px 12px 8px 37px;
-            border: 1px solid #e0e6ef;
+            height: 42px;
+            padding: 8px 13px 8px 39px;
+            border: 1px solid var(--mc-border);
             border-radius: 10px;
             outline: none;
-            font-size: 13px;
+            font-size: 12px;
+            background: var(--mc-surface);
+            color: var(--mc-text);
+            transition: .2s;
+        }
+
+        .classes-search input::placeholder {
+            color: var(--mc-muted);
         }
 
         .classes-search input:focus {
             border-color: #3478c5;
+            box-shadow: 0 0 0 3px rgba(52, 120, 197, .09);
         }
+
+        /* =========================================================
+       ZONE DE SÉLECTION
+    ========================================================= */
 
         .class-selection-box {
             padding: 18px;
-            border: 1px solid #e5ebf3;
+            border: 1px solid var(--mc-border);
             border-radius: 14px;
-            background: #f9fbfe;
+            background: var(--mc-surface-soft);
+        }
+
+        .class-column {
+            transition: .2s;
         }
 
         .class-item {
             height: 100%;
-            padding: 13px 14px;
-            background: #fff;
-            border: 1px solid #e5eaf1;
+            padding: 14px;
+            background: var(--mc-surface);
+            border: 1px solid var(--mc-border);
             border-radius: 11px;
             transition: .2s;
+            cursor: pointer;
         }
 
         .class-item:hover {
@@ -203,7 +387,8 @@
 
         .class-item.selected {
             border-color: #3982cf;
-            background: #f0f6ff;
+            background: var(--mc-primary-soft);
+            box-shadow: 0 0 0 1px rgba(57, 130, 207, .08);
         }
 
         .class-item .form-check {
@@ -220,23 +405,36 @@
             margin: 0;
             cursor: pointer;
             flex-shrink: 0;
+            accent-color: var(--mc-primary);
         }
 
         .class-item .form-check-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            color: #34445b;
+            color: var(--mc-text);
             cursor: pointer;
             flex: 1;
+        }
+
+        .class-item .form-check-label i {
+            color: var(--mc-primary) !important;
         }
 
         .class-empty {
             display: none;
             text-align: center;
             padding: 30px;
-            color: #8996a8;
-            font-size: 13px;
+            color: var(--mc-muted);
+            font-size: 12px;
         }
+
+        .class-empty i {
+            color: var(--mc-primary);
+        }
+
+        /* =========================================================
+       RÉSUMÉ DE SÉLECTION
+    ========================================================= */
 
         .selection-summary {
             display: flex;
@@ -245,20 +443,69 @@
             flex-wrap: wrap;
             gap: 10px;
             padding: 13px 16px;
-            background: #edf5ff;
+            background: var(--mc-primary-soft);
+            border: 1px solid var(--mc-border);
             border-radius: 11px;
             margin-top: 16px;
         }
 
         .selection-summary strong {
-            color: #245b98;
-            font-size: 13px;
+            color: var(--mc-primary);
+            font-size: 12px;
         }
+
+        .selection-summary>span {
+            color: var(--mc-muted);
+            font-size: 11px;
+        }
+
+        .selection-summary-icon {
+            color: #299769;
+            margin-right: 7px;
+        }
+
+        /* =========================================================
+       ÉTAT SANS CLASSE
+    ========================================================= */
+
+        .matiere-no-classes {
+            text-align: center;
+            padding: 35px 15px;
+            color: var(--mc-muted);
+        }
+
+        .matiere-no-classes-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 13px;
+            border-radius: 18px;
+            background: var(--mc-primary-soft);
+            color: var(--mc-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .matiere-no-classes h6 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--mc-heading);
+        }
+
+        .matiere-no-classes p {
+            font-size: 11px;
+            margin-bottom: 0;
+        }
+
+        /* =========================================================
+       FOOTER
+    ========================================================= */
 
         .matiere-form-footer {
             padding: 20px 27px;
-            background: #fafbfd;
-            border-top: 1px solid #edf0f5;
+            background: var(--mc-surface-soft);
+            border-top: 1px solid var(--mc-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -268,9 +515,10 @@
 
         .matiere-btn {
             border-radius: 10px;
-            padding: 11px 20px;
-            font-size: 13px;
+            padding: 11px 19px;
+            font-size: 12px;
             font-weight: 700;
+            transition: .2s;
         }
 
         .matiere-btn-primary {
@@ -283,31 +531,157 @@
         .matiere-btn-primary:hover {
             color: white;
             opacity: .92;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
 
         .matiere-btn-light {
-            background: white;
-            border: 1px solid #dfe6ef;
-            color: #526176;
+            background: var(--mc-surface);
+            border: 1px solid var(--mc-border);
+            color: var(--mc-text);
         }
 
         .matiere-btn-light:hover {
-            background: #f2f5f9;
+            background: var(--mc-surface-soft);
+            color: var(--mc-heading);
+            transform: translateY(-1px);
         }
 
-        .matiere-alert {
-            border-radius: 11px;
-            font-size: 13px;
+        /* =========================================================
+       MODE SOMBRE
+    ========================================================= */
+
+        html[data-app-theme="dark"] .matiere-create-page {
+            --mc-surface: #1b2637;
+            --mc-surface-soft: #222f42;
+            --mc-text: #dce5f1;
+            --mc-heading: #f0f5fc;
+            --mc-muted: #a0aec0;
+            --mc-border: #344257;
+            --mc-primary: #76b8f5;
+            --mc-primary-soft: #263e59;
+            --mc-shadow: 0 8px 25px rgba(0, 0, 0, .2);
         }
+
+        html[data-app-theme="dark"] .matiere-hero {
+            background: linear-gradient(120deg, #14243c, #1d456b 60%, #17616a);
+            border: 1px solid rgba(148, 190, 230, .13);
+        }
+
+        html[data-app-theme="dark"] .matiere-alert {
+            background: #462a2d;
+            border-color: #714044;
+            color: #ffaaa5;
+        }
+
+        html[data-app-theme="dark"] .class-item.selected {
+            background: #263e59;
+            border-color: #579bd8;
+        }
+
+        html[data-app-theme="dark"] .classes-toolbar-actions .btn-success {
+            background: #1f664d;
+            border-color: #287c5d;
+        }
+
+        html[data-app-theme="dark"] .classes-toolbar-actions .btn-outline-danger {
+            color: #ff9d9d;
+            border-color: #87474d;
+        }
+
+        html[data-app-theme="dark"] .matiere-stat-icon {
+            background: #263e59;
+            color: #83bdf2;
+        }
+
+        /* =========================================================
+       MODE ULTRA PRO
+    ========================================================= */
+
+        html[data-app-theme="ultra-pro"] .matiere-create-page {
+            --mc-surface: #111d31;
+            --mc-surface-soft: #17263d;
+            --mc-text: #dbe8f7;
+            --mc-heading: #f3f8ff;
+            --mc-muted: #91a5bf;
+            --mc-border: #293d59;
+            --mc-primary: #56b9f5;
+            --mc-primary-soft: #1d3c5b;
+            --mc-shadow: 0 8px 30px rgba(0, 0, 0, .22);
+        }
+
+        html[data-app-theme="ultra-pro"] .matiere-hero {
+            background: linear-gradient(120deg, #09182d, #123d66 60%, #087c89);
+            border: 1px solid rgba(91, 190, 255, .18);
+        }
+
+        html[data-app-theme="ultra-pro"] .matiere-alert {
+            background: #462a2d;
+            border-color: #714044;
+            color: #ffaaa5;
+        }
+
+        html[data-app-theme="ultra-pro"] .class-item.selected {
+            background: #1d3c5b;
+            border-color: #56a6e5;
+        }
+
+        html[data-app-theme="ultra-pro"] .matiere-stat-icon {
+            background: #1c3c5e;
+            color: #72c5ff;
+        }
+
+        html[data-app-theme="ultra-pro"] .classes-toolbar-actions .btn-success {
+            background: #17664f;
+            border-color: #287c5d;
+        }
+
+        html[data-app-theme="ultra-pro"] .classes-toolbar-actions .btn-outline-danger {
+            color: #ff9d9d;
+            border-color: #87474d;
+        }
+
+        /* =========================================================
+       THÈME EMERALD
+    ========================================================= */
+
+        html[data-app-theme="emerald"] .matiere-create-page {
+            --mc-primary: #168568;
+            --mc-primary-soft: #e6f6f0;
+        }
+
+        html[data-app-theme="emerald"] .matiere-hero {
+            background: linear-gradient(120deg, #075b4a, #13866b 60%, #36a58a);
+        }
+
+        /* =========================================================
+       THÈME WARM
+    ========================================================= */
+
+        html[data-app-theme="warm"] .matiere-create-page {
+            --mc-primary: #a66a35;
+            --mc-primary-soft: #fbf0e4;
+        }
+
+        html[data-app-theme="warm"] .matiere-hero {
+            background: linear-gradient(120deg, #70452e, #a66a35 60%, #c28b56);
+        }
+
+        /* =========================================================
+       RESPONSIVE
+    ========================================================= */
 
         @media(max-width: 768px) {
+
             .matiere-create-page {
                 padding: 14px;
             }
 
             .matiere-hero {
                 padding: 24px;
+            }
+
+            .matiere-hero h3 {
+                font-size: 21px;
             }
 
             .matiere-form-body {
@@ -317,33 +691,115 @@
             .matiere-form-footer {
                 padding: 17px;
             }
+
+            .matiere-section-header {
+                padding: 17px 18px;
+            }
+
+            .classes-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .classes-toolbar-actions {
+                width: 100%;
+            }
+
+            .classes-toolbar-actions button {
+                flex: 1;
+            }
+
+            .classes-search {
+                max-width: 100%;
+            }
+        }
+
+        @media(max-width: 480px) {
+
+            .matiere-hero {
+                padding: 20px;
+            }
+
+            .matiere-hero h3 {
+                font-size: 19px;
+            }
+
+            .matiere-hero::after {
+                right: 10px;
+                font-size: 85px;
+            }
+
+            .matiere-form-body {
+                padding: 15px;
+            }
+
+            .class-selection-box {
+                padding: 11px;
+            }
+
+            .matiere-form-footer {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .matiere-form-footer .matiere-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .selection-summary {
+                align-items: flex-start;
+                flex-direction: column;
+            }
         }
     </style>
+
 
     <div class="matiere-create-page">
 
         {{-- EN-TÊTE --}}
         <div class="matiere-hero">
-            <div class="d-flex align-items-center gap-3 mb-2">
-                <i class="fas fa-book-open fa-2x"></i>
-                <span class="small fw-bold text-uppercase">
-                    Gestion pédagogique
-                </span>
+
+            <div class="matiere-hero-content">
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="matiere-hero-icon">
+                        <i class="bi bi-journal-bookmark-fill"></i>
+                    </div>
+
+                    <span class="matiere-hero-eyebrow">
+                        GESTION PÉDAGOGIQUE
+                    </span>
+                </div>
+
+                <h3>Ajouter une nouvelle matière</h3>
+
+                <p>
+                    Configurez les informations de la matière et choisissez
+                    les classes auxquelles elle sera enseignée.
+                </p>
+
             </div>
 
-            <h3>Ajouter une nouvelle matière</h3>
+        </div>
 
-            <p>
-                Configurez les informations de la matière et choisissez
-                les classes auxquelles elle sera enseignée.
-            </p>
+        {{-- FIL D'ARIANE --}}
+        <div class="matiere-breadcrumb">
+            <i class="bi bi-house-door"></i>
+            <span>Accueil</span>
+            <i class="bi bi-chevron-right"></i>
+            <a href="{{ route('matieres.index') }}" class="text-decoration-none" style="color:inherit;">
+                Matières
+            </a>
+            <i class="bi bi-chevron-right"></i>
+            <strong>Ajouter</strong>
         </div>
 
         {{-- ERREURS --}}
         @if ($errors->any())
-            <div class="alert alert-danger matiere-alert mb-4">
+            <div class="alert matiere-alert mb-4">
                 <div class="fw-bold mb-2">
-                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
                     Vérifiez les informations saisies
                 </div>
 
@@ -362,14 +818,16 @@
 
                 {{-- SECTION INFORMATIONS --}}
                 <div class="matiere-section-header">
+
                     <div class="matiere-section-icon">
-                        <i class="fas fa-info-circle"></i>
+                        <i class="bi bi-info-circle-fill"></i>
                     </div>
 
                     <div>
                         <h5>Informations de la matière</h5>
                         <p>Renseignez le nom de la matière à créer</p>
                     </div>
+
                 </div>
 
                 <div class="matiere-form-body">
@@ -377,28 +835,36 @@
                     <div class="row g-4">
 
                         <div class="col-lg-8">
-                            <label class="matiere-label">
+
+                            <label for="nom" class="matiere-label">
                                 Nom de la matière
                                 <span class="text-danger">*</span>
                             </label>
 
-                            <input type="text" name="nom"
+                            <input type="text" name="nom" id="nom"
                                 class="form-control matiere-input @error('nom') is-invalid @enderror"
                                 value="{{ old('nom') }}" placeholder="Exemple : Mathématiques, Français, Physique..."
-                                required autofocus>
+                                maxlength="100" required autofocus>
 
                             @error('nom')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
 
                             <div class="matiere-help">
-                                <i class="fas fa-lightbulb me-1"></i>
+                                <i class="bi bi-lightbulb me-1"></i>
                                 Utilisez un nom clair et facilement identifiable.
                             </div>
+
                         </div>
 
                         <div class="col-lg-4">
+
                             <div class="matiere-stat">
+
+                                <div class="matiere-stat-icon">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                </div>
+
                                 <div class="matiere-stat-label">
                                     Classes disponibles
                                 </div>
@@ -410,7 +876,9 @@
                                 <div class="matiere-help">
                                     Classes enregistrées dans l'établissement
                                 </div>
+
                             </div>
+
                         </div>
 
                     </div>
@@ -419,14 +887,16 @@
 
                 {{-- SECTION CLASSES --}}
                 <div class="matiere-section-header">
+
                     <div class="matiere-section-icon">
-                        <i class="fas fa-school"></i>
+                        <i class="bi bi-building-fill"></i>
                     </div>
 
                     <div>
                         <h5>Affectation aux classes</h5>
                         <p>Sélectionnez les classes concernées par cette matière</p>
                     </div>
+
                 </div>
 
                 <div class="matiere-form-body">
@@ -434,37 +904,46 @@
                     <div class="classes-toolbar">
 
                         <div>
-                            <div class="fw-bold" style="font-size:14px;">
+                            <div class="classes-toolbar-title">
                                 Classes de l'établissement
                             </div>
 
-                            <div class="text-muted small mt-1">
+                            <div class="classes-toolbar-subtitle">
                                 Vous pouvez sélectionner plusieurs classes.
                             </div>
                         </div>
 
-                        <div class="d-flex gap-2 flex-wrap">
-                            <button type="button" id="selectAll" class="btn btn-sm btn-success rounded-3">
+                        <div class="classes-toolbar-actions">
 
-                                <i class="fas fa-check-double me-1"></i>
+                            <button type="button" id="selectAll" class="btn btn-sm btn-success">
+
+                                <i class="bi bi-check2-all me-1"></i>
                                 Tout sélectionner
+
                             </button>
 
-                            <button type="button" id="deselectAll" class="btn btn-sm btn-outline-danger rounded-3">
+                            <button type="button" id="deselectAll" class="btn btn-sm btn-outline-danger">
 
-                                <i class="fas fa-times me-1"></i>
+                                <i class="bi bi-x-lg me-1"></i>
                                 Tout désélectionner
+
                             </button>
+
                         </div>
 
                     </div>
 
                     {{-- RECHERCHE --}}
-                    <div class="classes-search mb-3">
-                        <i class="fas fa-search"></i>
+                    @if ($classes->count() > 0)
+                        <div class="classes-search">
 
-                        <input type="text" id="searchClasses" placeholder="Rechercher une classe...">
-                    </div>
+                            <i class="bi bi-search"></i>
+
+                            <input type="text" id="searchClasses" placeholder="Rechercher une classe..."
+                                autocomplete="off" aria-label="Rechercher une classe">
+
+                        </div>
+                    @endif
 
                     {{-- LISTE DES CLASSES --}}
                     <div class="class-selection-box">
@@ -486,7 +965,7 @@
 
                                                 <label class="form-check-label" for="classe{{ $classe->id }}">
 
-                                                    <i class="fas fa-graduation-cap text-primary me-1"></i>
+                                                    <i class="bi bi-mortarboard-fill me-1"></i>
                                                     {{ $classe->nom }}
 
                                                 </label>
@@ -501,21 +980,23 @@
                             </div>
 
                             <div class="class-empty" id="classEmpty">
-                                <i class="fas fa-search fa-2x mb-2 d-block"></i>
+                                <i class="bi bi-search fs-3 mb-2 d-block"></i>
                                 Aucune classe ne correspond à votre recherche.
                             </div>
                         @else
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-school fa-3x mb-3"></i>
+                            <div class="matiere-no-classes">
 
-                                <h6 class="fw-bold">
-                                    Aucune classe disponible
-                                </h6>
+                                <div class="matiere-no-classes-icon">
+                                    <i class="bi bi-building-x"></i>
+                                </div>
 
-                                <p class="small mb-0">
+                                <h6>Aucune classe disponible</h6>
+
+                                <p>
                                     Veuillez d'abord créer une classe avant
                                     d'affecter cette matière.
                                 </p>
+
                             </div>
                         @endif
 
@@ -525,11 +1006,11 @@
                     <div class="selection-summary">
 
                         <div>
-                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            <i class="bi bi-check-circle-fill selection-summary-icon"></i>
                             <strong id="selectedCount">0 classe sélectionnée</strong>
                         </div>
 
-                        <span class="small text-muted" id="selectionMessage">
+                        <span id="selectionMessage">
                             Aucune classe sélectionnée
                         </span>
 
@@ -542,14 +1023,16 @@
 
                     <a href="{{ route('matieres.index') }}" class="btn matiere-btn matiere-btn-light">
 
-                        <i class="fas fa-arrow-left me-2"></i>
+                        <i class="bi bi-arrow-left me-2"></i>
                         Retour à la liste
+
                     </a>
 
                     <button type="submit" class="btn matiere-btn matiere-btn-primary">
 
-                        <i class="fas fa-save me-2"></i>
+                        <i class="bi bi-floppy-fill me-2"></i>
                         Enregistrer la matière
+
                     </button>
 
                 </div>
@@ -559,6 +1042,7 @@
         </form>
 
     </div>
+
 
     {{-- JAVASCRIPT --}}
     <script>
@@ -570,6 +1054,13 @@
             const searchInput = document.getElementById('searchClasses');
             const classColumns = document.querySelectorAll('.class-column');
             const classEmpty = document.getElementById('classEmpty');
+
+            const selectAllButton = document.getElementById('selectAll');
+            const deselectAllButton = document.getElementById('deselectAll');
+
+            /* =====================================================
+               MISE À JOUR DE LA SÉLECTION
+            ===================================================== */
 
             function updateSelection() {
 
@@ -588,62 +1079,101 @@
 
                 });
 
-                selectedCount.textContent =
-                    selected + (selected > 1 ?
-                        ' classes sélectionnées' :
-                        ' classe sélectionnée');
+                if (selectedCount) {
+                    selectedCount.textContent =
+                        selected + (selected > 1 ?
+                            ' classes sélectionnées' :
+                            ' classe sélectionnée');
+                }
 
-                selectionMessage.textContent = selected > 0 ?
-                    'La matière sera affectée à ' + selected + ' classe(s).' :
-                    'Aucune classe sélectionnée';
+                if (selectionMessage) {
+                    selectionMessage.textContent = selected > 0 ?
+                        'La matière sera affectée à ' + selected + ' classe(s).' :
+                        'Aucune classe sélectionnée';
+                }
             }
 
-            // Mise à jour lors d'une sélection
+            /* =====================================================
+               SÉLECTION INDIVIDUELLE
+            ===================================================== */
+
             checkboxes.forEach(function(checkbox) {
                 checkbox.addEventListener('change', updateSelection);
             });
 
-            // Tout sélectionner
-            document.getElementById('selectAll').addEventListener('click', function() {
+            /* =====================================================
+               TOUT SÉLECTIONNER
+            ===================================================== */
 
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = true;
+            if (selectAllButton) {
+
+                selectAllButton.addEventListener('click', function() {
+
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = true;
+                    });
+
+                    updateSelection();
+
                 });
 
-                updateSelection();
-            });
+            }
 
-            // Tout désélectionner
-            document.getElementById('deselectAll').addEventListener('click', function() {
+            /* =====================================================
+               TOUT DÉSELECTIONNER
+            ===================================================== */
 
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = false;
+            if (deselectAllButton) {
+
+                deselectAllButton.addEventListener('click', function() {
+
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = false;
+                    });
+
+                    updateSelection();
+
                 });
 
-                updateSelection();
-            });
+            }
 
-            // Recherche des classes
-            searchInput.addEventListener('input', function() {
+            /* =====================================================
+               RECHERCHE DES CLASSES
+            ===================================================== */
 
-                const search = this.value.toLowerCase().trim();
-                let visible = 0;
+            if (searchInput) {
 
-                classColumns.forEach(function(column) {
+                searchInput.addEventListener('input', function() {
 
-                    const name = column.dataset.name;
-                    const match = name.includes(search);
+                    const search = this.value.toLowerCase().trim();
+                    let visible = 0;
 
-                    column.style.display = match ? '' : 'none';
+                    classColumns.forEach(function(column) {
 
-                    if (match) visible++;
+                        const name = column.dataset.name || '';
+                        const match = name.includes(search);
+
+                        column.style.display = match ? '' : 'none';
+
+                        if (match) visible++;
+
+                    });
+
+                    if (classEmpty) {
+                        classEmpty.style.display =
+                            visible === 0 && classColumns.length > 0 ?
+                            'block' :
+                            'none';
+                    }
+
                 });
 
-                classEmpty.style.display =
-                    visible === 0 && classColumns.length > 0 ? 'block' : 'none';
-            });
+            }
 
-            // Initialisation avec les anciennes valeurs après validation
+            /* =====================================================
+               INITIALISATION
+            ===================================================== */
+
             updateSelection();
 
         });
