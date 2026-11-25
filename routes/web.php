@@ -13,13 +13,21 @@ use App\Http\Controllers\EcoleSettingController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\EmploiTempsController;
 use App\Http\Controllers\EnseignantController;
+use App\Http\Controllers\FraisDashboardController;
+use App\Http\Controllers\GenerationFraisController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\LivreController;
 use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ParentEleveController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\RapportFinancierController;
+use App\Http\Controllers\RecuController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalleController;
+use App\Http\Controllers\SituationFinanciereController;
+use App\Http\Controllers\TarifFraisController;
+use App\Http\Controllers\TypeFraisController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -186,6 +194,69 @@ Route::middleware(['auth'])->group(function () {
         ->parameters([
             'inscriptions' => 'inscription',
         ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODULE FRAIS ET ÉCOLAGES
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('frais')
+        ->name('frais.')
+        ->group(function () {
+
+            // TABLEAU DE BORD FINANCIER
+            Route::get('/dashboard', [FraisDashboardController::class, 'index'])
+                ->name('dashboard');
+
+            // TYPES DE FRAIS
+            Route::resource('types', TypeFraisController::class);
+
+            // TARIFS SCOLAIRES
+            Route::resource('tarifs', TarifFraisController::class);
+
+            // SITUATION FINANCIÈRE DES ÉLÈVES
+            Route::get('/situations', [SituationFinanciereController::class, 'index'])
+                ->name('situations.index');
+
+            Route::get('/situations/{eleve}', [SituationFinanciereController::class, 'show'])
+                ->name('situations.show');
+
+            // ENCAISSEMENTS
+            Route::get('/paiements', [PaiementController::class, 'index'])
+                ->name('paiements.index');
+
+            Route::get('/paiements/create', [PaiementController::class, 'create'])
+                ->name('paiements.create');
+
+            Route::post('/paiements', [PaiementController::class, 'store'])
+                ->name('paiements.store');
+
+            Route::get('/paiements/{paiement}', [PaiementController::class, 'show'])
+                ->name('paiements.show');
+
+            Route::post('/paiements/{paiement}/annuler', [PaiementController::class, 'annuler'])
+                ->name('paiements.annuler');
+
+            // REÇUS DE PAIEMENT
+            Route::get('/recus', [RecuController::class, 'index'])
+                ->name('recus.index');
+
+            Route::get('/recus/{recu}/imprimer', [RecuController::class, 'imprimer'])
+                ->name('recus.imprimer');
+
+            // RAPPORTS FINANCIERS
+            Route::get('/rapports', [RapportFinancierController::class, 'index'])
+                ->name('rapports.index');
+
+            // Génération automatique des frais
+            Route::get('/generation', [GenerationFraisController::class, 'index'])
+                ->name('generation.index');
+
+            Route::post('/generation', [GenerationFraisController::class, 'generer'])
+                ->name('generation.generer');
+
+        });
 
     /*
     |--------------------------------------------------------------------------
@@ -513,6 +584,18 @@ Route::middleware(['auth'])->group(function () {
 
         /*
 |--------------------------------------------------------------------------
+| POINTAGE
+|--------------------------------------------------------------------------
+*/
+
+        Route::get('/pointage', [ConfigController::class, 'pointage'])
+            ->name('pointage');
+
+        Route::put('/pointage', [ConfigController::class, 'updatePointage'])
+            ->name('pointage.update');
+
+        /*
+|--------------------------------------------------------------------------
 | ANNÉE SCOLAIRE
 |--------------------------------------------------------------------------
 */
@@ -549,6 +632,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/mode-paiement', [ConfigController::class, 'modePaiement'])
             ->name('mode.paiement');
+
+        Route::put('/mode-paiement', [ConfigController::class, 'updateModePaiement'])
+            ->name('mode.paiement.update');
 
         /*
         |--------------------------------------------------------------------------

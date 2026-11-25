@@ -767,19 +767,91 @@
                 </div>
             @endif
 
-            @if (auth()->user()->aPermission('paiements.voir'))
+
+            @if (auth()->user()->aPermission('frais.dashboard') ||
+                    auth()->user()->aPermission('frais.types_voir') ||
+                    auth()->user()->aPermission('frais.tarifs_voir') ||
+                    auth()->user()->aPermission('frais.tarifs_gerer') ||
+                    auth()->user()->aPermission('frais.situations_voir') ||
+                    auth()->user()->aPermission('frais.encaisser') ||
+                    auth()->user()->aPermission('frais.paiements_voir') ||
+                    auth()->user()->aPermission('frais.recus_voir') ||
+                    auth()->user()->aPermission('frais.rapports_voir'))
                 <a href="#" class="sidebar-link menu-toggle" data-target="finances">
                     <i class="bi bi-wallet2"></i>
                     <span>Frais et écolages</span>
                     <i class="bi bi-chevron-right menu-arrow"></i>
                 </a>
+
                 <div id="finances" class="submenu">
-                    <a href="{{ route('config.droit.inscription') }}">Droit d'inscription</a>
-                    <a href="{{ route('config.droit.reinscription') }}">Droit de réinscription</a>
-                    <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
-                    <a href="{{ route('config.frais.divers') }}">Frais divers</a>
+
+                    @if (auth()->user()->aPermission('frais.dashboard'))
+                        <a href="{{ route('frais.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i>
+                            Tableau de bord financier
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.types_voir'))
+                        <a href="{{ route('frais.types.index') }}">
+                            <i class="bi bi-tags"></i>
+                            Types de frais
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.tarifs_voir'))
+                        <a href="{{ route('frais.tarifs.index') }}">
+                            <i class="bi bi-cash-stack"></i>
+                            Tarifs scolaires
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.tarifs_gerer'))
+                        <a href="{{ route('frais.generation.index') }}">
+                            <i class="bi bi-calendar2-check"></i>
+                            Génération des frais mensuels
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.situations_voir'))
+                        <a href="{{ route('frais.situations.index') }}">
+                            <i class="bi bi-person-lines-fill"></i>
+                            Situations financières
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.encaisser'))
+                        <a href="{{ route('frais.paiements.create') }}">
+                            <i class="bi bi-cash-coin"></i>
+                            Nouvel encaissement
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.paiements_voir'))
+                        <a href="{{ route('frais.paiements.index') }}">
+                            <i class="bi bi-receipt"></i>
+                            Liste des paiements
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.recus_voir'))
+                        <a href="{{ route('frais.recus.index') }}">
+                            <i class="bi bi-file-earmark-text"></i>
+                            Reçus de paiement
+                        </a>
+                    @endif
+
+                    @if (auth()->user()->aPermission('frais.rapports_voir'))
+                        <a href="{{ route('frais.rapports.index') }}">
+                            <i class="bi bi-bar-chart-line"></i>
+                            Rapports financiers
+                        </a>
+                    @endif
+                     <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
+
                 </div>
             @endif
+
 
             @if (auth()->user()->aPermission('parents.voir'))
                 <a href="#" class="sidebar-link menu-toggle" data-target="communication">
@@ -1337,15 +1409,15 @@
 
             <ul class="dropdown-menu dropdown-menu-end theme-menu">
                 ${themes.map(theme => `
-                        <li>
-                            <button type="button"
-                                class="dropdown-item"
-                                data-theme="${theme.id}">
-                                <i class="bi ${theme.icon}"></i>
-                                <span>${theme.label}</span>
-                            </button>
-                        </li>
-                    `).join('')}
+                                <li>
+                                    <button type="button"
+                                        class="dropdown-item"
+                                        data-theme="${theme.id}">
+                                        <i class="bi ${theme.icon}"></i>
+                                        <span>${theme.label}</span>
+                                    </button>
+                                </li>
+                            `).join('')}
             </ul>
         `;
 

@@ -3,12 +3,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Bulletin;
 use App\Models\ClasseMatiereCoefficient;
+use App\Models\EcoleSetting;
 use App\Models\Eleve;
 use App\Models\Note;
 use App\Models\Periode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class BulletinController extends Controller
 {
@@ -360,10 +362,17 @@ class BulletinController extends Controller
                 'moyenne' => $moyenne,
             ];
         }
+        $ecole = EcoleSetting::first();
+
+        $logoEcole = null;
+
+        if ($ecole && ! empty($ecole->logo)) {
+            $logoEcole = Storage::disk('public')->url($ecole->logo);
+        }
 
         return view(
             'bulletin.affichage',
-            compact('eleve', 'bulletins')
+            compact('eleve', 'bulletins', 'ecole', 'logoEcole')
         );
     }
 

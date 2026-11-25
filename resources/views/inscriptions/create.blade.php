@@ -4,8 +4,8 @@
 
     <style>
         /* =========================================================
-       INSCRIPTION — ULTRA PRO PREMIUM
-    ========================================================= */
+                   INSCRIPTION — ULTRA PRO PREMIUM
+                ========================================================= */
 
         .ins-create {
             padding: 24px;
@@ -787,9 +787,9 @@
         }
 
         /* =========================================================
-       MODE SOMBRE — ADAPTATION ULTRA PRO
-       Les autres thèmes ne sont pas modifiés.
-    ========================================================= */
+                   MODE SOMBRE — ADAPTATION ULTRA PRO
+                   Les autres thèmes ne sont pas modifiés.
+                ========================================================= */
 
         html[data-app-theme="dark"] .ins-create {
             color: #e2e8f0;
@@ -1549,31 +1549,13 @@
                         <div class="ins-create-card-header">
                             <div class="ins-create-section-icon ins-section-orange">💰</div>
                             <div>
-                                <h5>Informations financières et administratives</h5>
-                                <p>Renseignez les frais et les remarques éventuelles.</p>
+                                <h5>Informations administratives</h5>
+                                <p>Ajoutez les remarques éventuelles concernant cette inscription.</p>
                             </div>
                         </div>
 
                         <div class="ins-create-card-body">
                             <div class="ins-create-grid">
-
-                                {{-- FRAIS --}}
-                                <div class="ins-create-field full">
-                                    <label for="frais_inscription">Frais d'inscription (Ar)</label>
-
-                                    <input type="number" name="frais_inscription" id="frais_inscription"
-                                        class="ins-create-input @error('frais_inscription') is-invalid @enderror"
-                                        value="{{ old('frais_inscription', 0) }}" min="0" step="0.01"
-                                        placeholder="0">
-
-                                    <div class="ins-field-help">
-                                        Montant des frais d'inscription. Laissez 0 si aucun frais n'est demandé.
-                                    </div>
-
-                                    @error('frais_inscription')
-                                        <div class="ins-field-error">{{ $message }}</div>
-                                    @enderror
-                                </div>
 
                                 {{-- OBSERVATIONS --}}
                                 <div class="ins-create-field full">
@@ -1624,9 +1606,13 @@
 
                             <hr class="ins-summary-divider">
 
-                            <div class="ins-summary-total">
-                                <span>Frais d'inscription</span>
-                                <strong id="ins_summary_frais">0 Ar</strong>
+                            <div class="ins-student-note">
+                                <span>💰</span>
+                                <div>
+                                    Les frais d'inscription ou de réinscription seront
+                                    générés automatiquement après la validation du dossier,
+                                    selon les tarifs scolaires configurés.
+                                </div>
                             </div>
 
                             {{-- ACTIONS --}}
@@ -1663,11 +1649,8 @@
             // 1. FORMULAIRE ET RÉSUMÉ
             const classeSelect = document.getElementById('classe_id');
             const dateInput = document.getElementById('date_inscription');
-            const fraisInput = document.getElementById('frais_inscription');
-
             const summaryClasse = document.getElementById('ins_summary_classe');
             const summaryDate = document.getElementById('ins_summary_date');
-            const summaryFrais = document.getElementById('ins_summary_frais');
             const summaryType = document.getElementById('ins_summary_type');
 
             // 2. SÉLECTION ÉLÈVE
@@ -1702,16 +1685,6 @@
                 const parts = dateInput.value.split('-');
                 summaryDate.textContent =
                     parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : dateInput.value;
-            }
-
-            // 5. RÉSUMÉ FRAIS
-            function updateFrais() {
-                const montant = parseFloat(fraisInput.value) || 0;
-
-                summaryFrais.textContent =
-                    new Intl.NumberFormat('fr-FR', {
-                        maximumFractionDigits: 2
-                    }).format(montant) + ' Ar';
             }
 
             // 6. TYPE D'INSCRIPTION AUTOMATIQUE
@@ -1853,12 +1826,10 @@
             // 11. ÉVÉNEMENTS RÉCAPITULATIF
             classeSelect.addEventListener('change', updateClasse);
             dateInput.addEventListener('change', updateDate);
-            fraisInput.addEventListener('input', updateFrais);
 
             // INITIALISATION
             updateClasse();
             updateDate();
-            updateFrais();
         });
     </script>
 

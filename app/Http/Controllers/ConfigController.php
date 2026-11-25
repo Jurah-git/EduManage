@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\EcoleSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -183,4 +184,228 @@ class ConfigController extends Controller
 
         return back()->with('success', 'Utilisateur supprimé');
     }
+
+    /*
+|--------------------------------------------------------------------------
+| CONFIGURATION DU POINTAGE
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| CONFIGURATION DU POINTAGE
+|--------------------------------------------------------------------------
+*/
+
+    public function pointage()
+    {
+        $setting = EcoleSetting::first();
+
+        $valeursParDefaut = [
+            'ouverture_portail'   => '07:15',
+            'debut_matin'         => '07:30',
+            'fin_matin'           => '12:00',
+            'debut_apres_midi'    => '14:00',
+            'fin_apres_midi'      => '17:00',
+            'jours_cours'         => ['lun', 'mar', 'mer', 'jeu', 'ven'],
+            'tolerance_retard'    => 10,
+            'seuil_absence'       => 30,
+            'mode_pointage'       => 'qr_badge',
+            'jours_justification' => 3,
+            'alerter_parents'     => true,
+            'inclure_bulletin'    => true,
+        ];
+
+        $config = (object) array_merge(
+            $valeursParDefaut,
+            $setting?->pointage_config ?? []
+        );
+
+        return view('config.pointage', compact('config'));
+    }
+
+/*
+|--------------------------------------------------------------------------
+| ENREGISTRER LA CONFIGURATION DU POINTAGE
+|--------------------------------------------------------------------------
+*/
+
+    public function updatePointage(Request $request)
+    {
+        $data = $request->validate([
+            'ouverture_portail'   => 'required|date_format:H:i',
+            'debut_matin'         => 'required|date_format:H:i',
+            'fin_matin'           => 'required|date_format:H:i',
+            'debut_apres_midi'    => 'required|date_format:H:i',
+            'fin_apres_midi'      => 'required|date_format:H:i',
+
+            'jours_cours'         => 'required|array|min:1',
+            'jours_cours.*'       => 'required|in:lun,mar,mer,jeu,ven,sam',
+
+            'tolerance_retard'    => 'required|integer|min:0|max:60',
+            'seuil_absence'       => 'required|integer|min:5|max:240',
+
+            'mode_pointage'       => 'required|in:qr_badge,appel_manuel,biometrie',
+
+            'jours_justification' => 'nullable|integer|min:0|max:30',
+        ]);
+
+        // Gestion des cases à cocher
+        $data['alerter_parents']  = $request->boolean('alerter_parents');
+        $data['inclure_bulletin'] = $request->boolean('inclure_bulletin');
+
+        // Valeur par défaut du délai de justification
+        $data['jours_justification'] ??= 3;
+
+        // Récupérer ou créer les paramètres de l'école
+        $setting = EcoleSetting::first() ?? new EcoleSetting();
+
+        // Enregistrer les paramètres dans la colonne JSON
+        $setting->pointage_config = $data;
+        $setting->save();
+
+        return redirect()
+            ->route('config.pointage')
+            ->with('success', 'Configuration du pointage enregistrée avec succès.');
+    }
+
+    /*
+|--------------------------------------------------------------------------
+| CONFIGURATION DES MODES DE PAIEMENT
+|--------------------------------------------------------------------------
+*/
+
+public function modePaiement()
+{
+    $setting = EcoleSetting::first();
+
+    $modesParDefaut = [
+        'especes' => [
+            'nom' => 'Espèces',
+            'description' => 'Paiement directement à la caisse.',
+            'actif' => true,
+            'details' => '',
+        ],
+        'mvola' => [
+            'nom' => 'MVola',
+            'description' => 'Paiement par transfert MVola.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'orange_money' => [
+            'nom' => 'Orange Money',
+            'description' => 'Paiement par transfert Orange Money.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'airtel_money' => [
+            'nom' => 'Airtel Money',
+            'description' => 'Paiement par transfert Airtel Money.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'virement' => [
+            'nom' => 'Virement bancaire',
+            'description' => 'Paiement par virement bancaire.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'cheque' => [
+            'nom' => 'Chèque',
+            'description' => 'Paiement par chèque.',
+            'actif' => false,
+            'details' => '',
+        ],
+    ];
+
+    $modes = array_replace_recursive(
+        $modesParDefaut,
+        $setting?->modes_paiement_config ?? []
+    );
+
+    return view('config.mode_paiement', compact('modes'));
+}
+
+/*
+|--------------------------------------------------------------------------
+| ENREGISTRER LES MODES DE PAIEMENT
+|--------------------------------------------------------------------------
+*/
+
+
+public function updateModePaiement(Request $request)
+{
+    $request->validate([
+        'modes' => 'required|array',
+        'modes.*.actif' => 'nullable|boolean',
+        'modes.*.details' => 'nullable|string|max:255',
+    ]);
+
+    $modesParDefaut = [
+        'especes' => [
+            'nom' => 'Espèces',
+            'description' => 'Paiement directement à la caisse.',
+            'actif' => true,
+            'details' => '',
+        ],
+        'mvola' => [
+            'nom' => 'MVola',
+            'description' => 'Paiement par transfert MVola.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'orange_money' => [
+            'nom' => 'Orange Money',
+            'description' => 'Paiement par transfert Orange Money.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'airtel_money' => [
+            'nom' => 'Airtel Money',
+            'description' => 'Paiement par transfert Airtel Money.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'virement' => [
+            'nom' => 'Virement bancaire',
+            'description' => 'Paiement par virement bancaire.',
+            'actif' => false,
+            'details' => '',
+        ],
+        'cheque' => [
+            'nom' => 'Chèque',
+            'description' => 'Paiement par chèque.',
+            'actif' => false,
+            'details' => '',
+        ],
+    ];
+
+    $setting = EcoleSetting::firstOrCreate([]);
+
+    $modes = array_replace_recursive(
+        $modesParDefaut,
+        $setting->modes_paiement_config ?? []
+    );
+
+    foreach ($modes as $key => &$mode) {
+        $mode['actif'] = (bool) (
+            $request->input("modes.$key.actif", false)
+        );
+
+        $mode['details'] = $request->input(
+            "modes.$key.details",
+            ''
+        );
+    }
+
+    unset($mode);
+
+    $setting->modes_paiement_config = $modes;
+    $setting->save();
+
+    return redirect()
+        ->route('config.mode.paiement')
+        ->with('success', 'Les modes de paiement ont été enregistrés avec succès.');
+}
+
 }

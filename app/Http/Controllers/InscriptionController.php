@@ -5,6 +5,7 @@ use App\Models\AnneeScolaire;
 use App\Models\Classe;
 use App\Models\Eleve;
 use App\Models\Inscription;
+use App\Services\GenerationAutomatiqueFrais;
 use Illuminate\Http\Request;
 
 class InscriptionController extends Controller
@@ -69,8 +70,6 @@ class InscriptionController extends Controller
         $totalEnAttente = Inscription::where('statut', 'en_attente')
             ->count();
 
-        $totalFrais = Inscription::sum('frais_inscription');
-
         $anneesScolaires = AnneeScolaire::orderBy('date_debut', 'desc')->get();
 
         $classes = Classe::orderBy('nom')->get();
@@ -82,7 +81,6 @@ class InscriptionController extends Controller
             'totalInscriptions',
             'totalValidees',
             'totalEnAttente',
-            'totalFrais'
         ));
     }
 
@@ -131,7 +129,6 @@ class InscriptionController extends Controller
             'annee_scolaire_id' => 'required|exists:annee_scolaires,id',
             'date_inscription'  => 'required|date',
             'type'              => 'nullable|in:nouvelle_inscription,reinscription',
-            'frais_inscription' => 'nullable|numeric|min:0',
             'observations'      => 'nullable|string|max:5000',
         ]);
 
@@ -177,14 +174,13 @@ class InscriptionController extends Controller
             : 'nouvelle_inscription';
 
         // Enregistrer l'inscription
-        Inscription::create([
+        $inscription = Inscription::create([
             'eleve_id'          => $validated['eleve_id'],
             'classe_id'         => $validated['classe_id'],
             'annee_scolaire_id' => $validated['annee_scolaire_id'],
             'date_inscription'  => $validated['date_inscription'],
             'type'              => $typeAutomatique,
             'statut'            => 'en_attente',
-            'frais_inscription' => $validated['frais_inscription'] ?? 0,
             'observations'      => $validated['observations'] ?? null,
         ]);
 
@@ -255,8 +251,11 @@ class InscriptionController extends Controller
 |--------------------------------------------------------------------------
 */
 
-    public function update(Request $request, Inscription $inscription)
-    {
+    public function update(
+        Request $request,
+        Inscription $inscription,
+        GenerationAutomatiqueFrais $generationFrais
+    ) {
         $validated = $request->validate([
             'eleve_id'          => 'required|exists:eleves,id',
             'classe_id'         => 'required|exists:classes,id',
@@ -264,11 +263,41 @@ class InscriptionController extends Controller
             'date_inscription'  => 'required|date',
             'type'              => 'nullable|in:nouvelle_inscription,reinscription',
             'statut'            => 'required|in:en_attente,validee,annulee',
-            'frais_inscription' => 'nullable|numeric|min:0',
             'observations'      => 'nullable|string|max:5000',
         ]);
 
-        // Vérifier qu'une année scolaire active existe
+        // Une inscription déjà validée ne doit pas changer d'élève,
+        // de classe, d'année scolaire ou de date.
+        if ($inscription->statut === 'validee') {
+            $modificationInterdite =
+            (int) $inscription->eleve_id !== (int) $validated['eleve_id']
+            || (int) $inscription->classe_id !== (int) $validated['classe_id']
+            || (int) $inscription->annee_scolaire_id !== (int) $validated['annee_scolaire_id']
+            || \Illuminate\Support\Carbon::parse($inscription->date_inscription)->toDateString()
+            !== \Illuminate\Support\Carbon::parse($validated['date_inscription'])->toDateString();
+
+            if ($modificationInterdite) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'statut' => 'Une inscription déjà validée ne peut plus changer d’élève, de classe, d’année scolaire ou de date.',
+                    ]);
+            }
+        }
+
+        // Empêcher de dévalider une inscription déjà validée.
+        if (
+            $inscription->statut === 'validee'
+            && $validated['statut'] !== 'validee'
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'statut' => 'Une inscription déjà validée ne peut pas être remise en attente ou annulée depuis cette page.',
+                ]);
+        }
+
+        // Vérifier qu'une année scolaire active existe.
         $anneeActive = AnneeScolaire::where('active', true)->first();
 
         if (! $anneeActive) {
@@ -279,7 +308,7 @@ class InscriptionController extends Controller
                 ]);
         }
 
-        // Vérifier que la modification concerne l'année active
+        // Vérifier que la modification concerne l'année active.
         if ((int) $validated['annee_scolaire_id'] !== (int) $anneeActive->id) {
             return back()
                 ->withInput()
@@ -288,7 +317,7 @@ class InscriptionController extends Controller
                 ]);
         }
 
-        // Vérifier les doublons pour un même élève et une même année
+        // Vérifier les doublons pour un même élève et une même année.
         $existe = Inscription::where('eleve_id', $validated['eleve_id'])
             ->where('annee_scolaire_id', $validated['annee_scolaire_id'])
             ->where('id', '!=', $inscription->id)
@@ -302,8 +331,7 @@ class InscriptionController extends Controller
                 ]);
         }
 
-        // Déterminer le type selon l'historique de l'élève
-        // On exclut l'inscription actuellement modifiée
+        // Déterminer le type selon l'historique de l'élève.
         $dejaInscrit = Inscription::where('eleve_id', $validated['eleve_id'])
             ->where('id', '!=', $inscription->id)
             ->exists();
@@ -312,16 +340,37 @@ class InscriptionController extends Controller
             ? 'reinscription'
             : 'nouvelle_inscription';
 
-        $inscription->update([
-            'eleve_id'          => $validated['eleve_id'],
-            'classe_id'         => $validated['classe_id'],
-            'annee_scolaire_id' => $validated['annee_scolaire_id'],
-            'date_inscription'  => $validated['date_inscription'],
-            'type'              => $typeAutomatique,
-            'statut'            => $validated['statut'],
-            'frais_inscription' => $validated['frais_inscription'] ?? 0,
-            'observations'      => $validated['observations'] ?? null,
-        ]);
+        // Conserver l'ancien statut avant la modification.
+        $ancienStatut = $inscription->statut;
+
+        // Enregistrer et générer les frais dans une seule transaction.
+        // Si la génération échoue, la modification sera également annulée.
+        \Illuminate\Support\Facades\DB::transaction(function () use (
+            $inscription,
+            $validated,
+            $typeAutomatique,
+            $ancienStatut,
+            $generationFrais
+        ) {
+            $inscription->update([
+                'eleve_id'          => $validated['eleve_id'],
+                'classe_id'         => $validated['classe_id'],
+                'annee_scolaire_id' => $validated['annee_scolaire_id'],
+                'date_inscription'  => $validated['date_inscription'],
+                'type'              => $typeAutomatique,
+                'statut'            => $validated['statut'],
+                'observations'      => $validated['observations'] ?? null,
+            ]);
+
+            // Générer les frais uniquement lors du passage
+            // d'une inscription non validée à une inscription validée.
+            if (
+                $ancienStatut !== 'validee'
+                && $inscription->statut === 'validee'
+            ) {
+                $generationFrais->genererFraisInscription($inscription);
+            }
+        });
 
         return redirect()
             ->route('inscriptions.show', $inscription->id)

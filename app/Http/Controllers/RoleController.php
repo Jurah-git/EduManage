@@ -21,6 +21,7 @@ class RoleController extends Controller
         'presences'    => 'Présences',
         'inscriptions' => 'Inscriptions',
         'paiements'    => 'Paiements',
+        'frais'        => 'Frais et Écolages',
         'utilisateurs' => 'Utilisateurs',
         'rapports'     => 'Rapports',
 
@@ -124,6 +125,30 @@ class RoleController extends Controller
             'modifier'  => 'Modifier',
             'supprimer' => 'Supprimer',
             'valider'   => 'Valider un paiement',
+        ],
+
+        'frais'        => [
+            'dashboard'         => 'Tableau de bord financier',
+
+            'types_voir'        => 'Consulter les types de frais',
+            'types_creer'       => 'Ajouter un type de frais',
+            'types_modifier'    => 'Modifier un type de frais',
+            'types_supprimer'   => 'Supprimer un type de frais',
+
+            'tarifs_voir'       => 'Consulter les tarifs scolaires',
+            'tarifs_gerer'      => 'Gérer les tarifs scolaires',
+
+            'situations_voir'   => 'Consulter les situations financières',
+
+            'encaisser'         => 'Enregistrer un paiement',
+
+            'paiements_voir'    => 'Consulter les paiements',
+            'paiements_annuler' => 'Annuler un paiement',
+
+            'recus_voir'        => 'Consulter les reçus',
+            'recus_imprimer'    => 'Imprimer les reçus',
+
+            'rapports_voir'     => 'Consulter les rapports financiers',
         ],
 
         'utilisateurs' => [

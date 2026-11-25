@@ -27,8 +27,8 @@
 
         <style>
             /* =========================================================
-                                                                                               AFFICHAGE BULLETIN - ULTRA PRO
-                                                                                            ========================================================= */
+                                                                                                   AFFICHAGE BULLETIN - ULTRA PRO
+                                                                                                ========================================================= */
 
             .affichage-bulletin-page {
                 --ab-bg: #f1f5fb;
@@ -64,8 +64,8 @@
             }
 
             /* =========================================================
-                                                                                               THEMES
-                                                                                            ========================================================= */
+                                                                                                   THEMES
+                                                                                                ========================================================= */
 
             html[data-app-theme="dark"] .affichage-bulletin-page {
                 --ab-bg: #101827;
@@ -144,8 +144,8 @@
             }
 
             /* =========================================================
-                                                                                               TOP ACTION BAR
-                                                                                            ========================================================= */
+                                                                                                   TOP ACTION BAR
+                                                                                                ========================================================= */
 
             .ab-toolbar {
                 display: flex;
@@ -260,8 +260,8 @@
             }
 
             /* =========================================================
-                                                                                               SUMMARY TOP CARDS
-                                                                                            ========================================================= */
+                                                                                                   SUMMARY TOP CARDS
+                                                                                                ========================================================= */
 
             .ab-summary-top {
                 display: grid;
@@ -322,8 +322,8 @@
             }
 
             /* =========================================================
-                                                                                               BULLETIN GRID
-                                                                                            ========================================================= */
+                                                                                                   BULLETIN GRID
+                                                                                                ========================================================= */
 
             .container-bulletins {
                 display: grid;
@@ -351,8 +351,8 @@
             }
 
             /* =========================================================
-                                                                                               BULLETIN CARD
-                                                                                            ========================================================= */
+                                                                                                   BULLETIN CARD
+                                                                                                ========================================================= */
 
             .ab-bulletin {
                 background: var(--ab-card);
@@ -371,8 +371,8 @@
             }
 
             /* =========================================================
-                                                                                               SCHOOL HEADER
-                                                                                            ========================================================= */
+                                                                                                   SCHOOL HEADER
+                                                                                                ========================================================= */
 
             .ab-header-top {
                 background: linear-gradient(135deg, #112f69, #1d4ed8 65%, #3b82f6);
@@ -442,6 +442,44 @@
                 line-height: 1.3;
             }
 
+            .ab-identite-ecole {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .ab-logo-ecole {
+                width: 65px;
+                height: 65px;
+                object-fit: contain;
+                background: #fff;
+                border-radius: 10px;
+                padding: 4px;
+                flex-shrink: 0;
+            }
+
+            .ab-identite-texte {
+                min-width: 0;
+                text-align: center;
+            }
+
+            .ab-identite-texte h2 {
+                overflow-wrap: anywhere;
+            }
+
+            @media(max-width: 650px) {
+                .ab-logo-ecole {
+                    width: 45px;
+                    height: 45px;
+                }
+
+                .ab-identite-ecole {
+                    gap: 6px;
+                }
+            }
+
             .ab-ecole p {
                 margin: 5px 0 0;
                 font-size: 11px;
@@ -463,8 +501,8 @@
             }
 
             /* =========================================================
-                                                                                               TITLE
-                                                                                            ========================================================= */
+                                                                                                   TITLE
+                                                                                                ========================================================= */
 
             .ab-titre {
                 background: var(--ab-primary-soft);
@@ -486,8 +524,8 @@
             }
 
             /* =========================================================
-                                                                                               STUDENT INFORMATION
-                                                                                            ========================================================= */
+                                                                                                   STUDENT INFORMATION
+                                                                                                ========================================================= */
 
             .ab-infos {
                 padding: 17px;
@@ -523,8 +561,8 @@
             }
 
             /* =========================================================
-                                                                                               TABLE
-                                                                                            ========================================================= */
+                                                                                                   TABLE
+                                                                                                ========================================================= */
 
             .ab-zone-table {
                 padding: 0 17px 17px;
@@ -610,8 +648,8 @@
             }
 
             /* =========================================================
-                                                                                               RESULT SUMMARY
-                                                                                            ========================================================= */
+                                                                                                   RESULT SUMMARY
+                                                                                                ========================================================= */
 
             .ab-resume {
                 padding: 0 17px 17px;
@@ -676,8 +714,8 @@
             }
 
             /* =========================================================
-                                                                                               SIGNATURE
-                                                                                            ========================================================= */
+                                                                                                   SIGNATURE
+                                                                                                ========================================================= */
 
             .ab-footer-sign {
                 padding: 20px 17px;
@@ -710,8 +748,8 @@
             }
 
             /* =========================================================
-                                                                                               RESPONSIVE
-                                                                                            ========================================================= */
+                                                                                                   RESPONSIVE
+                                                                                                ========================================================= */
 
             @media(max-width: 1500px) {
                 .container-bulletins.nb3 {
@@ -815,8 +853,8 @@
             }
 
             /* =========================================================
-                                                                                               PRINT
-                                                                                            ========================================================= */
+                                                                                                   PRINT
+                                                                                                ========================================================= */
 
             @media print {
                 .affichage-bulletin-page {
@@ -862,8 +900,8 @@
             }
 
             /* =====================================================
-                                                               BOUTON RETOUR
-                                                            ===================================================== */
+                                                                   BOUTON RETOUR
+                                                                ===================================================== */
             .ab-btn-back {
                 display: inline-flex;
                 align-items: center;
@@ -887,8 +925,8 @@
             }
 
             /* =====================================================
-                                                       BARRE D'ACTIONS
-                                                    ===================================================== */
+                                                           BARRE D'ACTIONS
+                                                        ===================================================== */
 
             .ab-toolbar-actions {
                 display: flex;
@@ -1034,8 +1072,8 @@
             }
 
             /* =====================================================
-                                       POPUP IMAGE NON ENREGISTRÉE
-                                    ===================================================== */
+                                           POPUP IMAGE NON ENREGISTRÉE
+                                        ===================================================== */
 
             .ab-save-modal {
                 position: fixed;
@@ -1245,7 +1283,9 @@
                 </div>
                 <div>
                     <div class="ab-stat-label">Établissement</div>
-                    <div class="ab-stat-value" style="font-size:17px;">Lycée EduManage</div>
+                    <div class="ab-stat-value" style="font-size:17px;">
+                        {{ $ecole->nom_ecole ?? 'Établissement scolaire' }}
+                    </div>
                 </div>
             </div>
 
@@ -1277,13 +1317,29 @@
                             </div>
 
                             <div class="ab-ecole">
-                                <h2>LYCÉE EDUMANAGE</h2>
-                                <p>Antananarivo</p>
 
-                                <span class="ab-school-tag">
-                                    <i class="bi bi-mortarboard-fill"></i>
-                                    Établissement scolaire
-                                </span>
+                                <div class="ab-identite-ecole">
+
+                                    @if (!empty($logoEcole))
+                                        <img src="{{ $logoEcole }}" alt="Logo officiel de l'école" class="ab-logo-ecole"
+                                            crossorigin="anonymous">
+                                    @endif
+
+                                    <div class="ab-identite-texte">
+
+                                        <h2>
+                                            {{ $ecole->nom_ecole ?? 'Établissement scolaire' }}
+                                        </h2>
+
+                                        <span class="ab-school-tag">
+                                            <i class="bi bi-mortarboard-fill"></i>
+                                            Établissement scolaire
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
                             </div>
 
                             <div class="ab-annee">

@@ -11,5 +11,10 @@ class EcoleSetting extends Model
         'adresse',
         'telephone',
         'email',
+        'pointage_config',
+    ];
+
+    protected $casts = [
+        'pointage_config' => 'array',
     ];
 }
