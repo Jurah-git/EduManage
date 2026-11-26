@@ -847,7 +847,7 @@
                             Rapports financiers
                         </a>
                     @endif
-                     <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a>
+                    <!-- <a href="{{ route('config.mode.paiement') }}">Modes de paiement</a> -->
 
                 </div>
             @endif
