@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -21,12 +22,29 @@ class AnneeScolaire extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Relation avec les inscriptions
+    | RELATION AVEC LES INSCRIPTIONS SCOLAIRES
     |--------------------------------------------------------------------------
     */
 
     public function inscriptions(): HasMany
     {
-        return $this->hasMany(Inscription::class, 'annee_scolaire_id');
+        return $this->hasMany(
+            Inscription::class,
+            'annee_scolaire_id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION AVEC LES INSCRIPTIONS AUX ACTIVITÉS
+    |--------------------------------------------------------------------------
+    */
+
+    public function inscriptionsActivites(): HasMany
+    {
+        return $this->hasMany(
+            InscriptionActivite::class,
+            'annee_scolaire_id'
+        );
     }
 }

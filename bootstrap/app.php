@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Foundation\Application;
@@ -14,8 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.only'         => \App\Http\Middleware\AdminOnly::class,
             'permission.globale' => \App\Http\Middleware\VerifierPermissionGlobale::class,
+            'parent'             => \App\Http\Middleware\ParentOnly::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

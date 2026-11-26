@@ -73,4 +73,13 @@ class Eleve extends Model
     {
         return $this->hasMany(Inscription::class, 'eleve_id');
     }
+
+public function inscriptionsActivites(): HasMany
+{
+    return $this->hasMany(
+        InscriptionActivite::class,
+        'eleve_id'
+    );
+}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
@@ -10,83 +11,77 @@ class EleveController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | LISTE
+    | LISTE DES ÉLÈVES
     |--------------------------------------------------------------------------
     */
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        // PORTAIL PARENT : uniquement ses propres enfants.
+        if ($this->estParent()) {
+            $parent = $user->parentEleve()->first();
+
+            if (! $parent) {
+                abort(403, 'Aucun dossier parent associé à ce compte.');
+            }
+
+            $query = $parent->eleves()->with('classe');
+
+            $this->appliquerFiltres($query, $request);
+
+            $eleves = $query->get();
+
+            // Le parent ne voit que les classes de ses enfants.
+            $classes = Classe::whereIn(
+                'id',
+                $eleves->pluck('classe_id')->filter()->unique()
+            )->get();
+
+            return view('eleves.index', compact('eleves', 'classes'));
+        }
+
+        // AUTRES UTILISATEURS
         $this->verifierPermission('eleves.voir');
+
         $query = Eleve::with('classe');
 
-        /*
+        $this->appliquerFiltres($query, $request);
+
+        $eleves = $query->get();
+        $classes = Classe::all();
+
+        return view('eleves.index', compact('eleves', 'classes'));
+    }
+
+    /*
     |--------------------------------------------------------------------------
-    | FILTRE NOM
+    | FILTRES ET TRI
     |--------------------------------------------------------------------------
     */
 
+    private function appliquerFiltres($query, Request $request): void
+    {
         if ($request->nom) {
-
-            $query->where(
-                'nom',
-                'like',
-                '%' . $request->nom . '%'
-            );
+            $query->where('nom', 'like', '%' . $request->nom . '%');
         }
-
-        /*
-    |--------------------------------------------------------------------------
-    | FILTRE PRENOM
-    |--------------------------------------------------------------------------
-    */
 
         if ($request->prenom) {
-
-            $query->where(
-                'prenom',
-                'like',
-                '%' . $request->prenom . '%'
-            );
+            $query->where('prenom', 'like', '%' . $request->prenom . '%');
         }
-
-        /*
-    |--------------------------------------------------------------------------
-    | FILTRE CLASSE
-    |--------------------------------------------------------------------------
-    */
 
         if ($request->classe_id) {
-
-            $query->where(
-                'classe_id',
-                $request->classe_id
-            );
+            $query->where('classe_id', $request->classe_id);
         }
-
-        /*
-    |--------------------------------------------------------------------------
-    | FILTRE NUMERO
-    |--------------------------------------------------------------------------
-    */
 
         if ($request->numero_classe) {
-
-            $query->where(
-                'numero_classe',
-                $request->numero_classe
-            );
+            $query->where('numero_classe', $request->numero_classe);
         }
-
-        /*
-    |--------------------------------------------------------------------------
-    | TRI
-    |--------------------------------------------------------------------------
-    */
 
         $sort = $request->sort ?? 'nom_asc';
 
         switch ($sort) {
-
             case 'nom_desc':
                 $query->orderBy('nom', 'desc');
                 break;
@@ -111,26 +106,19 @@ class EleveController extends Controller
                 $query->orderBy('nom', 'asc');
                 break;
         }
-
-        $eleves = $query->get();
-
-        $classes = Classe::all();
-
-        return view(
-            'eleves.index',
-            compact('eleves', 'classes')
-        );
     }
 
     /*
     |--------------------------------------------------------------------------
-    | FORM CREATE
+    | FORMULAIRE DE CRÉATION
     |--------------------------------------------------------------------------
     */
 
     public function create()
     {
+        $this->interdireParent();
         $this->verifierPermission('eleves.creer');
+
         $classes = Classe::all();
 
         return view('eleves.create', compact('classes'));
@@ -138,73 +126,42 @@ class EleveController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | STORE
+    | ENREGISTRER UN ÉLÈVE
     |--------------------------------------------------------------------------
     */
 
     public function store(Request $request)
     {
+        $this->interdireParent();
         $this->verifierPermission('eleves.creer');
+
         $request->validate([
             'nom'       => 'required',
             'prenom'    => 'required',
             'classe_id' => 'required',
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | PHOTO
-        |--------------------------------------------------------------------------
-        */
-
         $photoPath = null;
 
         if ($request->hasFile('photo')) {
-
-            $photoPath = $request
-                ->file('photo')
-                ->store('eleves', 'public');
+            $photoPath = $request->file('photo')->store('eleves', 'public');
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | MATRICULE AUTO
-        |--------------------------------------------------------------------------
-        */
 
         $lastEleve = Eleve::latest()->first();
 
-        $nextId = $lastEleve
-            ? $lastEleve->id + 1
-            : 1;
+        $nextId = $lastEleve ? $lastEleve->id + 1 : 1;
 
-        $matricule = 'ELV-' .
-        date('Y') . '-' .
-        str_pad($nextId, 4, '0', STR_PAD_LEFT);
-
-        /*
-    |--------------------------------------------------------------------------
-    | NUMERO CLASSE AUTO
-    |--------------------------------------------------------------------------
-    */
+        $matricule = 'ELV-' . date('Y') . '-' .
+            str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
         $lastNumero = Eleve::where(
             'classe_id',
             $request->classe_id
         )->max('numero_classe');
 
-        $numeroClasse = $lastNumero
-            ? $lastNumero + 1
-            : 1;
-
-        /*
-    |--------------------------------------------------------------------------
-    | CREATE
-    |--------------------------------------------------------------------------
-    */
+        $numeroClasse = $lastNumero ? $lastNumero + 1 : 1;
 
         Eleve::create([
-
             'nom'            => $request->nom,
             'prenom'         => $request->prenom,
             'matricule'      => $matricule,
@@ -213,7 +170,6 @@ class EleveController extends Controller
             'classe_id'      => $request->classe_id,
             'numero_classe'  => $numeroClasse,
             'photo'          => $photoPath,
-
         ]);
 
         return redirect()
@@ -223,124 +179,75 @@ class EleveController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | EDIT
+    | FORMULAIRE DE MODIFICATION
     |--------------------------------------------------------------------------
     */
 
     public function edit(Eleve $eleve)
     {
+        $this->interdireParent();
         $this->verifierPermission('eleves.modifier');
+
         $classes = Classe::all();
 
-        return view('eleves.edit', compact(
-            'eleve',
-            'classes'
-        ));
+        return view('eleves.edit', compact('eleve', 'classes'));
     }
 
     /*
     |--------------------------------------------------------------------------
-    | UPDATE
+    | MODIFIER UN ÉLÈVE
     |--------------------------------------------------------------------------
     */
 
     public function update(Request $request, Eleve $eleve)
     {
+        $this->interdireParent();
         $this->verifierPermission('eleves.modifier');
-        /*
-    |--------------------------------------------------------------------------
-    | PHOTO
-    |--------------------------------------------------------------------------
-    */
+
+        $request->validate([
+            'nom'       => 'required',
+            'prenom'    => 'required',
+            'classe_id' => 'required',
+        ]);
 
         $photoPath = $eleve->photo;
 
-        // Nouvelle photo
         if ($request->hasFile('photo')) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | DELETE OLD PHOTO
-            |--------------------------------------------------------------------------
-            */
-
             if (
                 $eleve->photo &&
                 Storage::disk('public')->exists($eleve->photo)
             ) {
-
                 Storage::disk('public')->delete($eleve->photo);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | STORE NEW PHOTO
-            |--------------------------------------------------------------------------
-            */
-
-            $photoPath = $request
-                ->file('photo')
-                ->store('eleves', 'public');
+            $photoPath = $request->file('photo')->store('eleves', 'public');
         }
 
         $ancienneClasse = $eleve->classe_id;
 
-        /*
-        |--------------------------------------------------------------------------
-        | SI CHANGEMENT DE CLASSE
-        |--------------------------------------------------------------------------
-        */
-
         if ($ancienneClasse != $request->classe_id) {
-
-            /*
-        |--------------------------------------------------------------------------
-        | REORGANISER ANCIENNE CLASSE
-        |--------------------------------------------------------------------------
-        */
-
-            $anciens = Eleve::where(
-                'classe_id',
-                $ancienneClasse
-            )
+            $anciens = Eleve::where('classe_id', $ancienneClasse)
                 ->where('id', '!=', $eleve->id)
                 ->orderBy('numero_classe')
                 ->get();
 
             foreach ($anciens as $index => $e) {
-
                 $e->update([
                     'numero_classe' => $index + 1,
                 ]);
             }
-
-            /*
-        |--------------------------------------------------------------------------
-        | NOUVEAU NUMERO
-        |--------------------------------------------------------------------------
-        */
 
             $lastNumero = Eleve::where(
                 'classe_id',
                 $request->classe_id
             )->max('numero_classe');
 
-            $nouveauNumero = $lastNumero
-                ? $lastNumero + 1
-                : 1;
+            $nouveauNumero = $lastNumero ? $lastNumero + 1 : 1;
         } else {
-
             $nouveauNumero = $eleve->numero_classe;
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | UPDATE ELEVE
-    |--------------------------------------------------------------------------
-    */
-
         $eleve->update([
-
             'nom'            => $request->nom,
             'prenom'         => $request->prenom,
             'sexe'           => $request->sexe,
@@ -348,7 +255,6 @@ class EleveController extends Controller
             'classe_id'      => $request->classe_id,
             'numero_classe'  => $nouveauNumero,
             'photo'          => $photoPath,
-
         ]);
 
         return redirect()
@@ -358,64 +264,112 @@ class EleveController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | DELETE
+    | SUPPRIMER UN ÉLÈVE
     |--------------------------------------------------------------------------
     */
+
     public function destroy(Eleve $eleve)
     {
+        $this->interdireParent();
         $this->verifierPermission('eleves.supprimer');
+
         $classeId = $eleve->classe_id;
-        /*
-|--------------------------------------------------------------------------
-        | DELETE PHOTO
-        |--------------------------------------------------------------------------
-        */
 
         if (
             $eleve->photo &&
             Storage::disk('public')->exists($eleve->photo)
         ) {
-
             Storage::disk('public')->delete($eleve->photo);
         }
-        $eleve->delete();
 
-        /*
-    |--------------------------------------------------------------------------
-    | REORGANISER NUMEROS
-    |--------------------------------------------------------------------------
-    */
+        $eleve->delete();
 
         $eleves = Eleve::where('classe_id', $classeId)
             ->orderBy('numero_classe')
             ->get();
 
         foreach ($eleves as $index => $e) {
-
             $e->update([
                 'numero_classe' => $index + 1,
             ]);
         }
 
-        return back()
-            ->with('success', 'Élève supprimé');
+        return back()->with('success', 'Élève supprimé');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | SHOW
+    | AFFICHER UNE FICHE ÉLÈVE
     |--------------------------------------------------------------------------
     */
 
     public function show(Eleve $eleve)
     {
-        $this->verifierPermission('eleves.voir');
+        if ($this->estParent()) {
+            $parent = auth()->user()->parentEleve()->first();
+
+            if (! $parent) {
+                abort(403, 'Aucun dossier parent associé à ce compte.');
+            }
+
+            // Vérifier que cet élève appartient au parent connecté.
+            $autorise = $parent->eleves()
+                ->where('eleves.id', $eleve->id)
+                ->exists();
+
+            if (! $autorise) {
+                abort(403, 'Vous ne pouvez pas consulter cet élève.');
+            }
+        } else {
+            $this->verifierPermission('eleves.voir');
+        }
+
+        $eleve->load('classe');
+
         return view('eleves.show', compact('eleve'));
     }
 
     /*
     |--------------------------------------------------------------------------
-    | VERIFICATION DES PERMISSIONS
+    | IDENTIFIER LE RÔLE PARENT
+    |--------------------------------------------------------------------------
+    */
+
+    private function estParent(): bool
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        // L'administrateur principal conserve ses droits.
+        if (
+            (int) $user->id === 1 ||
+            $user->hasRole('Administrateur')
+        ) {
+            return false;
+        }
+
+        return $user->hasRole('Parent');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | INTERDIRE LES OPÉRATIONS D'ÉCRITURE AUX PARENTS
+    |--------------------------------------------------------------------------
+    */
+
+    private function interdireParent(): void
+    {
+        if ($this->estParent()) {
+            abort(403, 'Les parents ne peuvent pas modifier les dossiers des élèves.');
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VÉRIFICATION DES PERMISSIONS
     |--------------------------------------------------------------------------
     */
 

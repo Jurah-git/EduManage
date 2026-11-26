@@ -335,8 +335,12 @@ class BulletinController extends Controller
             'periodes.*' => 'required|integer|exists:periodes,id',
         ]);
 
-        $eleve = Eleve::with('classe')
+        $eleve = Eleve::with('classe.matieres')
             ->findOrFail($request->eleve_id);
+
+        $ordreMatieres = $eleve->classe
+            ? $eleve->classe->matieres->pluck('pivot.ordre', 'id')
+            : collect();
 
         $bulletins = [];
 
@@ -347,7 +351,11 @@ class BulletinController extends Controller
             $notes = Note::where('eleve_id', $eleve->id)
                 ->where('periode_id', $periode_id)
                 ->with('matiere')
-                ->get();
+                ->get()
+                ->sortBy(function ($note) use ($ordreMatieres) {
+                    return $ordreMatieres[$note->matiere_id] ?? PHP_INT_MAX;
+                })
+                ->values();
 
             $total = $notes->sum('valeur');
             $coef  = $notes->sum('coef');

@@ -937,7 +937,7 @@
                     <a href="{{ route('config.annees-scolaires.index') }}">Années scolaires</a>
                     <a href="{{ route('config.test.niveau') }}">Tests de niveau</a>
                     <a href="{{ route('config.parascolaires') }}">Activités parascolaires</a>
-                    <a href="{{ route('config.rang.matiere') }}">Rang par matière</a>
+                    <a href="{{ route('config.rang_matiere') }}">Rang par matière</a>
                     <a href="{{ route('config.ecoles') }}">Liste des écoles</a>
                 </div>
 

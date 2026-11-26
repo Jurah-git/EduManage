@@ -21,6 +21,7 @@ use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ParentEleveController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\RangMatiereController;
 use App\Http\Controllers\RapportFinancierController;
 use App\Http\Controllers\RecuController;
 use App\Http\Controllers\RoleController;
@@ -29,6 +30,9 @@ use App\Http\Controllers\SituationFinanciereController;
 use App\Http\Controllers\TarifFraisController;
 use App\Http\Controllers\TypeFraisController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EspaceParentController;
+use App\Http\Controllers\EspaceParentActiviteController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -672,14 +676,35 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/parascolaires', [ConfigController::class, 'parascolaires'])
             ->name('parascolaires');
 
+        Route::post('/parascolaires', [ConfigController::class, 'parascolairesStore'])
+            ->name('parascolaires.store');
+
+        Route::get('/parascolaires/{activite}/edit', [ConfigController::class, 'parascolairesEdit'])
+            ->name('parascolaires.edit');
+
+        Route::put('/parascolaires/{activite}', [ConfigController::class, 'parascolairesUpdate'])
+            ->name('parascolaires.update');
+
+        Route::patch('/parascolaires/{activite}/toggle', [ConfigController::class, 'parascolairesToggle'])
+            ->name('parascolaires.toggle');
+
+        Route::delete('/parascolaires/{activite}', [ConfigController::class, 'parascolairesDestroy'])
+            ->name('parascolaires.destroy');
+
         /*
         |--------------------------------------------------------------------------
-        | RANG MATIÈRE
+        | CLASSEMENT DES MATIÈRES
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/rang-matiere', [ConfigController::class, 'rangMatiere'])
-            ->name('rang.matiere');
+        Route::get('/rang-matiere', [RangMatiereController::class, 'index'])
+            ->name('rang_matiere');
+
+        Route::post('/rang-matiere/deplacer', [RangMatiereController::class, 'deplacer'])
+            ->name('rang_matiere.deplacer');
+
+        Route::post('/rang-matiere/enregistrer', [RangMatiereController::class, 'enregistrer'])
+            ->name('rang_matiere.enregistrer');
     });
 });
 
@@ -689,4 +714,38 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php'; // ESPACE PARENT — CONSULTATION UNIQUEMENT
+
+Route::middleware(['auth', 'parent'])
+    ->prefix('espace-parent')
+    ->name('parent.')
+    ->controller(EspaceParentController::class)
+    ->group(function () {
+
+        Route::get('/dashboard', 'dashboard')
+            ->name('dashboard');
+
+        Route::get('/mes-enfants', 'mesEnfants')
+            ->name('enfants');
+    });
+
+// ESPACE PARENT — ACTIVITÉS PARASCOLAIRES
+
+Route::middleware(['auth', 'parent'])
+    ->prefix('espace-parent/activites')
+    ->name('parent.activites.')
+    ->controller(EspaceParentActiviteController::class)
+    ->group(function () {
+
+        // Liste des activités disponibles
+        Route::get('/', 'index')
+            ->name('index');
+
+        // Envoyer une demande d'inscription
+        Route::post('/inscrire', 'store')
+            ->name('store');
+
+        // Consulter les demandes du parent
+        Route::get('/mes-demandes', 'mesDemandes')
+            ->name('demandes');
+    });
