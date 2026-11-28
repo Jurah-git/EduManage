@@ -13,31 +13,10 @@
         </h2>
 
         <p class="text-muted">
-            Découvrez les activités proposées par l'école et demandez
-            l'inscription de vos enfants.
+            Découvrez les activités parascolaires proposées par notre établissement.
+            Cette page est réservée à la consultation des informations.
         </p>
     </div>
-
-    {{-- MESSAGES --}}
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle me-2"></i>
-            {{ session('success') }}
-            <button type="button" class="btn-close"
-                    data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <strong>Une erreur est survenue :</strong>
-            <ul class="mb-0 mt-2">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     {{-- ANNÉE SCOLAIRE --}}
     <div class="card shadow-sm border-0 mb-4">
@@ -62,6 +41,13 @@
         </div>
     </div>
 
+    {{-- INFORMATIONS PARENT --}}
+    <div class="alert alert-info border-0 shadow-sm mb-4">
+        <i class="fas fa-info-circle me-2"></i>
+        Vous pouvez consulter les activités, leurs horaires et leurs tarifs
+        indicatifs. Pour toute demande d'inscription, contactez l'administration.
+    </div>
+
     {{-- LISTE DES ACTIVITÉS --}}
     <div class="row">
 
@@ -73,7 +59,7 @@
 
                     <div class="card-body">
 
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
 
                             <span class="badge bg-primary">
                                 {{ $activite->categorie ?? 'Activité' }}
@@ -93,9 +79,10 @@
 
                         <hr>
 
-                        <p class="mb-2">
+                        {{-- TARIF --}}
+                        <p class="mb-3">
                             <i class="fas fa-money-bill-wave text-success me-2"></i>
-                            <strong>Tarif indicatif :</strong>
+                            <strong>Tarif indicatif :</strong><br>
 
                             @if($activite->tarif_indicatif !== null)
                                 {{ number_format((float) $activite->tarif_indicatif, 0, ',', ' ') }} Ar
@@ -104,23 +91,29 @@
                             @endif
                         </p>
 
+                        {{-- PÉRIODICITÉ --}}
                         @if($activite->periodicite)
-                            <p class="mb-2">
+                            <p class="mb-3">
                                 <i class="fas fa-clock text-primary me-2"></i>
+                                <strong>Périodicité :</strong>
                                 {{ $activite->periodicite }}
                             </p>
                         @endif
 
-                        @if($activite->jours)
-                            <p class="mb-2">
+                        {{-- JOURS --}}
+                        @if(!empty($activite->jours))
+                            <p class="mb-3">
                                 <i class="fas fa-calendar-day text-primary me-2"></i>
+                                <strong>Jours :</strong>
                                 {{ implode(', ', $activite->jours) }}
                             </p>
                         @endif
 
+                        {{-- HORAIRES --}}
                         @if($activite->heure_debut && $activite->heure_fin)
-                            <p class="mb-2">
+                            <p class="mb-0">
                                 <i class="fas fa-hourglass-half text-primary me-2"></i>
+                                <strong>Horaires :</strong>
                                 {{ substr($activite->heure_debut, 0, 5) }}
                                 -
                                 {{ substr($activite->heure_fin, 0, 5) }}
@@ -129,64 +122,14 @@
 
                     </div>
 
-                    <div class="card-footer bg-white border-0 p-3">
-
-                        @if($anneeActive && $parent->eleves->isNotEmpty())
-
-                            <form method="POST"
-                                  action="{{ route('parent.activites.store') }}">
-
-                                @csrf
-
-                                <input type="hidden"
-                                       name="activite_parascolaire_id"
-                                       value="{{ $activite->id }}">
-
-                                <label class="form-label fw-semibold">
-                                    Choisir mon enfant
-                                </label>
-
-                                <select name="eleve_id"
-                                        class="form-select mb-3"
-                                        required>
-
-                                    <option value="">
-                                        Sélectionner un enfant
-                                    </option>
-
-                                    @foreach($parent->eleves as $eleve)
-                                        <option value="{{ $eleve->id }}"
-                                            {{ (string) old('eleve_id') === (string) $eleve->id ? 'selected' : '' }}>
-                                            {{ $eleve->prenom }} {{ $eleve->nom }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-
-                                <button type="submit"
-                                        class="btn btn-primary w-100">
-
-                                    <i class="fas fa-paper-plane me-1"></i>
-                                    Demander une inscription
-
-                                </button>
-
-                            </form>
-
-                        @elseif(!$anneeActive)
-
-                            <button class="btn btn-secondary w-100" disabled>
-                                Année scolaire indisponible
-                            </button>
-
-                        @else
-
-                            <div class="alert alert-warning mb-0">
-                                Aucun enfant associé à votre compte.
-                            </div>
-
-                        @endif
-
+                    {{-- CONSULTATION UNIQUEMENT --}}
+                    <div class="card-footer border-0 p-3">
+                        <div class="alert alert-light border mb-0">
+                            <i class="fas fa-eye text-primary me-2"></i>
+                            <span class="text-muted">
+                                Activité disponible en consultation.
+                            </span>
+                        </div>
                     </div>
 
                 </div>
@@ -196,7 +139,7 @@
         @empty
 
             <div class="col-12">
-                <div class="alert alert-info">
+                <div class="alert alert-info shadow-sm">
                     <i class="fas fa-info-circle me-2"></i>
                     Aucune activité parascolaire n'est actuellement disponible.
                 </div>
@@ -204,17 +147,6 @@
 
         @endforelse
 
-    </div>
-
-    {{-- LIEN VERS LES DEMANDES --}}
-    <div class="mt-3">
-        <a href="{{ route('parent.activites.demandes') }}"
-           class="btn btn-outline-primary">
-
-            <i class="fas fa-list-alt me-1"></i>
-            Consulter mes demandes
-
-        </a>
     </div>
 
 </div>

@@ -32,6 +32,14 @@ use App\Http\Controllers\TypeFraisController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EspaceParentController;
 use App\Http\Controllers\EspaceParentActiviteController;
+use App\Http\Controllers\AnnonceController;
+use App\Http\Controllers\EspaceParentAnnonceController;
+use App\Models\Note;
+use App\Models\Periode;
+use App\Models\Bulletin;
+use App\Http\Controllers\EspaceParentMessagerieController;
+use App\Http\Controllers\AdminMessagerieController;
+
 
 
 /*
@@ -58,12 +66,15 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
+    Route::middleware(['admin.only'])->group(function () {
+
     Route::get('/config/ecole-identite', [EcoleSettingController::class, 'index'])
         ->name('config.ecole-identite');
 
     Route::post('/config/ecole-identite', [EcoleSettingController::class, 'update'])
         ->name('config.ecole-identite.update');
 
+});
 /*
 |--------------------------------------------------------------------------
 | SALLE
@@ -336,7 +347,9 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::middleware(['admin.only'])->group(function () {
     Route::resource('parents', ParentEleveController::class);
+});
 
     /*
     |--------------------------------------------------------------------------
@@ -549,7 +562,10 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::prefix('config')->name('config.')->group(function () {
+    Route::middleware(['admin.only'])
+    ->prefix('config')
+    ->name('config.')
+    ->group(function () {
 
         /*
         |--------------------------------------------------------------------------
@@ -714,38 +730,108 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__ . '/auth.php'; // ESPACE PARENT — CONSULTATION UNIQUEMENT
 
+require __DIR__ . '/auth.php';
+
+// ESPACE PARENT
 Route::middleware(['auth', 'parent'])
     ->prefix('espace-parent')
     ->name('parent.')
     ->controller(EspaceParentController::class)
     ->group(function () {
+        Route::get('/notes-bulletins', 'notes')
+    ->name('notes.index');
 
         Route::get('/dashboard', 'dashboard')
             ->name('dashboard');
 
         Route::get('/mes-enfants', 'mesEnfants')
             ->name('enfants');
-    });
 
-// ESPACE PARENT — ACTIVITÉS PARASCOLAIRES
+        Route::get('/emploi-temps', 'emploiTemps')
+            ->name('emploi-temps');
+            Route::get('/frais', 'frais')
+    ->name('frais');
+    Route::get('/historique-paiements', 'historiquePaiements')
+    ->name('paiements.historique');
+    
+            });
 
+// ACTIVITÉS PARASCOLAIRES
 Route::middleware(['auth', 'parent'])
     ->prefix('espace-parent/activites')
     ->name('parent.activites.')
     ->controller(EspaceParentActiviteController::class)
     ->group(function () {
 
-        // Liste des activités disponibles
+        Route::get('/', 'index')
+            ->name('index');
+    });
+    // ======================================================
+// ADMINISTRATION - ANNONCES ET COMMUNICATIONS
+// ======================================================
+
+Route::middleware(['auth', 'admin.only'])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::resource('annonces', AnnonceController::class)
+            ->except(['show']);
+
+        Route::post('/annonces/{annonce}/publier',
+            [AnnonceController::class, 'publier'])
+            ->name('annonces.publier');
+
+        Route::post('/annonces/{annonce}/depublier',
+            [AnnonceController::class, 'depublier'])
+            ->name('annonces.depublier');
+    });
+    // ======================================================
+// ESPACE PARENT - ANNONCES EN LECTURE SEULE
+// ======================================================
+
+Route::middleware(['auth', 'parent'])
+    ->prefix('espace-parent/annonces')
+    ->name('parent.annonces.')
+    ->controller(EspaceParentAnnonceController::class)
+    ->group(function () {
+
         Route::get('/', 'index')
             ->name('index');
 
-        // Envoyer une demande d'inscription
-        Route::post('/inscrire', 'store')
-            ->name('store');
+        Route::get('/{annonce}', 'show')
+            ->name('show');
+    });
+// ======================================================
+// MESSAGERIE PARENT
+// ======================================================
 
-        // Consulter les demandes du parent
-        Route::get('/mes-demandes', 'mesDemandes')
-            ->name('demandes');
+Route::middleware(['auth', 'parent'])
+    ->prefix('espace-parent/messagerie')
+    ->name('parent.messagerie.')
+    ->controller(EspaceParentMessagerieController::class)
+    ->group(function () {
+
+        Route::get('/', 'index')->name('index');
+
+        Route::post('/envoyer', 'envoyer')->name('envoyer');
+    });
+
+
+// ======================================================
+// MESSAGERIE ADMINISTRATEUR
+// ======================================================
+
+Route::middleware(['auth', 'admin.only'])
+    ->prefix('admin/messagerie')
+    ->name('admin.messagerie.')
+    ->controller(AdminMessagerieController::class)
+    ->group(function () {
+
+        Route::get('/', 'index')->name('index');
+
+        Route::get('/{conversation}', 'show')->name('show');
+
+        Route::post('/{conversation}/repondre', 'repondre')
+            ->name('repondre');
     });

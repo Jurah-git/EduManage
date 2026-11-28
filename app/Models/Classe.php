@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ class Classe extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function eleves()
+    public function eleves(): HasMany
     {
         return $this->hasMany(Eleve::class);
     }
@@ -44,5 +45,16 @@ class Classe extends Model
     public function inscriptions(): HasMany
     {
         return $this->hasMany(Inscription::class, 'classe_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relation avec les emplois du temps
+    |--------------------------------------------------------------------------
+    */
+
+    public function emploisTemps(): HasMany
+    {
+        return $this->hasMany(EmploiTemps::class, 'classe_id');
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Enseignant;
 use App\Models\Matiere;
 use App\Models\Salle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmploiTempsController extends Controller
 {
@@ -278,4 +279,32 @@ class EmploiTempsController extends Controller
             ->route('emplois-temps.show', $emploiTemps)
             ->with('success', 'Emploi du temps remis en brouillon.');
     }
+    /**
+ * Consulter les emplois du temps publiés des enfants.
+ */
+public function emploiTemps(Request $request)
+{
+    $parent = $request->user()->parentEleve;
+
+    abort_if(! $parent, 403);
+
+    // Récupérer uniquement les enfants de ce parent.
+    $eleves = $parent->eleves()
+        ->with([
+            'classe.emploisTemps' => function ($query) {
+                $query->where('statut', 'publie')
+                    ->with([
+                        'anneeScolaire',
+                        'creneaux.matiere',
+                        'creneaux.enseignant',
+                        'creneaux.salle',
+                    ]);
+            },
+        ])
+        ->orderBy('nom')
+        ->orderBy('prenom')
+        ->get();
+
+    return view('parent.emploi-temps', compact('parent', 'eleves'));
+}
 }

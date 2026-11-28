@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class AnnonceParentLue extends Model
+{
+    protected $table = 'annonce_parent_lues';
+
+    protected $fillable = [
+        'annonce_id',
+        'parent_id',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
+    ];
+
+    public function annonce(): BelongsTo
+    {
+        return $this->belongsTo(Annonce::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(ParentEleve::class, 'parent_id');
+    }
+}

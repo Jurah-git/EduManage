@@ -1,6 +1,67 @@
 <!DOCTYPE html>
 <html lang="fr">
 
+@php
+    $notificationMessages = collect();
+    $notificationAnnouncements = collect();
+
+    $notificationMessageCount = 0;
+    $notificationAnnouncementCount = 0;
+    $notificationCount = 0;
+
+    if (Auth::check()) {
+        $userConnecte = Auth::user();
+        $parentConnecte = $userConnecte->parentEleve;
+
+        $messageQuery = \App\Models\Message::query()
+            ->where('sender_id', '!=', $userConnecte->id)
+            ->whereNull('read_at');
+
+        if ((int) $userConnecte->id === 1) {
+            // Administrateur : messages entrants de toutes les conversations.
+        } elseif ($parentConnecte) {
+            // Parent : uniquement les messages de sa propre conversation.
+            $messageQuery->whereHas('conversation', function ($query) use ($parentConnecte) {
+                $query->where('parent_id', $parentConnecte->id);
+            });
+        } else {
+            // Les autres comptes ne reçoivent pas ces notifications.
+            $messageQuery->whereRaw('1 = 0');
+        }
+
+        $notificationMessageCount = (clone $messageQuery)->count();
+
+        $notificationMessages = (clone $messageQuery)
+            ->with(['conversation.parent.user', 'expediteur'])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Annonces non lues : réservées aux comptes parents.
+        if ((int) $userConnecte->id !== 1 && $parentConnecte) {
+            $annonceQuery = \App\Models\Annonce::query()
+                ->where('statut', 'publie')
+                ->whereIn('public_cible', ['tous', 'parents'])
+                ->whereNotNull('date_publication')
+                ->where('date_publication', '<=', now())
+                ->whereDoesntHave('lecturesParents', function ($query) use ($parentConnecte) {
+                    $query->where('parent_id', $parentConnecte->id)
+                        ->whereNotNull('read_at');
+                });
+
+            $notificationAnnouncementCount = (clone $annonceQuery)->count();
+
+            $notificationAnnouncements = (clone $annonceQuery)
+                ->latest('date_publication')
+                ->take(6)
+                ->get();
+        }
+
+        $notificationCount = $notificationMessageCount + $notificationAnnouncementCount;
+    }
+@endphp
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -275,7 +336,257 @@
             background: rgba(255, 201, 40, 0.08);
         }
 
+        
         /* ==========================================
+           NOTIFICATIONS - STYLE PROFESSIONNEL
+        ========================================== */
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-bell {
+            position: relative;
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #334155;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .notification-bell:hover {
+            background: #edf3ff;
+            border-color: #cbd8ed;
+            color: #1d4ed8;
+        }
+
+        .notification-bell i {
+            font-size: 19px;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 19px;
+            height: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid #fff;
+            border-radius: 20px;
+            background: #dc2626;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .notification-panel {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            z-index: 2100;
+            width: 360px;
+            max-width: calc(100vw - 25px);
+            max-height: 490px;
+            display: none;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, .18);
+        }
+
+        .notification-panel.show {
+            display: block;
+            animation: notificationAppear .18s ease;
+        }
+
+        @keyframes notificationAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-7px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 17px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .notification-header strong {
+            color: #0b1933;
+            font-size: 14px;
+        }
+
+        .notification-header span {
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        .notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notification-section-title {
+            padding: 11px 15px 7px;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 11px;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            color: inherit;
+            text-decoration: none;
+            transition: background .2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f5f8ff;
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #eaf1ff;
+            color: #2563eb;
+            font-size: 16px;
+        }
+
+        .notification-icon.announcement {
+            background: #fff5dc;
+            color: #b7791f;
+        }
+
+        .notification-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .notification-content strong {
+            display: block;
+            margin-bottom: 3px;
+            color: #17243b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .notification-content p {
+            margin: 0;
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .notification-content small {
+            display: block;
+            margin-top: 5px;
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        .notification-empty {
+            padding: 30px 15px;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .notification-empty i {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 26px;
+        }
+
+        .notification-footer {
+            padding: 12px;
+            border-top: 1px solid #edf0f5;
+            text-align: center;
+        }
+
+        .notification-footer a {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .notification-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Notifications en mode sombre */
+
+        html[data-app-theme="dark"] .notification-bell {
+            background: #162036;
+            border-color: #263554;
+            color: #f1f5f9;
+        }
+
+        html[data-app-theme="dark"] .notification-panel {
+            background: #111827;
+            border-color: #263554;
+        }
+
+        html[data-app-theme="dark"] .notification-header,
+        html[data-app-theme="dark"] .notification-footer,
+        html[data-app-theme="dark"] .notification-item {
+            border-color: #263554;
+        }
+
+        html[data-app-theme="dark"] .notification-header strong,
+        html[data-app-theme="dark"] .notification-content strong {
+            color: #f8fafc;
+        }
+
+        html[data-app-theme="dark"] .notification-item:hover {
+            background: #1e293b;
+        }
+
+        html[data-app-theme="dark"] .notification-content p,
+        html[data-app-theme="dark"] .notification-section-title {
+            color: #a5b4c8;
+        }
+
+        @media (max-width: 480px) {
+            .notification-panel {
+                position: fixed;
+                top: 75px;
+                right: 10px;
+                width: calc(100vw - 20px);
+            }
+        }
+
+/* ==========================================
    CONTENT AREA
 ========================================== */
 
@@ -663,10 +974,67 @@
 
             <div class="menu-section-title">ESPACE PRINCIPAL</div>
 
-            <a href="{{ route('dashboard') }}" class="sidebar-link">
+            <a href="{{ auth()->user()->parentEleve ? route('parent.dashboard') : route('dashboard') }}" class="sidebar-link">
                 <i class="bi bi-grid"></i>
                 <span>Tableau de bord</span>
             </a>
+                        {{-- MENU RESERVE A L'ESPACE PARENT --}}
+            @if (auth()->user()->parentEleve)
+
+                <div class="menu-section-title">
+                    ESPACE PARENT
+                </div>
+
+                <a href="{{ route('parent.enfants') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.enfants') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i>
+                    <span>Mes enfants</span>
+                </a>
+
+                <a href="{{ route('parent.emploi-temps') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.emploi-temps') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-week"></i>
+                    <span>Emploi du temps</span>
+                </a>
+
+                <a href="{{ route('parent.notes.index') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.notes.*') ? 'active' : '' }}">
+                    <i class="bi bi-journal-check"></i>
+                    <span>Notes et bulletins</span>
+                </a>
+
+                <a href="{{ route('parent.frais') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.frais') ? 'active' : '' }}">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Frais et écolages</span>
+                </a>
+
+                <a href="{{ route('parent.paiements.historique') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.paiements.*') ? 'active' : '' }}">
+                    <i class="bi bi-receipt"></i>
+                    <span>Historique des paiements</span>
+                </a>
+
+                <a href="{{ route('parent.annonces.index') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.annonces.*') ? 'active' : '' }}">
+                    <i class="bi bi-megaphone"></i>
+                    <span>Annonces</span>
+                </a>
+
+                <a href="{{ route('parent.messagerie.index') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.messagerie.*') ? 'active' : '' }}">
+                    <i class="bi bi-chat-dots"></i>
+                    <span>Messagerie</span>
+                </a>
+
+                <a href="{{ route('parent.activites.index') }}"
+                   class="sidebar-link {{ request()->routeIs('parent.activites.*') ? 'active' : '' }}">
+                    <i class="bi bi-trophy"></i>
+                    <span>Activités parascolaires</span>
+                </a>
+
+            @endif
+            {{-- FIN MENU PARENT --}}
             @if (auth()->user()->aPermission('eleves.voir'))
                 <a href="#" class="sidebar-link menu-toggle" data-target="eleve">
                     <i class="bi bi-people"></i>
@@ -852,18 +1220,42 @@
                 </div>
             @endif
 
+@if (auth()->check() && (
+    auth()->id() === 1 ||
+    auth()->user()->aPermission('parents.voir') ||
+    auth()->user()->aPermission('annonces.voir')
+))
+    <a href="#" class="sidebar-link menu-toggle" data-target="communication">
+        <i class="bi bi-megaphone"></i>
+        <span>Annonces et communication</span>
+        <i class="bi bi-chevron-right menu-arrow"></i>
+    </a>
 
-            @if (auth()->user()->aPermission('parents.voir'))
-                <a href="#" class="sidebar-link menu-toggle" data-target="communication">
-                    <i class="bi bi-megaphone"></i>
-                    <span>Annonces et communication</span>
-                    <i class="bi bi-chevron-right menu-arrow"></i>
-                </a>
-                <div id="communication" class="submenu">
-                    <a href="{{ route('parents.index') }}">Parents</a>
-                </div>
-            @endif
+    <div id="communication" class="submenu">
 
+        @if (auth()->user()->aPermission('parents.voir'))
+            <a href="{{ route('parents.index') }}">
+                <i class="bi bi-people"></i>
+                Parents
+            </a>
+        @endif
+
+        @if (auth()->user()->aPermission('annonces.voir'))
+            <a href="{{ route('annonces.index') }}">
+                <i class="bi bi-megaphone"></i>
+                Annonce
+            </a>
+        @endif
+
+        @if (auth()->id() === 1)
+            <a href="{{ route('admin.messagerie.index') }}">
+                <i class="bi bi-chat-dots"></i>
+                Messagerie des parents
+            </a>
+        @endif
+
+    </div>
+@endif
             @if (auth()->user()->aPermission('bibliotheque.voir'))
                 <a href="#" class="sidebar-link menu-toggle" data-target="livre">
                     <i class="bi bi-journal-bookmark"></i>
@@ -987,6 +1379,101 @@
 
             <div class="topbar-right">
 
+                <!-- NOTIFICATIONS -->
+                <div class="notification-wrapper">
+                    <button type="button"
+                        class="notification-bell"
+                        id="notificationBell"
+                        aria-label="Afficher les notifications"
+                        aria-expanded="false"
+                        aria-controls="notificationPanel">
+                        <i class="bi bi-bell-fill"></i>
+
+                        @if ($notificationCount > 0)
+                            <span class="notification-count">
+                                {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <div class="notification-panel" id="notificationPanel">
+                        <div class="notification-header">
+                            <strong>Notifications</strong>
+                            <span>{{ $notificationCount }} non lue(s)</span>
+                        </div>
+
+                        <div class="notification-list">
+                            @if ($notificationMessages->isNotEmpty())
+                                <div class="notification-section-title">Messages</div>
+
+                                @foreach ($notificationMessages as $message)
+                                    @php
+                                        $conversation = $message->conversation;
+                                        $expediteur = $message->expediteur;
+                                    @endphp
+
+                                    @if ($conversation)
+                                        @if ((int) Auth::id() === 1)
+                                            <a href="{{ route('admin.messagerie.show', $conversation->id) }}"
+                                                class="notification-item">
+                                        @else
+                                            <a href="{{ route('parent.messagerie.index') }}"
+                                                class="notification-item">
+                                        @endif
+
+                                            <div class="notification-icon">
+                                                <i class="bi bi-chat-dots-fill"></i>
+                                            </div>
+
+                                            <div class="notification-content">
+                                                <strong>{{ $expediteur?->name ?? 'Nouveau message' }}</strong>
+                                                <p>{{ \Illuminate\Support\Str::limit($message->contenu ?? 'Vous avez reçu un nouveau message.', 85) }}</p>
+                                                <small>{{ $message->created_at?->diffForHumans() }}</small>
+                                            </div>
+                                        </a>
+                                    @endif
+                                @endforeach
+                            @endif
+
+                            @if ($notificationAnnouncements->isNotEmpty())
+                                <div class="notification-section-title">Annonces</div>
+
+                                @foreach ($notificationAnnouncements as $annonce)
+                                    <a href="{{ route('parent.annonces.show', $annonce->id) }}"
+                                        class="notification-item">
+
+                                        <div class="notification-icon announcement">
+                                            <i class="bi bi-megaphone-fill"></i>
+                                        </div>
+
+                                        <div class="notification-content">
+                                            <strong>{{ $annonce->titre }}</strong>
+                                            <p>{{ \Illuminate\Support\Str::limit(strip_tags($annonce->contenu ?? ''), 85) }}</p>
+                                            <small>{{ \Carbon\Carbon::parse($annonce->date_publication)->diffForHumans() }}</small>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            @endif
+
+                            @if ($notificationMessages->isEmpty() && $notificationAnnouncements->isEmpty())
+                                <div class="notification-empty">
+                                    <i class="bi bi-bell-slash"></i>
+                                    Aucune nouvelle notification
+                                </div>
+                            @endif
+                        </div>
+
+                        @if ((int) Auth::id() === 1)
+                            <div class="notification-footer">
+                                <a href="{{ route('admin.messagerie.index') }}">Voir tous les messages</a>
+                            </div>
+                        @elseif (Auth::user()->parentEleve)
+                            <div class="notification-footer">
+                                <a href="{{ route('parent.messagerie.index') }}">Voir mes messages</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 <!-- USER -->
                 <div class="user-box">
 
@@ -1083,10 +1570,6 @@
             window.addEventListener('pageshow', initMenus);
         })();
     </script>
-    <!-- ======================================================
-     SÉLECTEUR DE THÈMES (SIDEBAR TOUJOURS SOMBRE)
-     Ajout non destructif — à placer juste avant </body>
-====================================================== -->
     <style id="edumanage-themes-dark-sidebar">
         /* Verrouillage de la sidebar toujours sombre */
         html body .sidebar {
@@ -1467,6 +1950,62 @@
         })();
     </script>
 
+    <!-- notification-script -->
+    <script>
+        (function () {
+            function initNotifications() {
+                const bell = document.getElementById('notificationBell');
+                const panel = document.getElementById('notificationPanel');
+
+                if (!bell || !panel || bell.dataset.initialized === 'true') {
+                    return;
+                }
+
+                bell.dataset.initialized = 'true';
+
+                function closePanel() {
+                    panel.classList.remove('show');
+                    bell.setAttribute('aria-expanded', 'false');
+                }
+
+                function togglePanel() {
+                    const isOpen = panel.classList.toggle('show');
+                    bell.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                }
+
+                bell.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    togglePanel();
+                });
+
+                panel.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (!panel.contains(event.target) && !bell.contains(event.target)) {
+                        closePanel();
+                    }
+                });
+
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        closePanel();
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initNotifications, {
+                    once: true
+                });
+            } else {
+                initNotifications();
+            }
+
+            window.addEventListener('pageshow', initNotifications);
+        })();
+    </script>
 </body>
 
 </html>
